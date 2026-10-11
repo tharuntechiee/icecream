@@ -1,0 +1,52 @@
+<%- include('partials/top') %>
+<section class="page-head">
+  <div class="container narrow">
+    <p class="eyebrow">About <%= site.brand %></p>
+    <h1>Frozen, food-safe and on time — since 2012</h1>
+    <p class="lead">We started with one chest freezer and a borrowed van, delivering kulfi to wedding caterers in <%= site.city %>. Today we run an FSSAI-licensed plant, a −22°C cold store and a fleet of reefer vans that serve hundreds of restaurants, hotels, caterers, shops and offices every week.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Our cold-chain process</h2></div>
+    <ol class="chain">
+      <% content.coldChain.forEach((c, i) => { %>
+        <li><span class="step-num"><%= i + 1 %></span><div><h3><%= c.title %></h3><p class="muted small"><%= c.text %></p></div></li>
+      <% }) %>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-soft">
+  <div class="container">
+    <div class="section-head"><h2>Hygiene &amp; food-safety certifications</h2></div>
+    <div class="grid grid-3">
+      <div class="cert-card"><span class="cert-badge">FSSAI</span><h3>FSSAI State Licence</h3><p class="muted small">Lic. No. <%= site.certifications.fssai %> — manufacturing and storage of frozen desserts and ice.</p></div>
+      <div class="cert-card"><span class="cert-badge">HACCP</span><h3>HACCP-based food safety plan</h3><p class="muted small">Critical control points from pasteurisation to dispatch, audited every year.</p></div>
+      <div class="cert-card"><span class="cert-badge">QA</span><h3>In-house quality lab</h3><p class="muted small">Every batch tested for coliforms and TPC; RO water tested daily for ice production.</p></div>
+    </div>
+    <ul class="ticks two-col">
+      <li>Staff in hairnets, gloves and aprons; health checks every 6 months</li>
+      <li>Closed, hands-free filling and bagging lines</li>
+      <li>24×7 cold-room temperature logging with alarms</li>
+      <li>Pest-control contract and monthly sanitation audits</li>
+      <li>Batch codes on every carton for full traceability</li>
+      <li>Temperature-logged deliveries with probe check at handover</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Inside our facility</h2></div>
+    <div class="grid grid-3 gallery">
+      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/facility.svg?c=F4A3B4" alt="Cold store racks at −22°C" loading="lazy" width="400" height="300"></div><figcaption><strong>−22°C cold store</strong><span class="muted small">1,200 pallet positions with backup power</span></figcaption></figure>
+      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/block.svg?v=1" alt="Ice block production" loading="lazy" width="400" height="300"></div><figcaption><strong>Ice plant</strong><span class="muted small">40 tonnes/day from RO-purified water</span></figcaption></figure>
+      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/van.svg" alt="Refrigerated delivery van" loading="lazy" width="400" height="300"></div><figcaption><strong>Reefer fleet</strong><span class="muted small">GPS-tracked vans with data loggers</span></figcaption></figure>
+    </div>
+    <p class="muted small">Illustrations shown — replace with real facility photos in <code>views/about.ejs</code>.</p>
+  </div>
+</section>
+
+<%- include('partials/bottom') %>

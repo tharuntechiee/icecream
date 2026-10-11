@@ -1,0 +1,32 @@
+<%- include('partials/top') %>
+<section class="page-head">
+  <div class="container">
+    <h1>Contact us</h1>
+    <p class="muted">For quotes, the fastest route is the <a href="/quote">quote cart</a> or WhatsApp. For anything else, write to us below.</p>
+  </div>
+</section>
+<div class="container contact-layout">
+  <div class="contact-cards">
+    <a class="contact-card" href="tel:<%= site.phone.replace(/\s/g, '') %>"><span class="ci">📞</span><span><strong>Call</strong><span class="muted small"><%= site.phone %></span></span></a>
+    <a class="contact-card" href="<%= h.waLink(`Hi ${site.brand}!`) %>" target="_blank" rel="noopener"><span class="ci">💬</span><span><strong>WhatsApp</strong><span class="muted small">Chat with our order desk</span></span></a>
+    <a class="contact-card" href="mailto:<%= site.email %>"><span class="ci">✉️</span><span><strong>Email</strong><span class="muted small"><%= site.email %></span></span></a>
+    <a class="contact-card" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(`${site.address.line1}, ${site.address.city} ${site.address.postcode}`) %>" target="_blank" rel="noopener"><span class="ci">📍</span><span><strong>Cold store &amp; office</strong><span class="muted small"><%= site.address.line1 %>, <%= site.address.city %>, <%= site.address.region %> <%= site.address.postcode %></span></span></a>
+    <div class="contact-card static"><span class="ci">🕘</span><span><strong>Business hours</strong><% site.hours.forEach((hr) => { %><span class="muted small"><%= hr.days %>: <%= hr.time %></span><% }) %></span></div>
+  </div>
+
+  <form class="card form-card" method="post" action="/contact">
+    <h2>Send a message</h2>
+    <% if (sent) { %><div class="notice success" role="status">Thanks — your message has been sent. We will reply within one business day.</div><% } %>
+    <% if (errors.length) { %><div class="form-errors" role="alert"><ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
+    <div class="form-grid">
+      <label class="field"><span>Name *</span><input name="name" required maxlength="80" value="<%= values.name || '' %>" autocomplete="name"></label>
+      <label class="field"><span>Phone</span><input name="phone" type="tel" maxlength="20" value="<%= values.phone || '' %>" autocomplete="tel"></label>
+      <label class="field span-2"><span>Email</span><input name="email" type="email" maxlength="120" value="<%= values.email || '' %>" autocomplete="email"></label>
+      <label class="field span-2"><span>Subject</span><input name="subject" maxlength="120" value="<%= values.subject || '' %>"></label>
+      <label class="field span-2"><span>Message *</span><textarea name="message" rows="5" required maxlength="3000"><%= values.message || '' %></textarea></label>
+      <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Send message</button>
+  </form>
+</div>
+<%- include('partials/bottom') %>

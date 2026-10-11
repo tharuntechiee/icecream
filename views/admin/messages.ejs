@@ -1,0 +1,16 @@
+<%- include('_shell') %>
+<h1>Messages</h1>
+<% if (!list.length) { %><p class="muted">No messages yet.</p><% } %>
+<div class="admin-products">
+<% list.forEach((m) => { %>
+  <section class="card <%= m.read ? '' : 'unread' %>">
+    <div class="section-head tight">
+      <h2 class="h-sub"><%= m.subject || 'No subject' %> <% if (!m.read) { %><span class="pill pill-warn">new</span><% } %></h2>
+      <span class="muted small"><%= h.fmtDateTime(m.createdAt) %></span>
+    </div>
+    <p class="small"><strong><%= m.name %></strong><% if (m.phone) { %> · <a href="tel:<%= m.phone %>"><%= m.phone %></a><% } %><% if (m.email) { %> · <a href="mailto:<%= m.email %>"><%= m.email %></a><% } %></p>
+    <p class="prewrap"><%= m.message %></p>
+  </section>
+<% }) %>
+</div>
+<%- include('_end') %>

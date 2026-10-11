@@ -1,0 +1,11 @@
+<%- include('../partials/top') %>
+<div class="login-wrap">
+  <form class="card form-card login-card" method="post" action="/admin/login">
+    <h1><%= site.brand %> admin</h1>
+    <% if (error) { %><div class="form-errors" role="alert"><%= error %></div><% } %>
+    <label class="field"><span>Password</span><input type="password" name="password" required autofocus autocomplete="current-password"></label>
+    <button class="btn btn-primary btn-block" type="submit">Log in</button>
+    <p class="muted small center"><a href="/">← Back to website</a></p>
+  </form>
+</div>
+<%- include('../partials/bottom') %>

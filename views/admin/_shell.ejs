@@ -1,0 +1,17 @@
+<%- include('../partials/top') %>
+<div class="admin-shell">
+  <aside class="admin-side">
+    <a class="logo" href="/admin"><span><%= site.brand %></span><small>Admin</small></a>
+    <nav aria-label="Admin">
+      <a href="/admin" class="<%= path === '/admin' ? 'active' : '' %>">Dashboard</a>
+      <a href="/admin/quotes" class="<%= path.startsWith('/admin/quotes') ? 'active' : '' %>">Quotes <% if (nav.newQuotes) { %><span class="badge-count"><%= nav.newQuotes %></span><% } %></a>
+      <a href="/admin/products" class="<%= path.startsWith('/admin/products') ? 'active' : '' %>">Products &amp; stock</a>
+      <a href="/admin/accounts" class="<%= path.startsWith('/admin/accounts') ? 'active' : '' %>">Business accounts <% if (nav.pending) { %><span class="badge-count"><%= nav.pending %></span><% } %></a>
+      <a href="/admin/messages" class="<%= path.startsWith('/admin/messages') ? 'active' : '' %>">Messages <% if (nav.unread) { %><span class="badge-count"><%= nav.unread %></span><% } %></a>
+    </nav>
+    <div class="admin-side-foot">
+      <a href="/" target="_blank" rel="noopener">View website ↗</a>
+      <form method="post" action="/admin/logout"><button class="btn-text" type="submit">Log out</button></form>
+    </div>
+  </aside>
+  <div class="admin-main">

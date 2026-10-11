@@ -1,0 +1,44 @@
+<%- include('_shell') %>
+<h1>Dashboard</h1>
+<div class="kpis">
+  <a class="kpi" href="/admin/quotes?status=new"><span class="muted small">New quotes</span><strong><%= byStatus.new %></strong></a>
+  <a class="kpi" href="/admin/quotes?status=quoted"><span class="muted small">Awaiting customer</span><strong><%= byStatus.quoted %></strong></a>
+  <a class="kpi" href="/admin/quotes?status=confirmed"><span class="muted small">Confirmed</span><strong><%= byStatus.confirmed %></strong></a>
+  <div class="kpi"><span class="muted small">Open pipeline value</span><strong><%= h.money(pipeline) %></strong></div>
+</div>
+
+<div class="admin-grid">
+  <section class="card">
+    <h2 class="h-sub">Deliveries in the next 7 days</h2>
+    <% if (upcoming.length) { %>
+      <table class="data-table compact">
+        <thead><tr><th>Date</th><th>Slot</th><th>Customer</th><th>Area</th></tr></thead>
+        <tbody><% upcoming.forEach((q) => { %>
+          <tr><td><a href="/admin/quotes/<%= q.id %>"><%= h.fmtDate(q.deliveryDate) %></a></td><td><%= q.timeSlot %></td><td><%= q.customer.company || q.customer.name %></td><td><%= q.area %></td></tr>
+        <% }) %></tbody>
+      </table>
+    <% } else { %><p class="muted">No confirmed deliveries this week.</p><% } %>
+  </section>
+
+  <section class="card">
+    <h2 class="h-sub">Low stock</h2>
+    <% if (low.length) { %>
+      <ul class="plain-list"><% low.forEach(({ p, s }) => { %>
+        <li><a href="/admin/products#p-<%= p.id %>"><%= p.name %> — <%= s.label %></a> <span class="pill pill-warn"><%= s.stock %> <%= s.unit %>s</span></li>
+      <% }) %></ul>
+    <% } else { %><p class="muted">All stock above reorder level.</p><% } %>
+  </section>
+</div>
+
+<section class="card">
+  <div class="section-head tight"><h2 class="h-sub">Recent quote requests</h2><a class="link-more" href="/admin/quotes">All quotes →</a></div>
+  <%- include('_quote-table', { list: recent }) %>
+</section>
+
+<% if (pendingAccounts.length) { %>
+<section class="card">
+  <div class="section-head tight"><h2 class="h-sub">Business accounts awaiting approval</h2><a class="link-more" href="/admin/accounts">Review →</a></div>
+  <ul class="plain-list"><% pendingAccounts.forEach((a) => { %><li><strong><%= a.businessName %></strong> · <%= a.businessType %> · <%= a.gstin %></li><% }) %></ul>
+</section>
+<% } %>
+<%- include('_end') %>

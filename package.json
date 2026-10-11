@@ -1,0 +1,23 @@
+{
+  "name": "bulk-ice-cream-supplier",
+  "version": "1.0.0",
+  "description": "B2B bulk ice cream, custom packaging and ice supply website with quote cart and admin dashboard",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "reset-data": "node scripts/reset-data.js"
+  },
+  "engines": {
+    "node": ">=22.9"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "ejs": "^7.0.1",
+    "express": "^4.22.3",
+    "express-session": "^1.19.0",
+    "multer": "^2.4.0",
+    "nodemailer": "^10.1.0"
+  }
+}

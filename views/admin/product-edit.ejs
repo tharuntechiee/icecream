@@ -1,0 +1,67 @@
+<%- include('_shell') %>
+<p><a href="/admin/products">← Products</a></p>
+<h1><%= isNew ? 'New product' : p.name %></h1>
+<% if (errors.length) { %><div class="form-errors" role="alert"><ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
+
+<form method="post" action="/admin/products/<%= isNew ? 'new' : p.id %>" class="product-form">
+  <section class="card form-card">
+    <h2 class="h-sub">Details</h2>
+    <div class="form-grid">
+      <label class="field"><span>Name *</span><input name="name" required value="<%= p.name %>"></label>
+      <label class="field"><span>URL slug</span><input name="id" value="<%= p.id %>" <%= isNew ? '' : 'readonly' %> placeholder="auto from name"></label>
+      <label class="field"><span>Category</span>
+        <select name="category"><% categories.forEach((c) => { %><option value="<%= c.id %>" <%= p.category === c.id ? 'selected' : '' %>><%= c.name %></option><% }) %></select>
+      </label>
+      <label class="field"><span>Product type</span>
+        <select name="format"><% Object.entries(formats).forEach(([k, v]) => { %><option value="<%= k %>" <%= p.format === k ? 'selected' : '' %>><%= v %></option><% }) %></select>
+      </label>
+      <label class="field span-2"><span>Flavours <small class="muted">(comma separated)</small></span><input name="flavours" value="<%= p.flavours.join(', ') %>"></label>
+      <fieldset class="field span-2"><legend>Dietary</legend>
+        <% Object.entries(dietary).forEach(([k, v]) => { %><label class="check"><input type="checkbox" name="dietary" value="<%= k %>" <%= p.dietary.includes(k) ? 'checked' : '' %>> <%= v %></label><% }) %>
+      </fieldset>
+      <label class="field span-2"><span>Description</span><textarea name="description" rows="3"><%= p.description %></textarea></label>
+      <label class="field span-2"><span>Highlights <small class="muted">(one per line)</small></span><textarea name="highlights" rows="3"><%= (p.highlights || []).join('\n') %></textarea></label>
+      <label class="field"><span>Shelf life</span><input name="shelfLife" value="<%= p.shelfLife %>"></label>
+      <label class="field"><span>Storage temperature</span><input name="storageTemp" value="<%= p.storageTemp %>"></label>
+      <label class="field"><span>Lead time</span><input name="leadTime" value="<%= p.leadTime %>"></label>
+      <div class="field checks-inline">
+        <label class="check"><input type="checkbox" name="active" <%= p.active ? 'checked' : '' %>> Live on site</label>
+        <label class="check"><input type="checkbox" name="featured" <%= p.featured ? 'checked' : '' %>> Bestseller (home page)</label>
+        <label class="check"><input type="checkbox" name="seasonal" <%= p.seasonal ? 'checked' : '' %>> Seasonal</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card form-card">
+    <h2 class="h-sub">Image</h2>
+    <div class="art-editor">
+      <img src="<%= isNew ? '/art/s/tub.svg' : h.artUrl(p) %>" alt="" width="200" height="150" data-art-preview>
+      <div class="form-grid">
+        <label class="field"><span>Illustration</span><select name="artShape" data-art-shape><% shapes.forEach((s) => { %><option <%= p.art.shape === s ? 'selected' : '' %>><%= s %></option><% }) %></select></label>
+        <label class="field"><span>Colour</span><input type="color" name="artColor" value="<%= p.art.color || '#F4A3B4' %>" data-art-color></label>
+        <label class="field"><span>Label <small class="muted">(max 14)</small></span><input name="artLabel" maxlength="14" value="<%= p.art.label || '' %>" data-art-label></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card form-card">
+    <div class="section-head tight"><h2 class="h-sub">Pack sizes, tier pricing &amp; stock</h2><button class="btn btn-secondary btn-sm" type="button" data-add-size>+ Add size</button></div>
+    <p class="muted small">Tier prices are per unit (carton / block / bag…), written as <code>minQty:price</code>, comma separated — e.g. <code>10:1920, 50:1820, 200:1730</code> means 10–49 at ₹1,920, 50–199 at ₹1,820, 200+ at ₹1,730.</p>
+    <div class="sizes" data-sizes>
+      <% p.sizes.forEach((s, i) => { %><%- include('_size-row', { s, i }) %><% }) %>
+    </div>
+    <template data-size-template><%- include('_size-row', { s: { id: '', label: '', packSize: '', unit: 'carton', contains: '', unitsPerCarton: 1, moq: 10, stock: 0, tiers: [] }, i: '__i__' }) %></template>
+  </section>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit"><%= isNew ? 'Create product' : 'Save changes' %></button>
+    <a class="btn btn-secondary" href="/admin/products">Cancel</a>
+  </div>
+</form>
+
+<% if (!isNew) { %>
+<form method="post" action="/admin/products/<%= p.id %>/delete" class="danger-zone" data-confirm="Delete <%= p.name %>? This cannot be undone. (Tip: untick “Live on site” to hide it instead.)">
+  <button class="btn btn-danger btn-sm" type="submit">Delete product</button>
+</form>
+<% } %>
+<%- include('_end') %>

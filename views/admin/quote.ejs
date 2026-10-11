@@ -1,0 +1,86 @@
+<%- include('_shell') %>
+<% const c = q.customer; const flow = ['new', 'quoted', 'confirmed', 'delivered']; const idx = flow.indexOf(q.status); %>
+<p><a href="/admin/quotes">← All quotes</a></p>
+<div class="section-head tight">
+  <h1><%= q.ref %> <span class="status status-<%= q.status %>"><%= (h.STATUSES.find((s) => s.id === q.status) || {}).label %></span></h1>
+  <span class="muted small">Received <%= h.fmtDateTime(q.createdAt) %> · <%= q.source === 'custom-packaging' ? 'Custom packaging form' : 'Quote cart' %></span>
+</div>
+<% if (saved) { %><div class="notice success" role="status">Saved.</div><% } %>
+
+<ol class="pipeline" aria-label="Status">
+  <% flow.forEach((s, i) => { %><li class="<%= q.status === 'cancelled' ? '' : i <= idx ? 'done' : '' %>"><%= h.STATUSES.find((x) => x.id === s).label %></li><% }) %>
+</ol>
+
+<div class="admin-grid">
+  <section class="card">
+    <h2 class="h-sub">Customer</h2>
+    <dl class="spec-table compact">
+      <div><dt>Name</dt><dd><%= c.name %></dd></div>
+      <% if (c.company) { %><div><dt>Business</dt><dd><%= c.company %></dd></div><% } %>
+      <div><dt>Phone</dt><dd><a href="tel:<%= c.phone %>"><%= c.phone %></a> · <a href="https://wa.me/<%= c.phone.replace(/\D/g, '').length === 10 ? '91' + c.phone.replace(/\D/g, '') : c.phone.replace(/\D/g, '') %>?text=<%= encodeURIComponent(`Hi ${c.name}, this is ${site.brand} about your quote ${q.ref}.`) %>" target="_blank" rel="noopener">WhatsApp</a></dd></div>
+      <% if (c.email) { %><div><dt>Email</dt><dd><a href="mailto:<%= c.email %>?subject=<%= encodeURIComponent(`Your quote ${q.ref} from ${site.brand}`) %>"><%= c.email %></a></dd></div><% } %>
+      <% if (c.gstin) { %><div><dt>GSTIN</dt><dd><%= c.gstin %></dd></div><% } %>
+      <% if (account) { %><div><dt>Account</dt><dd><%= account.businessName %> <span class="pill"><%= account.status %></span></dd></div><% } %>
+    </dl>
+  </section>
+  <section class="card">
+    <h2 class="h-sub">Delivery</h2>
+    <dl class="spec-table compact">
+      <div><dt>Date</dt><dd><%= h.fmtDate(q.deliveryDate) || '—' %></dd></div>
+      <div><dt>Slot</dt><dd><%= q.timeSlot || '—' %></dd></div>
+      <div><dt>Event type</dt><dd><%= q.eventType || '—' %></dd></div>
+      <% if (q.guests) { %><div><dt>Guests</dt><dd><%= q.guests %></dd></div><% } %>
+      <div><dt>Area</dt><dd><%= q.area || '—' %></dd></div>
+      <div><dt>Address</dt><dd><%= q.address || '—' %></dd></div>
+      <% if (q.sampleRequested) { %><div><dt>Sample</dt><dd>Requested</dd></div><% } %>
+      <% if (q.logo) { %><div><dt>Logo</dt><dd><a href="/admin/quotes/<%= q.id %>/logo"><%= q.logo.originalName %></a> <span class="muted small">(<%= Math.round(q.logo.size / 1024) %> KB)</span></dd></div><% } %>
+    </dl>
+  </section>
+</div>
+
+<section class="card">
+  <h2 class="h-sub">Items</h2>
+  <div class="table-scroll">
+  <table class="data-table">
+    <thead><tr><th>Product</th><th>Size</th><th>Flavour</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Line total</th></tr></thead>
+    <tbody>
+      <% q.items.forEach((i) => { %>
+        <tr>
+          <td><%= i.name %><% if (i.belowMoq) { %> <span class="pill pill-warn">below MOQ</span><% } %></td>
+          <td><%= i.sizeLabel %><br><span class="muted small"><%= i.contains %></span></td>
+          <td><%= i.flavour || '—' %></td>
+          <td class="num"><%= i.qty %> <%= i.unit %>s</td>
+          <td class="num"><%= h.money(i.unitPrice) %></td>
+          <td class="num"><%= h.money(i.lineTotal) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot><tr><td colspan="5" class="num">Estimated subtotal (excl. GST &amp; delivery)</td><td class="num"><strong><%= h.money(q.estimate) %></strong></td></tr></tfoot>
+  </table>
+  </div>
+  <% if (q.notes) { %><p><strong>Customer notes:</strong> <%= q.notes %></p><% } %>
+</section>
+
+<div class="admin-grid">
+  <form class="card form-card" method="post" action="/admin/quotes/<%= q.id %>">
+    <h2 class="h-sub">Update quote</h2>
+    <div class="form-grid">
+      <label class="field"><span>Status</span>
+        <select name="status"><% h.STATUSES.forEach((s) => { %><option value="<%= s.id %>" <%= q.status === s.id ? 'selected' : '' %>><%= s.label %></option><% }) %></select>
+      </label>
+      <label class="field"><span>Quoted amount (₹, excl. GST)</span><input type="number" name="quotedAmount" min="0" value="<%= q.quotedAmount ?? '' %>" placeholder="<%= Math.round(q.estimate) %>"></label>
+      <label class="field span-2"><span>Log note <small class="muted">(added to history)</small></span><input name="note" maxlength="500" placeholder="e.g. Sent proforma on WhatsApp"></label>
+      <label class="field span-2"><span>Internal notes</span><textarea name="adminNotes" rows="3"><%= q.adminNotes || '' %></textarea></label>
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+  <section class="card">
+    <h2 class="h-sub">History</h2>
+    <ol class="history">
+      <% (q.history || []).slice().reverse().forEach((e) => { %>
+        <li><span class="status status-<%= e.status %>"><%= (h.STATUSES.find((s) => s.id === e.status) || {}).label %></span> <span class="muted small"><%= h.fmtDateTime(e.at) %></span><% if (e.note) { %><br><%= e.note %><% } %></li>
+      <% }) %>
+    </ol>
+  </section>
+</div>
+<%- include('_end') %>

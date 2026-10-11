@@ -1,0 +1,15 @@
+<fieldset class="size-row">
+  <legend class="sr-only">Pack size</legend>
+  <div class="form-grid size-grid">
+    <label class="field"><span>Label *</span><input name="sizes[<%= i %>][label]" value="<%= s.label %>" placeholder="4L tub"></label>
+    <label class="field"><span>ID</span><input name="sizes[<%= i %>][id]" value="<%= s.id %>" placeholder="4l"></label>
+    <label class="field"><span>Pack size filter</span><input name="sizes[<%= i %>][packSize]" value="<%= s.packSize %>" placeholder="4L"></label>
+    <label class="field"><span>Order unit</span><input name="sizes[<%= i %>][unit]" value="<%= s.unit %>" placeholder="carton"></label>
+    <label class="field span-2"><span>Contents</span><input name="sizes[<%= i %>][contains]" value="<%= s.contains %>" placeholder="4 × 4L tubs"></label>
+    <label class="field"><span>Units / carton</span><input type="number" min="1" name="sizes[<%= i %>][unitsPerCarton]" value="<%= s.unitsPerCarton %>"></label>
+    <label class="field"><span>MOQ</span><input type="number" min="1" name="sizes[<%= i %>][moq]" value="<%= s.moq %>"></label>
+    <label class="field"><span>Stock</span><input type="number" min="0" name="sizes[<%= i %>][stock]" value="<%= s.stock %>"></label>
+    <label class="field span-3"><span>Tier prices (min:price)</span><input name="sizes[<%= i %>][tiers]" value="<%= (s.tiers || []).map((t) => `${t.min}:${t.price}`).join(', ') %>" placeholder="10:1920, 50:1820, 200:1730"></label>
+  </div>
+  <button class="btn-text small" type="button" data-remove-size>Remove size</button>
+</fieldset>

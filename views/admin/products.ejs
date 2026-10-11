@@ -1,0 +1,40 @@
+<%- include('_shell') %>
+<div class="section-head tight">
+  <h1>Products &amp; stock</h1>
+  <a class="btn btn-primary btn-sm" href="/admin/products/new">+ New product</a>
+</div>
+<% if (saved) { %><div class="notice success" role="status">Saved “<%= saved %>”.</div><% } %>
+<% content.categories.forEach((cat) => { const items = list.filter((p) => p.category === cat.id); if (!items.length) return; %>
+  <h2 class="h-sub"><%= cat.name %></h2>
+  <div class="admin-products">
+    <% items.forEach((p) => { %>
+      <form class="card admin-product <%= p.active ? '' : 'inactive' %>" id="p-<%= p.id %>" method="post" action="/admin/products/<%= p.id %>/stock">
+        <img src="<%= h.artUrl(p) %>" alt="" width="96" height="72">
+        <div class="ap-main">
+          <div class="ap-title"><a href="/admin/products/<%= p.id %>"><strong><%= p.name %></strong></a>
+            <label class="check small"><input type="checkbox" name="active" <%= p.active ? 'checked' : '' %>> Live on site</label></div>
+          <div class="table-scroll">
+          <table class="data-table compact">
+            <thead><tr><th>Size</th><th>MOQ</th><th>Tier prices</th><th>Stock</th></tr></thead>
+            <tbody>
+              <% p.sizes.forEach((s) => { const low = !['custom', 'addons'].includes(p.category) && s.stock <= Math.max(s.moq * 3, 20); %>
+                <tr>
+                  <td><%= s.label %></td>
+                  <td><%= s.moq %></td>
+                  <td class="small"><%= h.Pricing.tierRanges(s).map((t) => `${t.label}: ${h.money(t.price)}`).join(' · ') %></td>
+                  <td><input class="stock-input <%= low ? 'low' : '' %>" type="number" min="0" name="stock[<%= s.id %>]" value="<%= s.stock %>" aria-label="Stock for <%= s.label %>"> <span class="muted small"><%= s.unit %>s</span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <div class="ap-actions">
+          <button class="btn btn-secondary btn-sm" type="submit">Save stock</button>
+          <a class="btn-text small" href="/admin/products/<%= p.id %>">Edit details &amp; prices</a>
+        </div>
+      </form>
+    <% }) %>
+  </div>
+<% }) %>
+<%- include('_end') %>

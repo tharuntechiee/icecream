@@ -1,0 +1,9 @@
+<%- include('partials/top') %>
+<section class="section">
+  <div class="container narrow center">
+    <h1><%= locals.error ? 'Something went wrong' : 'This page has melted' %></h1>
+    <p class="muted"><%= locals.error ? 'Please try again, or call or WhatsApp us your order.' : 'We couldn’t find that page. Try the catalogue instead.' %></p>
+    <div class="cta-actions center"><a class="btn btn-primary" href="/products">Browse catalogue</a><a class="btn btn-secondary" href="/">Home</a></div>
+  </div>
+</section>
+<%- include('partials/bottom') %>

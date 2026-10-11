@@ -1,0 +1,29 @@
+<%- include('_shell') %>
+<h1>Business accounts</h1>
+<% if (!list.length) { %><p class="muted">No registrations yet. Share <a href="/register" target="_blank">/register</a> with regular customers.</p><% } %>
+<div class="admin-products">
+<% list.forEach((a) => { %>
+  <section class="card">
+    <div class="section-head tight">
+      <h2 class="h-sub"><%= a.businessName %> <span class="pill <%= a.status === 'approved' ? 'pill-ok' : a.status === 'rejected' ? 'pill-bad' : 'pill-warn' %>"><%= a.status %></span></h2>
+      <span class="muted small">Registered <%= h.fmtDate(a.createdAt) %></span>
+    </div>
+    <dl class="spec-table compact two-col">
+      <div><dt>Type</dt><dd><%= a.businessType %></dd></div>
+      <div><dt>GSTIN</dt><dd><%= a.gstin %></dd></div>
+      <div><dt>Contact</dt><dd><%= a.contactName %></dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:<%= a.phone %>"><%= a.phone %></a></dd></div>
+      <div><dt>Email</dt><dd><a href="mailto:<%= a.email %>"><%= a.email %></a></dd></div>
+      <div><dt>Volume</dt><dd><%= a.monthlyVolume || '—' %></dd></div>
+      <div><dt>Address</dt><dd><%= a.address %><%= a.area ? ', ' + a.area : '' %></dd></div>
+      <div><dt>Orders</dt><dd><% if (a.orders.length) { a.orders.forEach((q) => { %><a href="/admin/quotes/<%= q.id %>"><%= q.ref %></a> <% }) } else { %>None yet<% } %></dd></div>
+    </dl>
+    <form method="post" action="/admin/accounts/<%= a.id %>" class="inline-form">
+      <select name="status" aria-label="Account status"><% ['pending', 'approved', 'rejected'].forEach((s) => { %><option <%= a.status === s ? 'selected' : '' %>><%= s %></option><% }) %></select>
+      <input name="notes" value="<%= a.notes || '' %>" placeholder="Credit terms, notes…" aria-label="Notes">
+      <button class="btn btn-secondary btn-sm" type="submit">Update</button>
+    </form>
+  </section>
+<% }) %>
+</div>
+<%- include('_end') %>

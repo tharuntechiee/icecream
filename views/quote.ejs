@@ -1,0 +1,79 @@
+<%- include('partials/top') %>
+<section class="page-head">
+  <div class="container">
+    <h1>Your bulk quote</h1>
+    <p class="muted">Build your order, pick a delivery slot and send it. We confirm stock, final price and delivery within 2 business hours. <strong>This is an enquiry — no payment is taken.</strong></p>
+  </div>
+</section>
+
+<div class="container quote-layout" data-quote-page data-min-date="<%= minDate %>" data-mov="<%= site.minOrderValue %>">
+  <section class="quote-items-wrap" aria-labelledby="items-h">
+    <div class="section-head tight">
+      <h2 id="items-h">Items <span class="muted" data-item-count></span></h2>
+      <button class="btn-text" type="button" data-repeat-last hidden>↻ Repeat my last order</button>
+    </div>
+    <div data-quote-items>
+      <noscript><p class="notice">Please enable JavaScript to use the quote cart — or call/WhatsApp us your list.</p></noscript>
+    </div>
+    <div class="empty" data-quote-empty hidden>
+      <h3>Your quote list is empty</h3>
+      <p class="muted">Add products from the catalogue, or use the event calculator to work out quantities.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="/products">Browse catalogue</a>
+        <a class="btn btn-secondary" href="/events#calculator">Event calculator</a>
+      </div>
+    </div>
+
+    <div class="summary-card" data-summary hidden>
+      <div class="sum-row"><span>Estimated subtotal</span><strong data-subtotal>₹0</strong></div>
+      <div class="sum-row muted small"><span>GST (18%) and delivery</span><span>Added in final quote</span></div>
+      <p class="notice warn small" data-mov-warning hidden>Minimum order value is <%= h.money(site.minOrderValue) %> per delivery. You can still send this — we will suggest options.</p>
+      <p class="notice warn small" data-moq-warning hidden>Some items are below their minimum order quantity.</p>
+    </div>
+  </section>
+
+  <section class="quote-form-wrap" aria-labelledby="details-h">
+    <form class="card form-card" data-quote-form novalidate>
+      <h2 id="details-h">Delivery &amp; contact details</h2>
+      <div class="form-errors" data-form-errors role="alert" hidden></div>
+
+      <div class="form-grid">
+        <label class="field"><span>Your name *</span><input name="name" autocomplete="name" required maxlength="80"></label>
+        <label class="field"><span>Business name</span><input name="company" autocomplete="organization" maxlength="120"></label>
+        <label class="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" autocomplete="tel" required maxlength="20" placeholder="+91"></label>
+        <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
+        <label class="field"><span>GSTIN <small class="muted">(for GST invoice)</small></span><input name="gstin" maxlength="15" style="text-transform:uppercase" placeholder="36ABCDE1234F1Z5"></label>
+        <label class="field"><span>Event / order type</span>
+          <select name="eventType">
+            <option value="">Select…</option>
+            <% site.eventTypes.forEach((t) => { %><option <%= preset.eventType === t ? 'selected' : '' %>><%= t %></option><% }) %>
+          </select>
+        </label>
+        <label class="field"><span>Delivery date *</span><input name="deliveryDate" type="date" min="<%= minDate %>" required></label>
+        <label class="field"><span>Time slot *</span>
+          <select name="timeSlot" required>
+            <option value="">Select…</option>
+            <% site.timeSlots.forEach((t) => { %><option><%= t %></option><% }) %>
+          </select>
+        </label>
+        <label class="field"><span>Area</span>
+          <select name="area">
+            <option value="">Select area…</option>
+            <% site.serviceZones.forEach((z) => { %><optgroup label="<%= z.name %>"><% z.areas.forEach((a) => { %><option><%= a %></option><% }) %></optgroup><% }) %>
+            <optgroup label="Other cities"><% site.otherCities.forEach((c) => { %><option><%= c %></option><% }) %></optgroup>
+            <option>Other / not listed</option>
+          </select>
+        </label>
+        <label class="field"><span>Guests <small class="muted">(events)</small></span><input name="guests" type="number" min="0" inputmode="numeric" value="<%= preset.guests %>"></label>
+        <label class="field span-2"><span>Delivery address *</span><textarea name="address" rows="2" required maxlength="400" autocomplete="street-address" placeholder="Venue / store name, street, landmark, pincode"></textarea></label>
+        <label class="field span-2"><span>Notes</span><textarea name="notes" rows="3" maxlength="1500" placeholder="Flavour split, freezer available at venue?, access/parking, invoice details…"></textarea></label>
+        <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" data-submit>Send quote request</button>
+      <p class="muted small center">By sending, you agree to be contacted about this order by phone, WhatsApp or email.</p>
+    </form>
+  </section>
+</div>
+
+<script type="application/json" id="catalog"><%- h.jsonScript(catalog) %></script>
+<%- include('partials/bottom') %>

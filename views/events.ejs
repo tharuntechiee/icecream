@@ -1,0 +1,88 @@
+<%- include('partials/top') %>
+<section class="hero hero-compact">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Events &amp; catering</p>
+      <h1>Ice cream for 50 guests or 5,000</h1>
+      <p class="lead">Weddings, birthdays, corporate days and festivals. We bring the ice cream, the freezer and the serving team, and it stays frozen until the last guest.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#calculator">How much do I need?</a>
+        <a class="btn btn-secondary" href="<%= h.waLink(`Hi ${site.brand}, I'm planning an event and need ice cream.`) %>" target="_blank" rel="noopener">Talk to an event planner</a>
+      </div>
+    </div>
+    <div class="hero-art single" aria-hidden="true"><img src="/art/s/counter.svg?c=ff385c" alt="" width="400" height="300"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Event packages</h2></div>
+    <div class="grid grid-4">
+      <% content.eventPackages.forEach((pk) => { %>
+        <article class="package-card">
+          <h3><%= pk.name %></h3>
+          <p class="price"><span class="muted small">from</span> <strong>₹<%= pk.from %></strong><span class="muted small"> / guest</span></p>
+          <ul class="ticks small"><% pk.includes.forEach((i) => { %><li><%= i %></li><% }) %></ul>
+          <button class="btn btn-outline btn-sm btn-block" type="button" data-use-package data-format="<%= pk.format %>" data-servings="<%= pk.perGuest %>" data-event="<%= { wedding: 'Wedding', birthday: 'Birthday / private party', corporate: 'Corporate event', festival: 'Festival / puja' }[pk.id] %>">Plan with calculator</button>
+        </article>
+      <% }) %>
+    </div>
+    <p class="muted small">Per-guest prices are indicative for 1 serving per guest at catalogue tier pricing, excluding GST, rentals and delivery.</p>
+  </div>
+</section>
+
+<section class="section section-soft" id="calculator">
+  <div class="container calc-layout">
+    <div>
+      <h2>Guest calculator</h2>
+      <p class="muted">Guests × servings per guest, plus a safety buffer, rounded up to full cartons — then add it straight to your quote.</p>
+      <form class="card form-card calc" data-calculator onsubmit="return false">
+        <div class="form-grid">
+          <label class="field"><span>Number of guests</span><input type="number" min="1" max="100000" value="200" inputmode="numeric" data-c-guests></label>
+          <label class="field"><span>Servings per guest</span>
+            <select data-c-servings>
+              <option value="1">1 — dessert with other sweets</option>
+              <option value="1.5" selected>1.5 — typical wedding</option>
+              <option value="2">2 — ice cream is the main dessert</option>
+              <option value="3">3 — hot day / kids’ party</option>
+            </select>
+          </label>
+          <label class="field"><span>Serve as</span>
+            <select data-c-format>
+              <% content.servingFormats.forEach((f) => { %><option value="<%= f.id %>"><%= f.label %></option><% }) %>
+            </select>
+          </label>
+          <label class="field"><span>Safety buffer</span>
+            <select data-c-buffer>
+              <option value="0">None</option>
+              <option value="0.05">5%</option>
+              <option value="0.1" selected>10% (recommended)</option>
+              <option value="0.15">15%</option>
+            </select>
+          </label>
+          <label class="field"><span>Event type</span>
+            <select data-c-event><% site.eventTypes.slice(0, 4).forEach((t) => { %><option><%= t %></option><% }) %></select>
+          </label>
+          <label class="check"><input type="checkbox" data-c-outdoor> Outdoor / no power at venue</label>
+        </div>
+      </form>
+    </div>
+    <div class="card calc-result" aria-live="polite">
+      <p class="eyebrow">Suggested order</p>
+      <p class="calc-big"><span data-r-servings>0</span> <small>servings</small></p>
+      <dl class="spec-table">
+        <div><dt>Product</dt><dd data-r-product>—</dd></div>
+        <div><dt>Units needed</dt><dd data-r-units>—</dd></div>
+        <div><dt>Cartons</dt><dd data-r-cartons>—</dd></div>
+        <div><dt>Estimated cost</dt><dd><strong data-r-cost>—</strong> <span class="muted small">+ GST</span></dd></div>
+        <div><dt>Per guest</dt><dd data-r-perguest>—</dd></div>
+      </dl>
+      <ul class="ticks small" data-r-tips></ul>
+      <button class="btn btn-primary btn-block" type="button" data-r-add>Add to quote</button>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="catalog"><%- h.jsonScript(catalog) %></script>
+<script type="application/json" id="serving-formats"><%- h.jsonScript(content.servingFormats) %></script>
+<%- include('partials/bottom') %>

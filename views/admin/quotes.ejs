@@ -1,0 +1,13 @@
+<%- include('_shell') %>
+<h1>Quote requests</h1>
+<nav class="chip-row" aria-label="Filter by status">
+  <a class="chip <%= !status ? 'active' : '' %>" href="/admin/quotes">All</a>
+  <% h.STATUSES.forEach((s) => { %><a class="chip <%= status === s.id ? 'active' : '' %>" href="/admin/quotes?status=<%= s.id %>"><%= s.label %></a><% }) %>
+</nav>
+<form class="admin-search" method="get" action="/admin/quotes">
+  <% if (status) { %><input type="hidden" name="status" value="<%= status %>"><% } %>
+  <input type="search" name="q" value="<%= search %>" placeholder="Search ref, name, company, phone…" aria-label="Search quotes">
+  <button class="btn btn-secondary btn-sm" type="submit">Search</button>
+</form>
+<section class="card"><%- include('_quote-table', { list }) %></section>
+<%- include('_end') %>
