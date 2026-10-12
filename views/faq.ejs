@@ -4,24 +4,21 @@
   mainEntity: content.faqs.flatMap((g) => g.items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } }))),
 }) %></script>
 <section class="page-head">
-  <div class="container narrow">
-    <h1>Frequently asked questions</h1>
-    <p class="muted">Can’t find your answer? <a href="/contact">Contact us</a> or WhatsApp — we reply within minutes during business hours.</p>
+  <div class="wrap narrow">
+    <h1>Questions before you order</h1>
+    <p>Can’t find the answer? <a href="/contact">Contact us</a> or WhatsApp the order desk; we reply within minutes during business hours.</p>
     <nav class="chip-row" aria-label="FAQ topics">
       <% content.faqs.forEach((g) => { %><a class="chip" href="#<%= site.slugify(g.topic) %>"><%= g.topic %></a><% }) %>
     </nav>
   </div>
 </section>
-<div class="container narrow">
+<div class="wrap narrow" style="padding-bottom:72px">
   <% content.faqs.forEach((g) => { %>
-    <section class="faq-group" id="<%= site.slugify(g.topic) %>">
-      <h2><%= g.topic %></h2>
-      <% g.items.forEach(([q, a]) => { %>
-        <details class="faq">
-          <summary><%= q %></summary>
-          <p><%= a %></p>
-        </details>
-      <% }) %>
+    <section id="<%= site.slugify(g.topic) %>" style="margin-bottom:44px">
+      <h2 class="h-sub" style="font-size:1.9rem"><%= g.topic %></h2>
+      <div class="faq" style="max-width:none">
+        <% g.items.forEach(([q, a]) => { %><details><summary><%= q %></summary><p><%= a %></p></details><% }) %>
+      </div>
     </section>
   <% }) %>
 </div>

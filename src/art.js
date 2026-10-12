@@ -173,7 +173,7 @@ const shapes = {
   van() {
     return `${shadow(200, 252, 150)}
       <rect x="70" y="110" width="170" height="110" rx="10" fill="#fff" stroke="#e2e2e2" stroke-width="2"/>
-      <path d="M240 140h50l40 40v40H240z" fill="#ff385c"/>
+      <path d="M240 140h50l40 40v40H240z" fill="#d63b1f"/>
       <path d="M252 150h34l26 28h-60z" fill="#DFF3FF"/>
       <circle cx="120" cy="226" r="22" fill="#222"/><circle cx="120" cy="226" r="9" fill="#bbb"/>
       <circle cx="280" cy="226" r="22" fill="#222"/><circle cx="280" cy="226" r="9" fill="#bbb"/>
@@ -199,7 +199,8 @@ const BG = {
   scoops: '#F7F7F7', van: '#F2F7FB', facility: '#F2F7FB',
 };
 
-// Render a 4:3 illustration. variant shifts the background so detail-page thumbnails differ.
+// Render a 4:3 illustration. variant shifts the background so detail-page thumbnails differ;
+// plain drops the background entirely so the object sits on the page's own board or card stock.
 function render(shape, opts = {}) {
   const fn = shapes[shape] || shapes.tub;
   const color = opts.color || '#F4A3B4';
@@ -207,8 +208,16 @@ function render(shape, opts = {}) {
   const v = Number(opts.variant || 0);
   const bgFill = v === 1 ? shade(bg, -10) : v === 2 ? '#ffffff' : bg;
   const deco = v === 2
-    ? '<g opacity=".5"><circle cx="40" cy="40" r="6" fill="#ff385c"/><circle cx="360" cy="60" r="4" fill="#ff385c"/><circle cx="350" cy="260" r="7" fill="#ffd1da"/></g>'
+    ? '<g opacity=".5"><circle cx="40" cy="40" r="6" fill="#d63b1f"/><circle cx="360" cy="60" r="4" fill="#d63b1f"/><circle cx="350" cy="260" r="7" fill="#caa24a"/></g>'
     : '<g opacity=".45"><circle cx="54" cy="56" r="26" fill="#fff"/><circle cx="350" cy="250" r="34" fill="#fff"/></g>';
+  if (opts.plain) {
+    // Monoline foil drawing: every shape becomes a gold hairline on a transparent ground, and the
+    // lettering and floor shadow are dropped, so it reads on indigo board and ivory card alike.
+    const ink = '#c39a3e';
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="${esc(opts.title || shape)}">
+  <style>*{fill:none!important;stroke:${ink}!important;stroke-width:2.4px!important;stroke-linejoin:round;stroke-linecap:round}text,ellipse[opacity]{display:none}</style>
+  ${fn({ color, label: '' }).replace(/<text[^>]*>[^<]*<\/text>/g, '')}</svg>`;
+  }
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="${esc(opts.title || shape)}">
   <rect width="400" height="300" fill="${bgFill}"/>${deco}${fn({ color, label: opts.label })}</svg>`;
 }

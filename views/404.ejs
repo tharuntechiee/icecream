@@ -1,9 +1,11 @@
 <%- include('partials/top') %>
-<section class="section">
-  <div class="container narrow center">
-    <h1><%= locals.error ? 'Something went wrong' : 'This page has melted' %></h1>
-    <p class="muted"><%= locals.error ? 'Please try again, or call or WhatsApp us your order.' : 'We couldn’t find that page. Try the catalogue instead.' %></p>
-    <div class="cta-actions center"><a class="btn btn-primary" href="/products">Browse catalogue</a><a class="btn btn-secondary" href="/">Home</a></div>
+<section class="band">
+  <div class="wrap narrow">
+    <div class="frame rsvp">
+      <h1 style="font-size:clamp(2rem,1.4rem + 2.6vw,3.2rem)"><%= locals.error ? 'Something went wrong' : 'This page has melted' %></h1>
+      <p class="soft" style="margin-top:14px"><%= locals.error ? 'Please try again, or call or WhatsApp us your order.' : 'We couldn’t find that page. The catalogue is a good place to start.' %></p>
+      <div class="rsvp-actions"><a class="btn btn-verm" href="/products">Open the catalogue</a><a class="btn btn-foil" href="/">Home</a></div>
+    </div>
   </div>
 </section>
 <%- include('partials/bottom') %>

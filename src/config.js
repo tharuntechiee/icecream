@@ -15,7 +15,7 @@ module.exports = {
   city,
   citySlug: slugify(city),
   country,
-  siteUrl: (env.SITE_URL || 'http://localhost:3000').replace(/\/$/, ''),
+  siteUrl: (env.SITE_URL || (env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000')).replace(/\/$/, ''),
   currency: { symbol: '₹', code: 'INR', locale: 'en-IN' },
   gstNote: 'Prices are per unit shown, exclusive of 18% GST and delivery.',
 

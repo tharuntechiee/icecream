@@ -1,72 +1,68 @@
 <%- include('partials/top') %>
-<% const v = values || {}; %>
-<section class="hero hero-compact">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">Custom &amp; private-label packaging</p>
-      <h1>Your logo on every cup</h1>
-      <p class="lead">Logo-printed cups and tubs for hotels, cafés and brands. Name sleeves for weddings and birthdays. Insulated gift boxes for corporate gifting. Free digital proof within 48 hours.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="#enquiry">Start a custom order</a>
-        <a class="btn btn-secondary" href="#gallery">See past work</a>
-      </div>
-    </div>
-    <div class="hero-art single" aria-hidden="true"><img src="/art/s/branded.svg?c=F7B2C4&l=YOUR&v=2" alt="" width="400" height="300"></div>
+<%
+  const v = values || {};
+  const diamond = '<div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>';
+  const steps = [
+    ['Day one', 'Share your logo', 'Upload a logo (PNG, SVG, PDF or AI) and tell us the pack, quantity and date.'],
+    ['Within 48 hours', 'Free digital proof', 'Our designer sends a mock-up; small revisions are on us.'],
+    ['Optional', 'Printed samples', 'Ten printed samples for ₹1,500, adjusted against your order.'],
+    ['After approval', 'Print, fill, deliver', 'Production starts on approval. Delivered frozen to one location or many.'],
+  ];
+%>
+<section class="page-head">
+  <div class="wrap narrow">
+    <h1>Your logo on every cup</h1>
+    <p>Logo-printed cups and tubs for hotels, cafés and brands. Name sleeves for weddings and birthdays. Insulated gift boxes for corporate gifting. A free digital proof within 48 hours.</p>
+    <div class="rsvp-actions"><a class="btn btn-verm" href="#enquiry">Start a custom order</a><a class="btn btn-foil" href="#gallery">See past work</a></div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head"><h2>How it works</h2></div>
-    <ol class="steps steps-4">
-      <li class="step"><span class="step-num">1</span><h3>Share your logo</h3><p class="muted">Upload a logo (PNG, SVG, PDF or AI) and tell us the pack, quantity and date.</p></li>
-      <li class="step"><span class="step-num">2</span><h3>Free digital proof</h3><p class="muted">Our designer sends a mock-up within 48 hours. Unlimited small revisions.</p></li>
-      <li class="step"><span class="step-num">3</span><h3>Physical sample</h3><p class="muted">Optional: we send 10 printed samples (₹1,500, adjusted against your order).</p></li>
-      <li class="step"><span class="step-num">4</span><h3>Print, fill, deliver</h3><p class="muted">Production starts on approval. Delivered frozen to one or many locations.</p></li>
+<section class="band sunk" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="how-h">How a custom order works</h2><%- diamond %></div>
+    <ol class="programme">
+      <% steps.forEach(([w, t, d]) => { %><li><span class="when"><%= w %></span><div><h3><%= t %></h3><p><%= d %></p></div></li><% }) %>
     </ol>
   </div>
 </section>
 
-<section class="section section-soft">
-  <div class="container">
-    <div class="section-head"><h2>Options, minimums &amp; lead times</h2></div>
+<section class="band" aria-labelledby="opt-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="opt-h">Options, minimums &amp; lead times</h2><%- diamond %></div>
     <div class="table-scroll">
-      <table class="data-table">
-        <thead><tr><th>Packaging</th><th>Sizes</th><th>Minimum order</th><th>Printing lead time</th><th>From</th></tr></thead>
+      <table class="data-table stack">
+        <thead><tr><th>Packaging</th><th>Sizes</th><th>Minimum order</th><th>Printing lead time</th><th class="num">From</th></tr></thead>
         <tbody>
           <% products.forEach((p) => { const s = p.sizes[0]; %>
             <tr>
-              <td><a href="/products/<%= p.id %>"><strong><%= p.name %></strong></a></td>
-              <td><%= p.sizes.map((x) => x.packSize).join(', ') %></td>
-              <td><%= s.moq %> <%= s.unit %>s <span class="muted small">(≈ <%= (s.moq * s.unitsPerCarton).toLocaleString('en-IN') %> units)</span></td>
-              <td><%= p.leadTime %></td>
-              <td><%= h.money(h.fromPrice(p)) %> / <%= s.unit %></td>
+              <td data-label="Packaging"><a href="/products/<%= p.id %>"><strong><%= p.name %></strong></a></td>
+              <td data-label="Sizes"><%= p.sizes.map((x) => x.packSize).join(', ') %></td>
+              <td data-label="Minimum"><span><%= s.moq %> <%= s.unit %>s <span class="mute small">(≈ <%= (s.moq * s.unitsPerCarton).toLocaleString('en-IN') %> units)</span></span></td>
+              <td data-label="Lead time"><%= p.leadTime %></td>
+              <td class="num" data-label="From"><span><%= h.money(h.fromPrice(p)) %> / <%= s.unit %></span></td>
             </tr>
           <% }) %>
         </tbody>
       </table>
     </div>
-    <p class="muted small">Artwork setup is free on orders above minimum. Custom-printed packaging cannot be cancelled once printing has started.</p>
+    <p class="small mute" style="margin-top:14px">Artwork setup is free above the minimum. Custom-printed packaging cannot be cancelled once printing has started.</p>
   </div>
 </section>
 
-<section class="section" id="gallery">
-  <div class="container">
-    <div class="section-head"><h2>Past branded packs</h2></div>
-    <div class="grid grid-3 gallery">
+<section class="band sunk" id="gallery" aria-labelledby="gal-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="gal-h">Past branded packs</h2><%- diamond %><p><span class="illus">Illustrations of example work</span></p></div>
+    <ul class="work-rows">
       <% content.gallery.forEach((g) => { %>
-        <figure class="gallery-item">
-          <div class="card-photo"><img src="<%= h.shapeUrl(g.art) %>" alt="<%= g.title %>" loading="lazy" width="400" height="300"></div>
-          <figcaption><strong><%= g.title %></strong><span class="muted small"><%= g.caption %></span></figcaption>
-        </figure>
+        <li><span class="line-art" aria-hidden="true" style="--art:url('<%= h.shapeUrl(g.art, true) %>')"></span><div><h3><%= g.title %></h3><p><%= g.caption %></p></div></li>
       <% }) %>
-    </div>
+    </ul>
   </div>
 </section>
 
-<section class="section section-soft" id="enquiry">
-  <div class="container narrow">
-    <form class="card form-card" method="post" action="/custom-packaging#enquiry" enctype="multipart/form-data">
+<section class="band" id="enquiry">
+  <div class="wrap narrow">
+    <form class="frame form-card" method="post" action="/custom-packaging#enquiry" enctype="multipart/form-data">
       <h2>Custom packaging enquiry</h2>
       <% if (errors.length) { %><div class="form-errors" role="alert"><ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
       <div class="form-grid">
@@ -75,33 +71,23 @@
         <label class="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" required maxlength="20" value="<%= v.phone || '' %>" autocomplete="tel"></label>
         <label class="field"><span>Email</span><input name="email" type="email" maxlength="120" value="<%= v.email || '' %>" autocomplete="email"></label>
         <label class="field"><span>Packaging type *</span>
-          <select name="productId" required data-custom-product>
-            <% products.forEach((p) => { %><option value="<%= p.id %>" <%= v.productId === p.id ? 'selected' : '' %>><%= p.name %></option><% }) %>
-          </select>
-        </label>
+          <select name="productId" required data-custom-product><% products.forEach((p) => { %><option value="<%= p.id %>" <%= v.productId === p.id ? 'selected' : '' %>><%= p.name %></option><% }) %></select></label>
         <label class="field"><span>Size</span>
-          <select name="sizeId" data-custom-size>
-            <% products.forEach((p) => { p.sizes.forEach((s) => { %><option value="<%= s.id %>" data-for="<%= p.id %>" <%= v.sizeId === s.id && v.productId === p.id ? 'selected' : '' %>><%= s.label %> — MOQ ≈ <%= (s.moq * s.unitsPerCarton).toLocaleString('en-IN') %> units</option><% }) }) %>
-          </select>
-        </label>
+          <select name="sizeId" data-custom-size><% products.forEach((p) => { p.sizes.forEach((s) => { %><option value="<%= s.id %>" data-for="<%= p.id %>" <%= v.sizeId === s.id && v.productId === p.id ? 'selected' : '' %>><%= s.label %>, minimum ≈ <%= (s.moq * s.unitsPerCarton).toLocaleString('en-IN') %> units</option><% }) }) %></select></label>
         <label class="field"><span>Approx. quantity (units) *</span><input name="units" type="number" min="1" required inputmode="numeric" value="<%= v.units || '' %>" placeholder="e.g. 2000"></label>
         <label class="field"><span>Preferred flavour</span><input name="flavour" maxlength="40" value="<%= v.flavour || '' %>" placeholder="e.g. Kesar, or mixed"></label>
         <label class="field"><span>Occasion</span>
-          <select name="eventType"><option value="">Select…</option><% site.eventTypes.forEach((t) => { %><option <%= v.eventType === t ? 'selected' : '' %>><%= t %></option><% }) %></select>
-        </label>
+          <select name="eventType"><option value="">Select…</option><% site.eventTypes.forEach((t) => { %><option <%= v.eventType === t ? 'selected' : '' %>><%= t %></option><% }) %></select></label>
         <label class="field"><span>Needed by</span><input name="date" type="date" value="<%= v.date || '' %>"></label>
         <label class="field span-2"><span>City / delivery location</span><input name="city" maxlength="120" value="<%= v.city || '' %>"></label>
-        <label class="field span-2 upload">
-          <span>Upload your logo <small class="muted">(PNG, JPG, SVG, PDF, AI, EPS — max 8 MB)</small></span>
-          <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp,.svg,.pdf,.ai,.eps,image/*,application/pdf">
-        </label>
-        <label class="check span-2"><input type="checkbox" name="sample" <%= v.sample ? 'checked' : '' %>> Send me 10 printed samples before the full run (₹1,500, adjusted against the order)</label>
-        <label class="field span-2"><span>Notes</span><textarea name="notes" rows="3" maxlength="1500" placeholder="Colours, names on wedding sleeves, number of delivery locations…"><%= v.notes || '' %></textarea></label>
+        <label class="field span-2"><span>Your logo <small>PNG, JPG, SVG, PDF, AI or EPS, up to 8 MB</small></span>
+          <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp,.svg,.pdf,.ai,.eps,image/*,application/pdf"></label>
+        <label class="check span-2"><input type="checkbox" name="sample" <%= v.sample ? 'checked' : '' %>> Send me 10 printed samples first (₹1,500, adjusted against the order)</label>
+        <label class="field span-2"><span>Notes</span><textarea name="notes" rows="3" maxlength="1500" placeholder="Colours, names for wedding sleeves, number of delivery locations…"><%= v.notes || '' %></textarea></label>
         <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
       </div>
-      <button class="btn btn-primary btn-block" type="submit">Send enquiry</button>
+      <button class="btn btn-verm btn-block" type="submit">Send the enquiry</button>
     </form>
   </div>
 </section>
-
 <%- include('partials/bottom') %>

@@ -1,22 +1,32 @@
 <%- include('partials/top') %>
+<%
+  const ic = {
+    phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>',
+    mail: '<path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/>',
+    pin: '<path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  };
+  const icon = (k) => `<span class="ic"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ic[k]}</svg></span>`;
+%>
 <section class="page-head">
-  <div class="container">
-    <h1>Contact us</h1>
-    <p class="muted">For quotes, the fastest route is the <a href="/quote">quote cart</a> or WhatsApp. For anything else, write to us below.</p>
+  <div class="wrap narrow">
+    <h1>Contact the order desk</h1>
+    <p>For quotes, the quickest routes are the <a href="/quote">quote cart</a> and WhatsApp. For anything else, write to us below.</p>
   </div>
 </section>
-<div class="container contact-layout">
-  <div class="contact-cards">
-    <a class="contact-card" href="tel:<%= site.phone.replace(/\s/g, '') %>"><span class="ci">📞</span><span><strong>Call</strong><span class="muted small"><%= site.phone %></span></span></a>
-    <a class="contact-card" href="<%= h.waLink(`Hi ${site.brand}!`) %>" target="_blank" rel="noopener"><span class="ci">💬</span><span><strong>WhatsApp</strong><span class="muted small">Chat with our order desk</span></span></a>
-    <a class="contact-card" href="mailto:<%= site.email %>"><span class="ci">✉️</span><span><strong>Email</strong><span class="muted small"><%= site.email %></span></span></a>
-    <a class="contact-card" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(`${site.address.line1}, ${site.address.city} ${site.address.postcode}`) %>" target="_blank" rel="noopener"><span class="ci">📍</span><span><strong>Cold store &amp; office</strong><span class="muted small"><%= site.address.line1 %>, <%= site.address.city %>, <%= site.address.region %> <%= site.address.postcode %></span></span></a>
-    <div class="contact-card static"><span class="ci">🕘</span><span><strong>Business hours</strong><% site.hours.forEach((hr) => { %><span class="muted small"><%= hr.days %>: <%= hr.time %></span><% }) %></span></div>
-  </div>
+<div class="wrap contact-layout">
+  <ul class="contact-list">
+    <li><a href="tel:<%= site.phone.replace(/\s/g, '') %>"><%- icon('phone') %><span><strong>Call</strong><span class="sub"><%= site.phone %></span></span></a></li>
+    <li><a href="<%= h.waLink(`Hi ${site.brand}!`) %>" target="_blank" rel="noopener"><%- icon('chat') %><span><strong>WhatsApp</strong><span class="sub">Chat with the order desk</span></span></a></li>
+    <li><a href="mailto:<%= site.email %>"><%- icon('mail') %><span><strong>Email</strong><span class="sub"><%= site.email %></span></span></a></li>
+    <li><a href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(`${site.address.line1}, ${site.address.city} ${site.address.postcode}`) %>" target="_blank" rel="noopener"><%- icon('pin') %><span><strong>Cold store &amp; office</strong><span class="sub"><%= site.address.line1 %>, <%= site.address.city %>, <%= site.address.region %> <%= site.address.postcode %></span></span></a></li>
+    <li><div class="row"><%- icon('clock') %><span><strong>Business hours</strong><% site.hours.forEach((hr) => { %><span class="sub"><%= hr.days %>: <%= hr.time %></span><% }) %></span></div></li>
+  </ul>
 
-  <form class="card form-card" method="post" action="/contact">
+  <form class="frame form-card" method="post" action="/contact">
     <h2>Send a message</h2>
-    <% if (sent) { %><div class="notice success" role="status">Thanks — your message has been sent. We will reply within one business day.</div><% } %>
+    <% if (sent) { %><div class="notice success" role="status">Thank you. Your message is with us, and we reply within one business day.</div><% } %>
     <% if (errors.length) { %><div class="form-errors" role="alert"><ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
     <div class="form-grid">
       <label class="field"><span>Name *</span><input name="name" required maxlength="80" value="<%= values.name || '' %>" autocomplete="name"></label>
@@ -26,7 +36,7 @@
       <label class="field span-2"><span>Message *</span><textarea name="message" rows="5" required maxlength="3000"><%= values.message || '' %></textarea></label>
       <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
     </div>
-    <button class="btn btn-primary btn-block" type="submit">Send message</button>
+    <button class="btn btn-verm btn-block" type="submit">Send the message</button>
   </form>
 </div>
 <%- include('partials/bottom') %>

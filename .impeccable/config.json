@@ -1,0 +1,89 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-10-12T05:37:19.934Z",
+        "reason": "Decision-round sketch for a replacement visual world; new type is the point, DESIGN.md will be rewritten after the choice"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-10-12T05:37:20.330Z",
+        "reason": "Decision-round sketch for a replacement visual world; new type is the point, DESIGN.md will be rewritten after the choice"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-cartons.html"
+        ],
+        "createdAt": "2026-10-12T05:37:20.714Z",
+        "reason": "Decision-round sketch for a replacement visual world; new type is the point, DESIGN.md will be rewritten after the choice"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "yatra one",
+        "files": [
+          "public/mockups/shaadi.css"
+        ],
+        "createdAt": "2026-10-12T05:48:24.552Z",
+        "reason": "User chose the Shaadi Card direction on the decision page; mockups intentionally use its type before DESIGN.md is updated"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "hind",
+        "files": [
+          "public/mockups/shaadi.css"
+        ],
+        "createdAt": "2026-10-12T05:48:25.003Z",
+        "reason": "User chose the Shaadi Card direction on the decision page; mockups intentionally use its type before DESIGN.md is updated"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-10-12T06:01:23.276Z",
+        "reason": "Spent decision-round sketch (thumbnail for the direction choice), not a shipping page; the built mockups under public/mockups supersede it"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-10-12T06:01:23.731Z",
+        "reason": "Spent decision-round sketch (thumbnail for the direction choice), not a shipping page; the built mockups under public/mockups supersede it"
+      },
+      {
+        "rule": "hero-eyebrow-chip",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/model-pick.html"
+        ],
+        "createdAt": "2026-10-12T06:01:24.171Z",
+        "reason": "Spent decision-round sketch (thumbnail for the direction choice), not a shipping page; the built mockups under public/mockups supersede it; the eyebrow was removed in the built home.html"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-cartons.html"
+        ],
+        "createdAt": "2026-10-12T06:01:24.579Z",
+        "reason": "Spent decision-round sketch (thumbnail for the direction choice), not a shipping page; the built mockups under public/mockups supersede it"
+      }
+    ]
+  }
+}

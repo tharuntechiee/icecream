@@ -1,14 +1,29 @@
-/* Front-end behaviour: quote cart (localStorage), product page pricing, event calculator, small UI bits. */
+/* Front-end behaviour: theme, quote cart (localStorage), invitation estimate, product tiers,
+   event menu card, catalogue filters, delivery area checker. Depends on /js/pricing.js. */
 (function () {
   'use strict';
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
   var money = Pricing.money;
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var IRREGULAR = { box: 'boxes' };
+  function plural(unit, n) { return n === 1 ? unit : (IRREGULAR[unit] || unit + 's'); }
 
   // ---------- storage (fails safely in private mode) ----------
   function load(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
   function store(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* ignore */ } }
+
+  // ---------- theme: dark (indigo board) by default, light (ivory card) on request ----------
+  var root = document.documentElement;
+  $$('[data-theme-toggle]').forEach(function (b) {
+    var sync = function () { b.setAttribute('aria-label', root.dataset.theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'); };
+    sync();
+    b.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
+      store('siteTheme', root.dataset.theme);
+      sync();
+    });
+  });
 
   // ---------- quote cart ----------
   var CART_KEY = 'quoteCart:v1';
@@ -41,37 +56,31 @@
     if (!t) return;
     t.innerHTML = html;
     t.hidden = false;
-    t.classList.add('show');
+    requestAnimationFrame(function () { t.classList.add('show'); });
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('show'); setTimeout(function () { t.hidden = true; }, 250); }, 3800);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); setTimeout(function () { t.hidden = true; }, 250); }, 4000);
   }
   function addedToast(name) {
-    toast('<span>✓ ' + esc(name) + ' added to your quote</span><a href="/quote">View quote (' + Cart.count() + ')</a>');
+    toast('<span>' + esc(name) + ' added to your quote</span><a href="/quote">View quote (' + Cart.count() + ')</a>');
   }
 
-  // Generic "Add to Quote" buttons (cards, calculator tips)
+  // Quick "Add to quote" buttons (place cards, menu-card extras)
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-add-to-quote]');
     if (!btn) return;
     var qty = Math.max(1, parseInt(btn.getAttribute('data-qty'), 10) || 1);
     Cart.add({ productId: btn.getAttribute('data-product'), sizeId: btn.getAttribute('data-size'), flavour: btn.getAttribute('data-flavour') || '', qty: qty });
-    var card = btn.closest('.product-card');
-    var name = btn.getAttribute('data-name') || (card && $('.card-title', card) ? $('.card-title', card).textContent.trim() : 'Item');
-    addedToast(name);
+    addedToast(btn.getAttribute('data-name') || 'Item');
   });
 
   // ---------- header menu ----------
-  var toggle = $('.menu-toggle');
-  if (toggle) {
-    toggle.addEventListener('click', function () {
-      var open = document.body.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  }
+  var menuBtn = $('.menu-btn');
+  if (menuBtn) menuBtn.addEventListener('click', function () {
+    var open = document.body.classList.toggle('nav-open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 
-  // ---------- catalogue filters ----------
-  var filters = $('details.filters');
-  if (filters && window.matchMedia('(min-width: 900px)').matches) filters.open = true;
+  // ---------- catalogue filters submit as you change them ----------
   $$('form[data-autosubmit]').forEach(function (form) {
     form.addEventListener('change', function (e) { if (e.target.name !== 'q') form.submit(); });
   });
@@ -82,88 +91,127 @@
   var byId = {};
   catalog.forEach(function (p) { byId[p.id] = p; });
   function findSize(p, id) { return p && p.sizes.filter(function (s) { return s.id === id; })[0]; }
-  function plural(unit, n) { return n === 1 ? unit : unit + 's'; }
+  var formatsEl = $('#serving-formats');
+  var servingFormats = formatsEl ? JSON.parse(formatsEl.textContent) : [];
 
   function nextTierHint(size, qty) {
     var ranges = Pricing.tierRanges(size);
     for (var i = 0; i < ranges.length; i++) {
-      if (ranges[i].min > qty) return 'Add ' + (ranges[i].min - qty) + ' more for ' + money(ranges[i].price) + '/' + size.unit;
+      if (ranges[i].min > qty) return (ranges[i].min - qty) + ' more for ' + money(ranges[i].price) + ' each';
     }
     return '';
   }
 
-  // ---------- stepper ----------
-  function bindStepper(root, onChange) {
-    var input = $('[data-qty]', root) || $('input', root);
-    $$('[data-step]', root).forEach(function (b) {
-      b.addEventListener('click', function () {
-        var min = parseInt(input.min, 10) || 1;
-        var v = (parseInt(input.value, 10) || 0) + parseInt(b.getAttribute('data-step'), 10);
-        input.value = Math.max(min, v);
-        onChange();
-      });
-    });
-    input.addEventListener('input', onChange);
-    input.addEventListener('blur', function () {
-      var min = parseInt(input.min, 10) || 1;
-      if ((parseInt(input.value, 10) || 0) < min) { input.value = min; onChange(); }
-    });
-    return input;
+  // Figures settle (a short blur-in) when their value changes.
+  function setFig(el, text) {
+    if (!el || el.textContent === text) return;
+    el.textContent = text;
+    el.classList.remove('settle'); void el.offsetWidth; el.classList.add('settle');
   }
 
-  // ---------- product detail page ----------
+  // Guests → servings → cartons, shared by the invitation and the menu card.
+  function sizeEvent(guests, perGuest, buffer, fmtId) {
+    var fmt = servingFormats.filter(function (f) { return f.id === fmtId; })[0];
+    var p = fmt && byId[fmt.productId], s = p && findSize(p, fmt.sizeId);
+    if (!s) return null;
+    var servings = Math.ceil(Math.round(guests * perGuest * (1 + buffer) * 1000) / 1000);
+    var units = Math.ceil(servings / fmt.perUnit);
+    var need = Math.ceil(units / s.unitsPerCarton);
+    var cartons = Math.max(s.moq, need);
+    return { p: p, s: s, fmt: fmt, servings: servings, units: units, cartons: cartons, atMoq: cartons > need, cost: Pricing.lineTotal(s, cartons) };
+  }
+
+  // ---------- home: the invitation card is the quote form ----------
+  var SERVINGS = { 'Wedding': 1.5, 'Birthday / private party': 1, 'Corporate event': 1, 'Festival / puja': 1.5 };
+  var inv = $('[data-invite]');
+  if (inv) {
+    requestAnimationFrame(function () { inv.classList.add('drawn'); });
+    var ev = $('[name=event]', inv), date = $('[name=date]', inv), venue = $('[name=venue]', inv), guests = $('[name=guests]', inv);
+    date.value = new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10);
+    date.min = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    var face = $('[data-date-face]', inv);
+    var writeDate = function () {
+      var v = date.value ? new Date(date.value + 'T00:00:00') : null;
+      face.textContent = v && !isNaN(v) ? v.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Choose a date';
+    };
+    date.addEventListener('change', writeDate);
+    date.addEventListener('click', function () { try { date.showPicker(); } catch (e) { /* older browsers open on focus */ } });
+    writeDate();
+
+    var renderInvite = function () {
+      var g = Math.max(0, parseInt(guests.value, 10) || 0);
+      var per = SERVINGS[ev.value];
+      if (!per) {
+        setFig($('[data-est-big]'), 'Restock by the carton');
+        $('[data-est-line]').innerHTML = 'Tubs, cups, kulfi and ice at tier prices. <a href="/products">Open the catalogue</a>.';
+        return;
+      }
+      if (!g) { setFig($('[data-est-big]'), 'Add your guest count'); $('[data-est-line]').textContent = 'We size the order for you.'; return; }
+      var r = sizeEvent(g, per, 0.1, 'cup100');
+      if (!r) return;
+      setFig($('[data-est-big]'), '≈ ' + money(r.cost));
+      $('[data-est-line]').textContent = r.cartons + ' cartons of 100ml cups (' + r.servings.toLocaleString('en-IN') + ' servings) for ' + g.toLocaleString('en-IN') + ' guests · before GST' + (r.servings >= 300 ? ' · freezer and counter suggested' : '');
+    };
+    inv.addEventListener('input', renderInvite);
+    inv.addEventListener('change', renderInvite);
+    inv.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var g = Math.max(0, parseInt(guests.value, 10) || 0), per = SERVINGS[ev.value];
+      if (per && g) { var r = sizeEvent(g, per, 0.1, 'cup100'); if (r) Cart.add({ productId: r.p.id, sizeId: r.s.id, flavour: 'Assorted', qty: r.cartons }); }
+      store('quotePreset:v1', { eventType: ev.value, guests: guests.value, date: date.value, area: venue.value });
+      location.href = '/quote?event=' + encodeURIComponent(ev.value) + '&guests=' + encodeURIComponent(guests.value);
+    });
+    var waBtn = $('[data-wa-card]');
+    if (waBtn) waBtn.addEventListener('click', function () {
+      var base = waBtn.href.split('?')[0];
+      waBtn.href = base + '?text=' + encodeURIComponent('Hi! ' + ev.value + ' on ' + face.textContent + ' at ' + venue.value + ' for ' + guests.value + ' guests. Please send a quote.');
+    });
+    renderInvite();
+  }
+
+  // ---------- product detail ----------
   var pdp = $('[data-pdp]');
   if (pdp) {
     var product = byId[pdp.getAttribute('data-product')];
-    var qtyInput = bindStepper($('[data-stepper]', pdp), renderPdp);
+    var qtyInput = $('[data-qty]', pdp);
     var flavourSel = $('[data-flavour]', pdp);
-
-    $$('[data-thumb]', pdp).forEach(function (b) {
-      b.addEventListener('click', function () {
-        $('[data-main-img]', pdp).src = b.getAttribute('data-thumb');
-        $$('[data-thumb]', pdp).forEach(function (x) { x.classList.toggle('active', x === b); });
-      });
-    });
-
     var currentSize = function () { var r = $('input[name="size"]:checked', pdp); return findSize(product, r ? r.value : product.sizes[0].id); };
 
-    $$('input[name="size"]', pdp).forEach(function (r) {
-      r.addEventListener('change', function () {
-        var s = currentSize();
-        qtyInput.min = s.moq;
-        qtyInput.value = s.moq;
-        $$('[data-unit]').forEach(function (el) { el.textContent = s.unit; });
-        $('[data-moq-note]', pdp).textContent = 'Minimum order: ' + s.moq + ' ' + plural(s.unit, s.moq);
-        $('[data-spec-contains]', pdp).textContent = s.contains;
-        $('[data-spec-units]', pdp).textContent = s.unitsPerCarton;
-        $('[data-spec-moq]', pdp).textContent = s.moq + ' ' + plural(s.unit, s.moq);
-        renderPdp();
-      });
-    });
-
-    function renderPdp() {
+    var renderPdp = function (reset) {
       var s = currentSize();
+      if (reset) { qtyInput.min = s.moq; qtyInput.value = s.moq; }
       var qty = Math.max(0, parseInt(qtyInput.value, 10) || 0);
       var tier = Pricing.tierFor(s.tiers, qty);
       $('[data-tier-table] tbody', pdp).innerHTML = Pricing.tierRanges(s).map(function (t) {
-        var active = tier && t.min === tier.min && qty >= s.moq;
-        return '<tr class="' + (active ? 'active' : '') + '"><td>' + t.label + ' ' + s.unit + 's</td><td>' + money(t.price) + '</td></tr>';
+        var on = tier && t.min === tier.min && qty >= s.moq;
+        return '<tr class="' + (on ? 'on' : '') + '"><td>' + t.label + ' ' + esc(plural(s.unit, 2)) + '</td><td>' + money(t.price) + '</td></tr>';
       }).join('');
-      var total = Pricing.lineTotal(s, qty);
-      $$('[data-estimate]').forEach(function (el) { el.textContent = money(total); });
+      $$('[data-unit]', pdp).forEach(function (el) { el.textContent = plural(s.unit, 2); });
+      $$('[data-unit-one]', pdp).forEach(function (el) { el.textContent = s.unit; });
+      setFig($('[data-estimate]', pdp), money(Pricing.lineTotal(s, qty)));
       var hint = nextTierHint(s, qty);
-      $('[data-estimate-note]', pdp).textContent = money(Pricing.unitPrice(s, qty)) + ' per ' + s.unit + (hint ? ' · ' + hint : '');
-    }
-    renderPdp();
-
-    $$('[data-pdp-add]').forEach(function (b) {
+      $('[data-estimate-note]', pdp).innerHTML = money(Pricing.unitPrice(s, qty)) + ' per ' + esc(s.unit) + (hint ? ' · <span class="hint">' + esc(hint) + '</span>' : '');
+      $('[data-moq-note]', pdp).textContent = qty < s.moq ? 'Minimum order is ' + s.moq + ' ' + plural(s.unit, s.moq) + '.' : '';
+      $('[data-spec-contains]', pdp).textContent = s.contains;
+      $('[data-spec-units]', pdp).textContent = s.unitsPerCarton;
+      $('[data-spec-moq]', pdp).textContent = s.moq + ' ' + plural(s.unit, s.moq);
+    };
+    pdp.addEventListener('change', function (e) { if (e.target.name === 'size') renderPdp(true); });
+    qtyInput.addEventListener('input', function () { renderPdp(false); });
+    qtyInput.addEventListener('blur', function () { var s = currentSize(); if ((parseInt(qtyInput.value, 10) || 0) < s.moq) { qtyInput.value = s.moq; renderPdp(false); } });
+    $$('[data-step]', pdp).forEach(function (b) {
       b.addEventListener('click', function () {
-        var s = currentSize();
-        var qty = Math.max(s.moq, parseInt(qtyInput.value, 10) || s.moq);
-        Cart.add({ productId: product.id, sizeId: s.id, flavour: flavourSel ? flavourSel.value : '', qty: qty });
-        addedToast(product.name + ' (' + s.label + ')');
+        qtyInput.value = Math.max(currentSize().moq, (parseInt(qtyInput.value, 10) || 0) + parseInt(b.getAttribute('data-step'), 10));
+        renderPdp(false);
       });
     });
+    $('[data-pdp-add]', pdp).addEventListener('click', function () {
+      var s = currentSize();
+      var qty = Math.max(s.moq, parseInt(qtyInput.value, 10) || s.moq);
+      Cart.add({ productId: product.id, sizeId: s.id, flavour: flavourSel ? flavourSel.value : '', qty: qty });
+      addedToast(product.name + ' (' + s.label + ')');
+    });
+    renderPdp(false);
   }
 
   // ---------- quote page ----------
@@ -177,11 +225,11 @@
     // Drop items whose product/size no longer exists.
     Cart.save(Cart.items().filter(function (i) { return findSize(byId[i.productId], i.sizeId); }));
 
-    function renderQuote() {
+    var renderQuote = function () {
       var items = Cart.items();
       $('[data-quote-empty]').hidden = items.length > 0;
       $('[data-summary]').hidden = items.length === 0;
-      $('[data-item-count]').textContent = items.length ? '(' + items.length + ')' : '';
+      $('[data-item-count]').textContent = items.length ? '· ' + items.length + ' line' + (items.length === 1 ? '' : 's') : '';
       var last = load(LAST_KEY, null);
       $('[data-repeat-last]').hidden = !(last && last.length);
 
@@ -202,23 +250,23 @@
           ? '<select data-field="size" aria-label="Pack size">' + p.sizes.map(function (x) { return '<option value="' + esc(x.id) + '"' + (x.id === s.id ? ' selected' : '') + '>' + esc(x.label) + '</option>'; }).join('') + '</select>'
           : '<span class="muted small">' + esc(s.label) + '</span>';
         return '<div class="qi" data-idx="' + idx + '">' +
-          '<img src="' + esc(p.art) + '" alt="" width="96" height="72">' +
+          '<span class="line-art" aria-hidden="true" style="--art:url(&quot;' + esc(p.art) + '&quot;)"></span>' +
           '<div class="qi-main"><a class="qi-name" href="/products/' + encodeURIComponent(p.id) + '">' + esc(p.name) + '</a>' +
             '<div class="qi-opts">' + sizes + flavours + '</div>' +
-            '<p class="muted small">' + esc(s.contains) + ' · ' + money(unit) + '/' + esc(s.unit) + (hint ? ' · <span class="hint">' + esc(hint) + '</span>' : '') + '</p>' +
+            '<p class="muted small">' + esc(s.contains) + ' · ' + money(unit) + ' per ' + esc(s.unit) + (hint ? ' · <span class="hint">' + esc(hint) + '</span>' : '') + '</p>' +
             (i.qty < s.moq ? '<p class="warn-text small">Minimum ' + s.moq + ' ' + plural(s.unit, s.moq) + '</p>' : '') +
           '</div>' +
-          '<div class="qi-qty"><div class="stepper sm"><button type="button" data-q="-1" aria-label="Decrease">−</button><input type="number" min="1" inputmode="numeric" value="' + i.qty + '" data-field="qty" aria-label="Quantity"><button type="button" data-q="1" aria-label="Increase">+</button></div><span class="muted small">' + esc(plural(s.unit, i.qty)) + '</span></div>' +
-          '<div class="qi-total"><strong>' + money(line) + '</strong><button type="button" class="btn-text small" data-remove>Remove</button></div>' +
+          '<div class="qi-qty"><div class="stepper sm"><button type="button" data-q="-1" aria-label="Fewer">−</button><input type="number" min="1" inputmode="numeric" value="' + i.qty + '" data-field="qty" aria-label="Quantity"><button type="button" data-q="1" aria-label="More">+</button></div><span class="muted small">' + esc(plural(s.unit, i.qty)) + '</span></div>' +
+          '<div class="qi-total"><strong class="tabular">' + money(line) + '</strong><button type="button" class="btn-text small" data-remove>Remove</button></div>' +
         '</div>';
       }).join('');
 
       $('[data-subtotal]').textContent = money(subtotal);
       $('[data-mov-warning]').hidden = !items.length || subtotal >= (parseInt(quotePage.getAttribute('data-mov'), 10) || 0);
       $('[data-moq-warning]').hidden = !belowMoq;
-    }
+    };
 
-    function mutate(idx, fn) {
+    var mutate = function (idx, fn) {
       var items = Cart.items();
       if (!items[idx]) return;
       fn(items[idx], items);
@@ -230,7 +278,7 @@
       });
       Cart.save(merged);
       renderQuote();
-    }
+    };
 
     list.addEventListener('click', function (e) {
       var row = e.target.closest('.qi');
@@ -261,15 +309,23 @@
     $('[data-repeat-last]').addEventListener('click', function () {
       load(LAST_KEY, []).forEach(function (i) { if (findSize(byId[i.productId], i.sizeId)) Cart.add(i); });
       renderQuote();
-      toast('<span>✓ Your last order has been added</span>');
+      toast('<span>Your last order has been added</span>');
     });
 
-    // Prefill remembered contact details
+    // Prefill remembered contact details, and anything the invitation or menu card carried over.
+    var f0 = form.elements;
     var saved = load(DETAILS_KEY, {});
     ['name', 'company', 'phone', 'email', 'gstin', 'address', 'area'].forEach(function (k) {
-      if (saved[k] && form.elements[k] && !form.elements[k].value) form.elements[k].value = saved[k];
+      if (saved[k] && f0[k] && !f0[k].value) f0[k].value = saved[k];
     });
-    if (!form.elements.deliveryDate.value) form.elements.deliveryDate.value = quotePage.getAttribute('data-min-date');
+    var preset = load('quotePreset:v1', null);
+    if (preset) {
+      if (!f0.eventType.value && preset.eventType) f0.eventType.value = preset.eventType;
+      if (!f0.guests.value && preset.guests) f0.guests.value = preset.guests;
+      if (preset.date && preset.date >= quotePage.getAttribute('data-min-date')) f0.deliveryDate.value = preset.date;
+      if (preset.area && !f0.area.value) f0.area.value = preset.area;
+    }
+    if (!f0.deliveryDate.value) f0.deliveryDate.value = quotePage.getAttribute('data-min-date');
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -277,7 +333,12 @@
       var f = form.elements;
       var errors = [];
       var items = Cart.items();
-      if (!items.length) errors.push('Your quote list is empty — add products first.');
+      var showErrors = function (msgs) {
+        errBox.innerHTML = '<ul>' + msgs.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+        errBox.hidden = false;
+        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      if (!items.length) errors.push('The order is empty. Add products first.');
       if (!f.name.value.trim()) errors.push('Please enter your name.');
       if (f.phone.value.replace(/\D/g, '').length < 10) errors.push('Please enter a valid phone number.');
       if (!f.deliveryDate.value) errors.push('Please choose a delivery date.');
@@ -300,108 +361,90 @@
           if (!res.ok) throw res;
           store(LAST_KEY, items);
           store(DETAILS_KEY, { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value, gstin: f.gstin.value, address: f.address.value, area: f.area.value });
+          try { localStorage.removeItem('quotePreset:v1'); } catch (x) { /* ignore */ }
           Cart.save([]);
           window.location.href = '/thanks?ref=' + encodeURIComponent(res.ref);
         })
         .catch(function (err) {
           btn.disabled = false;
-          btn.textContent = 'Send quote request';
+          btn.textContent = 'Send the quote request';
           showErrors((err && err.errors) || ['Could not send right now. Please try again, or WhatsApp us your list.']);
         });
-
-      function showErrors(list) {
-        errBox.innerHTML = '<ul>' + list.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
-        errBox.hidden = false;
-        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
     });
 
     renderQuote();
   }
 
-  // ---------- event guest calculator ----------
-  var calc = $('[data-calculator]');
+  // ---------- events: guest list in, menu card out ----------
+  var calc = $('[data-calc]');
   if (calc) {
-    var formats = JSON.parse($('#serving-formats').textContent);
-    var el = function (n) { return $('[data-' + n + ']'); };
-    var result = { item: null };
-
-    function computeCalc() {
-      var guests = Math.max(0, parseInt(el('c-guests').value, 10) || 0);
-      var perGuest = parseFloat(el('c-servings').value) || 1;
-      var buffer = parseFloat(el('c-buffer').value) || 0;
-      var fmt = formats.filter(function (f) { return f.id === el('c-format').value; })[0];
-      var p = byId[fmt.productId];
-      var s = findSize(p, fmt.sizeId);
-      var servings = Math.ceil(guests * perGuest * (1 + buffer));
-      var units = Math.ceil(servings / fmt.perUnit);
-      var needed = Math.ceil(units / s.unitsPerCarton);
-      var cartons = Math.max(s.moq, needed);
-      var cost = Pricing.lineTotal(s, cartons);
-
-      el('r-servings').textContent = servings.toLocaleString('en-IN');
-      el('r-product').innerHTML = '<a href="/products/' + p.id + '">' + esc(p.name) + '</a> · ' + esc(s.label);
-      el('r-units').textContent = units.toLocaleString('en-IN') + (fmt.perUnit > 1 ? ' tubs' : ' pieces');
-      el('r-cartons').textContent = cartons + ' ' + plural(s.unit, cartons) + ' (' + s.contains + ')' + (cartons > needed ? ' — minimum order' : '');
-      el('r-cost').textContent = money(cost);
-      el('r-perguest').textContent = guests ? money(cost / guests) : '—';
-      result.item = { productId: p.id, sizeId: s.id, flavour: p.flavours.length > 1 ? 'Assorted' : (p.flavours[0] || ''), qty: cartons, name: p.name };
-
-      var tips = [];
-      var freezerSize = cartons <= 25 ? '200l' : cartons <= 40 ? '300l' : '500l';
-      var freezers = Math.ceil(cartons / 65);
-      if (freezers > 1) freezerSize = '500l';
-      if (byId['chest-freezer-rental']) tips.push(tipHtml('No freezer at the venue? Rent ' + (freezers > 1 ? freezers + ' × ' : '') + freezerSize.toUpperCase().replace('L', ' L') + ' chest freezer', 'chest-freezer-rental', freezerSize, Math.max(1, freezers), 'Chest freezer'));
-      if (el('c-outdoor').checked && byId['dry-ice']) {
-        var kg = Math.ceil(cartons / 10) * 5;
-        tips.push(tipHtml('Outdoors / no power: add ~' + kg + ' kg dry ice to hold for 6–8 h', 'dry-ice', '5kg', Math.max(2, kg / 5), 'Dry ice'));
+    var g = $('[name=guests]', calc), per = $('[name=per]', calc), fmt = $('[name=fmt]', calc), buf = $('[name=buf]', calc), out = $('[name=outdoor]', calc), evt = $('[name=evt]', calc);
+    var opts = {};
+    var lastOrder = [];
+    var line = function (key, name, detail, amt, optional) {
+      var on = !optional || opts[key] !== false;
+      return '<li class="' + (optional ? 'opt' + (on ? ' on' : '') : '') + '"><span>' + esc(name) + '</span><small>' + esc(detail) + '</small><span class="amt tabular">' + money(amt) + '</span>' +
+        (optional ? '<button type="button" class="linkish small tog" data-tog="' + key + '" aria-pressed="' + on + '">' + (on ? 'Remove' : 'Add back') + '</button>' : '') + '</li>';
+    };
+    var renderCalc = function () {
+      var guests = Math.max(0, parseInt(g.value, 10) || 0);
+      var r = sizeEvent(guests || 1, parseFloat(per.value), parseFloat(buf.value), fmt.value);
+      setFig($('[data-serv]'), (guests && r ? r.servings : 0).toLocaleString('en-IN'));
+      var html = '', total = 0;
+      lastOrder = [];
+      if (guests && r) {
+        html += line('main', r.p.name + ' · ' + r.s.label, r.cartons + ' ' + plural(r.s.unit, r.cartons) + ' (' + r.s.contains + ')' + (r.atMoq ? ' · minimum order' : ''), r.cost, false);
+        total += r.cost;
+        lastOrder.push({ productId: r.p.id, sizeId: r.s.id, flavour: r.p.flavours.length > 1 ? 'Assorted' : (r.p.flavours[0] || ''), qty: r.cartons });
+        var extras = [];
+        var fr = byId['chest-freezer-rental'];
+        if (fr) {
+          var frN = Math.max(1, Math.ceil(r.cartons / 65));
+          var frSize = frN > 1 ? '500l' : r.cartons <= 25 ? '200l' : r.cartons <= 40 ? '300l' : '500l';
+          extras.push(['freezer', fr, findSize(fr, frSize), frN, 'Pre-cooled at the venue, collected after']);
+        }
+        if (out.checked && byId['dry-ice']) { var kg = Math.ceil(r.cartons / 10) * 5; extras.push(['dry', byId['dry-ice'], findSize(byId['dry-ice'], '5kg'), Math.max(2, kg / 5), kg + ' kg holds 6–8 hours without power']); }
+        if (r.servings >= 300 && byId['serving-counter']) extras.push(['counter', byId['serving-counter'], findSize(byId['serving-counter'], r.servings > 800 ? '2s' : '1s'), 1, 'Uniformed servers keep the queue moving']);
+        if (fmt.value === 'tub4l' && byId['scoops-cups-kit']) extras.push(['kit', byId['scoops-cups-kit'], findSize(byId['scoops-cups-kit'], 'kit'), Math.ceil(r.servings / 100), 'Cups, spoons and scoops']);
+        extras.forEach(function (x) {
+          if (!x[2]) return;
+          var amt = Pricing.lineTotal(x[2], x[3]);
+          html += line(x[0], x[1].name + ' · ' + x[2].label + (x[3] > 1 ? ' × ' + x[3] : ''), x[4], amt, true);
+          if (opts[x[0]] !== false) { total += amt; lastOrder.push({ productId: x[1].id, sizeId: x[2].id, flavour: '', qty: x[3] }); }
+        });
       }
-      if (servings >= 300 && byId['serving-counter']) tips.push(tipHtml('300+ servings: a staffed serving counter keeps queues moving', 'serving-counter', servings > 800 ? '2s' : '1s', 1, 'Serving counter'));
-      if (fmt.id === 'tub4l' && byId['scoops-cups-kit']) tips.push(tipHtml('Serving from tubs: add ' + Math.ceil(servings / 100) + ' cups & spoons kits', 'scoops-cups-kit', 'kit', Math.ceil(servings / 100), 'Cups & spoons kit'));
-      el('r-tips').innerHTML = tips.join('');
-    }
-    function tipHtml(text, pid, sid, qty, name) {
-      return '<li>' + esc(text) + ' <button type="button" class="btn-text small" data-add-to-quote data-product="' + pid + '" data-size="' + sid + '" data-qty="' + qty + '" data-name="' + esc(name) + '">+ Add</button></li>';
-    }
-
-    calc.addEventListener('input', computeCalc);
-    calc.addEventListener('change', computeCalc);
-    el('r-add').addEventListener('click', function () {
-      if (!result.item) return;
-      var it = result.item;
-      Cart.add({ productId: it.productId, sizeId: it.sizeId, flavour: it.flavour, qty: it.qty });
-      store('quotePreset:v1', { eventType: el('c-event').value, guests: el('c-guests').value });
-      toast('<span>✓ ' + it.qty + ' cartons of ' + esc(it.name) + ' added</span><a href="/quote?event=' + encodeURIComponent(el('c-event').value) + '&guests=' + encodeURIComponent(el('c-guests').value) + '">View quote</a>');
+      $('[data-lines]').innerHTML = html || '<li><span class="soft">Enter the guest count to set the menu card.</span></li>';
+      setFig($('[data-total]'), money(total));
+      $('[data-perguest]').textContent = guests ? money(total / guests) + ' per guest, before GST and delivery' : '';
+      $('[data-send]').disabled = !guests;
+    };
+    calc.addEventListener('input', renderCalc);
+    calc.addEventListener('change', renderCalc);
+    $('[data-lines]').addEventListener('click', function (e) {
+      var t = e.target.closest('[data-tog]'); if (!t) return;
+      opts[t.dataset.tog] = t.getAttribute('aria-pressed') !== 'true';
+      renderCalc();
     });
-
-    $$('[data-use-package]').forEach(function (b) {
+    $('[data-send]').addEventListener('click', function () {
+      lastOrder.forEach(function (i) { Cart.add(i); });
+      store('quotePreset:v1', { eventType: evt.value, guests: g.value });
+      location.href = '/quote?event=' + encodeURIComponent(evt.value) + '&guests=' + encodeURIComponent(g.value);
+    });
+    $$('[data-pkg]').forEach(function (b) {
       b.addEventListener('click', function () {
-        el('c-format').value = b.getAttribute('data-format');
-        el('c-servings').value = b.getAttribute('data-servings');
-        var ev = b.getAttribute('data-event');
-        $$('option', el('c-event')).forEach(function (o) { if (o.value === ev) el('c-event').value = ev; });
-        computeCalc();
+        fmt.value = b.dataset.fmt; per.value = b.dataset.per; evt.value = b.dataset.pkg;
+        renderCalc();
         $('#calculator').scrollIntoView({ behavior: 'smooth' });
-        el('c-guests').focus({ preventScroll: true });
+        g.focus({ preventScroll: true });
       });
     });
-    computeCalc();
-  }
-
-  // Quote page: prefill event type/guests carried over from the calculator
-  if (quotePage) {
-    var preset = load('quotePreset:v1', null);
-    var f2 = $('[data-quote-form]').elements;
-    if (preset) {
-      if (!f2.eventType.value && preset.eventType) f2.eventType.value = preset.eventType;
-      if (!f2.guests.value && preset.guests) f2.guests.value = preset.guests;
-    }
+    renderCalc();
   }
 
   // ---------- delivery area checker ----------
   var areaInput = $('[data-area-search]');
   if (areaInput) {
-    var out = $('[data-area-result]');
+    var result = $('[data-area-result]');
     areaInput.addEventListener('input', function () {
       var term = areaInput.value.trim().toLowerCase();
       var hit = null;
@@ -410,20 +453,20 @@
         li.classList.toggle('match', !!match);
         if (match && !hit) hit = li;
       });
-      if (!term) { out.hidden = true; return; }
-      out.hidden = false;
+      if (!term) { result.hidden = true; return; }
+      result.hidden = false;
       if (hit) {
         var zone = hit.closest('[data-zone]');
-        out.className = 'notice success small';
-        out.innerHTML = '✓ We deliver to <strong>' + esc(hit.textContent) + '</strong> — ' + esc(zone.getAttribute('data-zone')) + '. ' + esc($('dd', zone).textContent) + '.';
+        result.className = 'notice success small';
+        result.innerHTML = 'Yes, we deliver to <strong>' + esc(hit.textContent) + '</strong>: ' + esc(zone.getAttribute('data-zone')) + ', ' + esc($('.from', zone).textContent.toLowerCase()) + '.';
       } else {
-        out.className = 'notice small';
-        out.innerHTML = 'Not on our list yet — we often still deliver for larger orders. <a href="/contact">Ask us</a>.';
+        result.className = 'notice small';
+        result.innerHTML = 'Not on our list yet; we often still deliver larger orders. <a href="/contact">Ask us</a>.';
       }
     });
   }
 
-  // ---------- custom packaging: filter size options by product ----------
+  // ---------- custom packaging: show only the chosen pack's sizes ----------
   var cp = $('[data-custom-product]');
   if (cp) {
     var cs = $('[data-custom-size]');
@@ -439,6 +482,29 @@
     cp.addEventListener('change', syncSizes);
     syncSizes();
   }
+
+  // ---------- form date fields are written out ("13 Oct 2026"); the native picker sits on top ----------
+  $$('.field input[type=date]').forEach(function (input) {
+    var wrap = document.createElement('span');
+    wrap.className = 'datefield';
+    var face = document.createElement('span');
+    face.className = 'dateface';
+    face.setAttribute('aria-hidden', 'true');
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(face);
+    wrap.appendChild(input);
+    var write = function () {
+      var v = input.value ? new Date(input.value + 'T00:00:00') : null;
+      var ok = v && !isNaN(v);
+      face.classList.toggle('empty', !ok);
+      face.innerHTML = '<span>' + (ok ? v.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Choose a date') + '</span>' +
+        '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg>';
+    };
+    input.addEventListener('change', write);
+    input.addEventListener('input', write);
+    input.addEventListener('click', function () { try { input.showPicker(); } catch (e) { /* opens on focus in older browsers */ } });
+    write();
+  });
 
   // ---------- confirm dialogs ----------
   document.addEventListener('submit', function (e) {

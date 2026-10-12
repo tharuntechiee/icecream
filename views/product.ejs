@@ -1,114 +1,95 @@
 <%- include('partials/top') %>
-<% const first = p.sizes[0]; const cat = content.categories.find((c) => c.id === p.category); %>
+<%
+  const first = p.sizes[0];
+  const cat = content.categories.find((c) => c.id === p.category);
+  const units = (u, n) => n === 1 ? u : (u === 'box' ? 'boxes' : u + 's');
+%>
 <script type="application/ld+json"><%- h.jsonScript({
   '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: p.description,
   image: site.siteUrl + h.artUrl(p), brand: { '@type': 'Brand', name: site.brand }, category: cat && cat.name,
   offers: { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: h.fromPrice(p), highPrice: Math.max(...p.sizes.map((s) => s.tiers[0].price)), offerCount: p.sizes.length, availability: 'https://schema.org/InStock' },
 }) %></script>
 
-<div class="container">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/products?category=<%= p.category %>"><%= cat ? cat.name : 'Catalogue' %></a> / <span><%= p.name %></span></nav>
+<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/products">Catalogue</a> / <a href="/products?category=<%= p.category %>"><%= cat ? cat.name : '' %></a> / <span><%= p.name %></span></nav></div>
 
+<section class="wrap">
   <div class="pdp" data-pdp data-product="<%= p.id %>">
-    <div class="pdp-gallery">
-      <div class="pdp-main"><img src="<%= h.artUrl(p) %>" alt="<%= p.name %>" width="400" height="300" data-main-img></div>
-      <div class="pdp-thumbs">
-        <% [0, 1, 2].forEach((v) => { %>
-          <button type="button" class="thumb <%= v === 0 ? 'active' : '' %>" data-thumb="<%= h.artUrl(p, v) %>" aria-label="View image <%= v + 1 %>"><img src="<%= h.artUrl(p, v) %>" alt="" width="120" height="90"></button>
-        <% }) %>
-      </div>
+    <div class="frame label-card">
+      <div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>
+      <h1><%= p.name %></h1>
+      <% if (p.flavours.length) { %>
+        <div class="swatches" aria-hidden="true"><% p.flavours.forEach((f) => { %><span class="sw" style="background:<%= h.swatch(f) %>" title="<%= f %>"></span><% }) %></div>
+        <p class="flav"><%= p.flavours.join(' · ') %></p>
+      <% } %>
+      <p class="desc"><%= p.description %></p>
+      <% if (p.dietary.length || p.seasonal || p.category === 'custom') { %>
+        <p class="flav small"><%= [...p.dietary.map((d) => content.dietary[d]), p.seasonal ? 'Seasonal' : '', p.category === 'custom' ? 'Made to order' : ''].filter(Boolean).join(' · ') %></p>
+      <% } %>
+      <% if (p.highlights && p.highlights.length) { %><ul class="ticks"><% p.highlights.forEach((x) => { %><li><%= x %></li><% }) %></ul><% } %>
+      <div class="label-figure"><span class="line-art" aria-hidden="true" style="--art:url('<%= h.artUrl(p, 'plain') %>')"></span>
+        <% if (p.category !== 'ice' && p.category !== 'addons') { %><p class="photo-note"><span class="illus">Product photography to come</span></p><% } %></div>
     </div>
 
-    <div class="pdp-info">
-      <h1><%= p.name %></h1>
-      <p class="pdp-sub">
-        <% if (p.dietary.length) { p.dietary.forEach((d) => { %><span class="tag tag-<%= d %>"><%= content.dietary[d] %></span><% }) } %>
-        <% if (p.seasonal) { %><span class="tag">Seasonal</span><% } %>
-        <% if (p.category === 'custom') { %><span class="tag">Made to order</span><% } %>
-      </p>
-      <p class="body-copy"><%= p.description %></p>
-      <% if (p.highlights && p.highlights.length) { %>
-        <ul class="ticks"><% p.highlights.forEach((x) => { %><li><%= x %></li><% }) %></ul>
+    <div class="frame order" id="order">
+      <fieldset class="sizes">
+        <legend class="label">Pack size</legend>
+        <% p.sizes.forEach((s, i) => { %>
+          <label class="size-opt"><input type="radio" name="size" value="<%= s.id %>" <%= i === 0 ? 'checked' : '' %>><span><b><%= s.label %></b><small><%= s.contains %></small></span></label>
+        <% }) %>
+      </fieldset>
+
+      <% if (p.flavours.length) { %>
+      <div class="field-row"><label class="label" for="p-fl">Flavour</label>
+        <select id="p-fl" data-flavour>
+          <% if (p.flavours.length > 1) { %><option value="Assorted">Assorted, split in notes</option><% } %>
+          <% p.flavours.forEach((f) => { %><option><%= f %></option><% }) %>
+        </select></div>
       <% } %>
 
-      <div class="order-card" id="order">
-        <fieldset class="size-picker">
-          <legend class="label">Available sizes</legend>
-          <div class="size-options">
-            <% p.sizes.forEach((s, i) => { %>
-              <label class="size-option">
-                <input type="radio" name="size" value="<%= s.id %>" <%= i === 0 ? 'checked' : '' %>>
-                <span><strong><%= s.label %></strong><small><%= s.contains %></small></span>
-              </label>
-            <% }) %>
-          </div>
-        </fieldset>
+      <table class="rates" data-tier-table>
+        <thead><tr><th>Quantity</th><th>Rate, before GST</th></tr></thead>
+        <tbody>
+          <% h.Pricing.tierRanges(first).forEach((t, i) => { %><tr class="<%= i === 0 ? 'on' : '' %>"><td><%= t.label %> <%= units(first.unit, 2) %></td><td><%= h.money(t.price) %></td></tr><% }) %>
+        </tbody>
+      </table>
 
-        <% if (p.flavours.length) { %>
-        <label class="field">
-          <span class="label">Flavour</span>
-          <select data-flavour>
-            <% if (p.flavours.length > 1) { %><option value="Assorted">Assorted / mixed (tell us split in notes)</option><% } %>
-            <% p.flavours.forEach((f) => { %><option><%= f %></option><% }) %>
-          </select>
-        </label>
-        <% } %>
-
-        <div class="tier-table-wrap">
-          <p class="label">Bulk pricing per <span data-unit><%= first.unit %></span> <span class="muted small">(excl. GST)</span></p>
-          <table class="tier-table" data-tier-table>
-            <thead><tr><th>Quantity</th><th>Price</th></tr></thead>
-            <tbody>
-              <% h.Pricing.tierRanges(first).forEach((t) => { %><tr><td><%= t.label %> <%= first.unit %>s</td><td><%= h.money(t.price) %></td></tr><% }) %>
-            </tbody>
-          </table>
+      <div class="qty-row">
+        <span class="label">Order <span data-unit><%= units(first.unit, 2) %></span></span>
+        <div class="stepper" data-stepper>
+          <button type="button" data-step="-1" aria-label="Fewer">−</button>
+          <input type="number" inputmode="numeric" min="<%= first.moq %>" value="<%= first.moq %>" data-qty aria-label="Quantity">
+          <button type="button" data-step="1" aria-label="More">+</button>
         </div>
-
-        <div class="qty-row">
-          <span class="label">Quantity (<span data-unit><%= first.unit %></span>s)</span>
-          <div class="stepper" data-stepper>
-            <button type="button" data-step="-1" aria-label="Decrease quantity">−</button>
-            <input type="number" inputmode="numeric" min="<%= first.moq %>" value="<%= first.moq %>" data-qty aria-label="Quantity">
-            <button type="button" data-step="1" aria-label="Increase quantity">+</button>
-          </div>
-        </div>
-        <p class="muted small" data-moq-note>Minimum order: <%= first.moq %> <%= first.unit %>s</p>
-
-        <div class="estimate">
-          <div><span class="muted small">Estimated</span><strong data-estimate><%= h.money(first.tiers[0].price * first.moq) %></strong></div>
-          <span class="muted small" data-estimate-note><%= h.money(first.tiers[0].price) %> per <%= first.unit %></span>
-        </div>
-        <button class="btn btn-primary btn-block" type="button" data-pdp-add>Add to Quote</button>
-        <p class="muted small center">No payment now — we confirm price and delivery first.</p>
       </div>
+      <p class="small" data-moq-note style="color:var(--warn);margin:0"></p>
 
-      <h2 class="h-sub">Specifications</h2>
-      <dl class="spec-table">
-        <div><dt>Pack contents</dt><dd data-spec-contains><%= first.contains %></dd></div>
-        <div><dt>Units per <span data-unit><%= first.unit %></span></dt><dd data-spec-units><%= first.unitsPerCarton %></dd></div>
-        <div><dt>Minimum order</dt><dd data-spec-moq><%= first.moq %> <%= first.unit %>s</dd></div>
-        <div><dt>Shelf life</dt><dd><%= p.shelfLife %></dd></div>
-        <div><dt>Storage</dt><dd><%= p.storageTemp %></dd></div>
-        <div><dt>Lead time</dt><dd><%= p.leadTime %></dd></div>
-        <% if (p.flavours.length) { %><div><dt>Flavours</dt><dd><%= p.flavours.join(', ') %></dd></div><% } %>
+      <div class="sum">
+        <div><p class="label" style="margin:0 0 6px">Estimate</p><span class="big tabular" data-estimate><%= h.money(first.tiers[0].price * first.moq) %></span></div>
+        <span class="small soft" data-estimate-note><%= h.money(first.tiers[0].price) %> per <%= first.unit %></span>
+      </div>
+      <button class="btn btn-verm" type="button" data-pdp-add>Add to quote <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <p class="small mute center" style="margin:-8px 0 0">No payment now. We confirm the price and delivery first.</p>
+
+      <dl class="speclist">
+        <dt>Contents</dt><dd data-spec-contains><%= first.contains %></dd>
+        <dt>Units per <span data-unit-one><%= first.unit %></span></dt><dd data-spec-units><%= first.unitsPerCarton %></dd>
+        <dt>Minimum order</dt><dd data-spec-moq><%= first.moq %> <%= units(first.unit, first.moq) %></dd>
+        <dt>Shelf life</dt><dd><%= p.shelfLife %></dd>
+        <dt>Storage</dt><dd><%= p.storageTemp %></dd>
+        <dt>Lead time</dt><dd><%= p.leadTime %></dd>
       </dl>
     </div>
   </div>
+</section>
 
-  <div class="mobile-buy-bar">
-    <div><strong data-estimate><%= h.money(first.tiers[0].price * first.moq) %></strong><span class="muted small"> est.</span></div>
-    <button class="btn btn-primary btn-sm" type="button" data-pdp-add>Add to Quote</button>
+<% if (related.length) { %>
+<section class="band" aria-labelledby="rel-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="rel-h">Often ordered with it</h2></div>
+    <div class="places"><% related.forEach((r) => { %><%- include('partials/card', { p: r }) %><% }) %></div>
   </div>
-
-  <% if (related.length) { %>
-  <section class="section">
-    <div class="section-head"><h2>You may also need</h2></div>
-    <div class="grid grid-cards">
-      <% related.forEach((r) => { %><%- include('partials/card', { p: r }) %><% }) %>
-    </div>
-  </section>
-  <% } %>
-</div>
+</section>
+<% } %>
 
 <script type="application/json" id="catalog"><%- h.jsonScript(catalog) %></script>
 <%- include('partials/bottom') %>

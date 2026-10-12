@@ -1,75 +1,74 @@
 <%- include('partials/top') %>
+<% const diamond = '<div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>'; %>
 <section class="page-head">
-  <div class="container">
+  <div class="wrap narrow">
     <h1>Delivery &amp; service areas</h1>
-    <p class="muted">We deliver across <%= site.city %> in our own −18°C refrigerated vans, and to <%= site.otherCities.join(', ') %> on scheduled routes.</p>
+    <p>Our own −18°C refrigerated vans cover <%= site.city %>, with scheduled routes to <%= site.otherCities.join(', ') %>.</p>
   </div>
 </section>
 
-<div class="container">
-  <div class="grid grid-3 key-facts">
-    <div class="fact"><strong><%= h.money(site.minOrderValue) %></strong><span class="muted small">Minimum order value per delivery</span></div>
-    <div class="fact"><strong><%= site.advanceNoticeHours %> h</strong><span class="muted small">Standard advance notice (same day in Zone A before 11 AM)</span></div>
-    <div class="fact"><strong>−18°C</strong><span class="muted small">Reefer vans with temperature data loggers</span></div>
+<section class="wrap" aria-label="Ordering rules">
+  <div class="frame menu" style="padding:28px 24px">
+    <dl class="speclist" style="max-width:760px;margin:0 auto">
+      <dt>Minimum order</dt><dd><%= h.money(site.minOrderValue) %> per delivery</dd>
+      <dt>Advance notice</dt><dd><%= site.advanceNoticeHours %> hours; same day in Zone A if ordered by 11 AM</dd>
+      <dt>Cold chain</dt><dd>−18°C reefer vans with temperature data loggers</dd>
+      <dt>Time slots</dt><dd><%= site.timeSlots.join(' · ') %></dd>
+    </dl>
   </div>
+</section>
 
-  <section class="section">
+<section class="band" aria-labelledby="chk-h">
+  <div class="wrap">
     <div class="zone-layout">
-      <div class="zone-map" aria-hidden="true">
-        <svg viewBox="0 0 300 300">
-          <circle cx="150" cy="150" r="140" fill="#FFF0F3"/>
-          <circle cx="150" cy="150" r="95" fill="#FFD1DA"/>
-          <circle cx="150" cy="150" r="50" fill="#ff385c"/>
-          <text x="150" y="155" text-anchor="middle" fill="#fff" font-weight="700" font-size="16">A</text>
-          <text x="150" y="85" text-anchor="middle" fill="#222" font-weight="700" font-size="16">B</text>
-          <text x="150" y="35" text-anchor="middle" fill="#222" font-weight="700" font-size="16">C</text>
-          <circle cx="205" cy="170" r="6" fill="#222"/><text x="215" y="190" font-size="11" fill="#222">Cold store</text>
+      <div class="zone-map">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <circle class="ring" cx="150" cy="150" r="142"/><circle class="ring fine" cx="150" cy="150" r="136"/>
+          <circle class="ring" cx="150" cy="150" r="94"/><circle class="ring" cx="150" cy="150" r="48"/>
+          <text x="150" y="157" text-anchor="middle">A</text><text x="150" y="80" text-anchor="middle">B</text><text x="150" y="34" text-anchor="middle">C</text>
+          <rect class="store" x="206.5" y="144.5" width="11" height="11" transform="rotate(45 212 150)"/>
         </svg>
+        <p class="map-key"><span class="key-mark"></span>Cold store, <%= site.address.line1.split(', ').pop() %></p>
       </div>
       <div>
-        <h2>Is my area covered?</h2>
+        <h2 id="chk-h" class="h-sub" style="font-size:2rem">Is my area covered?</h2>
         <label class="field"><span>Type your area or locality</span><input type="search" placeholder="e.g. Gachibowli" data-area-search></label>
-        <p class="notice small" data-area-result hidden></p>
+        <p class="notice small" data-area-result hidden style="margin-top:12px"></p>
       </div>
     </div>
-  </section>
-
-  <div class="grid grid-3 zones">
-    <% site.serviceZones.forEach((z) => { %>
-      <section class="zone-card" data-zone="<%= z.name %>">
-        <h3><%= z.name %></h3>
-        <dl class="spec-table compact">
-          <div><dt>Delivery</dt><dd><%= z.eta %></dd></div>
-          <div><dt>Charge</dt><dd><%= z.chargeNote %></dd></div>
-        </dl>
-        <ul class="area-list"><% z.areas.forEach((a) => { %><li data-area><%= a %></li><% }) %></ul>
-      </section>
-    <% }) %>
   </div>
+</section>
 
-  <section class="section">
-    <div class="section-head"><h2>Outside <%= site.city %></h2></div>
-    <p>Scheduled refrigerated routes twice a week to <strong><%= site.otherCities.join(', ') %></strong>. Minimum order ₹40,000 per drop; delivery charged at actuals.</p>
-  </section>
-
-  <section class="section">
-    <div class="grid grid-2">
-      <div class="card">
-        <h2 class="h-sub">Our cold-chain vans</h2>
-        <ul class="ticks">
-          <li>Reefer units holding −18 to −22°C, pre-cooled before loading</li>
-          <li>Data loggers on every trip — temperature report on request</li>
-          <li>Live GPS link shared on WhatsApp on the day</li>
-          <li>Driver probe-checks product at handover</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h2 class="h-sub">Delivery time slots</h2>
-        <ul class="ticks"><% site.timeSlots.forEach((t) => { %><li><%= t %></li><% }) %></ul>
-        <p class="muted small">Ice blocks from 6 AM. Event deliveries can be scheduled to the hour with Insulated Express Delivery.</p>
+<section class="band sunk" aria-labelledby="zones-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="zones-h">Zones &amp; charges</h2><%- diamond %></div>
+    <div class="tariff">
+      <% site.serviceZones.forEach((z) => { %>
+        <div class="tariff-row" data-zone="<%= z.name %>">
+          <h3><%= z.name %></h3>
+          <p class="from" style="font-size:1.15rem"><%= z.eta %></p>
+          <div><p class="soft" style="margin:0 0 6px"><%= z.chargeNote %></p><ul class="area-list"><% z.areas.forEach((a) => { %><li data-area><%= a %></li><% }) %></ul></div>
+        </div>
+      <% }) %>
+      <div class="tariff-row">
+        <h3>Outside <%= site.city %></h3>
+        <p class="from" style="font-size:1.15rem">Twice a week</p>
+        <p class="soft" style="margin:0">Scheduled refrigerated routes to <%= site.otherCities.join(', ') %>. Minimum ₹40,000 per drop; delivery charged at cost.</p>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
+<section class="band" aria-labelledby="van-h">
+  <div class="wrap narrow">
+    <div class="band-head"><h2 id="van-h">Our cold-chain vans</h2><%- diamond %></div>
+    <ul class="ticks">
+      <li>Reefer units holding −18 to −22°C, pre-cooled before loading</li>
+      <li>Data loggers on every trip, with a temperature report on request</li>
+      <li>A live GPS link shared on WhatsApp on the day</li>
+      <li>The driver probe-checks the product at handover</li>
+      <li>Ice blocks from 6 AM; event drops can be timed to the hour with Insulated Express Delivery</li>
+    </ul>
+  </div>
+</section>
 <%- include('partials/bottom') %>

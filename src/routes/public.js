@@ -89,6 +89,7 @@ router.get('/', (req, res) => {
     },
     featured: products.filter((p) => p.featured).slice(0, 8),
     counts: Object.fromEntries(content.categories.map((c) => [c.id, products.filter((p) => p.category === c.id).length])),
+    catalog: h.clientCatalog(products.filter((p) => ['ice-cream-cups'].includes(p.id))),
   });
 });
 
@@ -135,7 +136,7 @@ router.get('/products', (req, res) => {
 router.get('/products/:id', (req, res, next) => {
   const p = db.get('products', req.params.id);
   if (!p || !p.active) return next();
-  const related = activeProducts().filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4);
+  const related = activeProducts().filter((x) => x.category === p.category && x.id !== p.id).slice(0, 3);
   res.render('product', {
     meta: {
       title: `${p.name} — Wholesale ${h.Pricing.money(h.fromPrice(p))}+ per ${p.sizes[0].unit} | ${config.brand}`,
@@ -336,14 +337,14 @@ router.get('/art/p/:id.svg', (req, res, next) => {
   if (!p) return next();
   const color = p.art.color || art.flavourColor(p.flavours[0]);
   res.type('image/svg+xml').set('Cache-Control', 'public, max-age=3600')
-    .send(art.render(p.art.shape, { color, label: p.art.label, title: p.name, variant: req.query.v }));
+    .send(art.render(p.art.shape, { color, label: p.art.label, title: p.name, variant: req.query.v, plain: req.query.plain === '1' }));
 });
 
 router.get('/art/s/:shape.svg', (req, res, next) => {
   if (!art.shapes.includes(req.params.shape)) return next();
   const c = /^[0-9a-f]{6}$/i.test(req.query.c || '') ? '#' + req.query.c : undefined;
   res.type('image/svg+xml').set('Cache-Control', 'public, max-age=86400')
-    .send(art.render(req.params.shape, { color: c, label: h.clean(req.query.l, 14), variant: req.query.v }));
+    .send(art.render(req.params.shape, { color: c, label: h.clean(req.query.l, 14), variant: req.query.v, plain: req.query.plain === '1' }));
 });
 
 // ---------- SEO plumbing ----------

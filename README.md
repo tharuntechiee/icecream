@@ -47,3 +47,18 @@ Product and gallery images are generated SVG illustrations (`src/art.js`), serve
 - `npm run reset-data` wipes quotes, accounts and messages and restores the seed catalogue. Stop the server first.
 - For production, set `NODE_ENV=production`, `SITE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET` and SMTP, and run behind HTTPS (for example nginx or Caddy) with a persistent disk for `data/`.
 - The JSON store suits a single server. If you outgrow it, re-implement the few functions in `src/db.js` against Postgres or SQLite.
+
+### Vercel
+
+The repo deploys to Vercel as one serverless function (`vercel.json` routes everything to `server.js`, which exports the Express app). Pushing to `main` deploys to production.
+
+- **Data is temporary on Vercel.** Functions can only write to `/tmp`, which is wiped whenever an instance restarts. Quotes, accounts, messages, admin product edits and uploaded logos can therefore disappear. Before taking real orders on Vercel, move `src/db.js` to a hosted database (Vercel Postgres/Neon, Upstash Redis) and logo uploads to Vercel Blob.
+- **Set these in Vercel → Project → Settings → Environment Variables:**
+  - `ADMIN_PASSWORD`. Without it, every cold start generates a new admin password, printed to the function logs.
+  - `SESSION_SECRET`. Without it, admin logins drop between instances.
+  - `SMTP_*` and `OWNER_EMAIL`. Without them, quote notification emails go only to `/tmp` and are lost.
+- `SITE_URL` defaults to the project's production domain on Vercel.
+
+## Design
+
+The look is the **Shaadi Card** world: a letterpress wedding invitation on indigo board, with gold foil and vermilion. It is dark by default, with an ivory light mode. `DESIGN.md` documents the tokens and components. Static design mockups live in `public/mockups/`.

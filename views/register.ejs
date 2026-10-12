@@ -1,47 +1,45 @@
 <%- include('partials/top') %>
 <section class="page-head">
-  <div class="container narrow">
+  <div class="wrap narrow">
     <h1>Register a business account</h1>
-    <p class="muted">For restaurants, hotels, caterers, cafés, shops and offices that order regularly.</p>
+    <p>For restaurants, hotels, caterers, cafés, shops and offices that order regularly.</p>
   </div>
 </section>
-<div class="container register-layout">
-  <aside class="card benefits">
-    <h2 class="h-sub">Account benefits</h2>
+<div class="wrap register-layout">
+  <aside>
+    <h2 class="h-sub">What an account gets you</h2>
     <ul class="ticks">
       <li>GST invoices with input tax credit</li>
-      <li>7–15 day credit terms after three orders</li>
-      <li>Your saved address and order history with our team — reorder by WhatsApp in one line</li>
-      <li>Priority slots in peak wedding season</li>
+      <li>7 to 15 day credit after three orders</li>
+      <li>Your address and order history with our team, so you can reorder on WhatsApp in one line</li>
+      <li>Priority slots in the wedding season</li>
       <li>Account pricing on regular volumes</li>
     </ul>
   </aside>
 
   <% if (done) { %>
-    <div class="card form-card">
-      <div class="notice success" role="status"><strong>Thanks, <%= values.contactName %>!</strong> We have received the registration for <%= values.businessName %>.</div>
-      <p>Our accounts team will verify your GSTIN and call you within one business day to activate the account. Meanwhile, you can <a href="/products">start building a quote</a> — use the same phone number or GSTIN and we will link it to your account.</p>
+    <div class="frame form-card">
+      <div class="notice success" role="status"><strong>Thank you, <%= values.contactName %>.</strong> We have the registration for <%= values.businessName %>.</div>
+      <p>Our accounts team will verify your GSTIN and call within one business day to activate the account. Meanwhile, <a href="/products">start building a quote</a>; use the same phone number or GSTIN and we will link it to your account.</p>
     </div>
   <% } else { %>
-  <form class="card form-card" method="post" action="/register">
+  <form class="frame form-card" method="post" action="/register">
     <% if (errors.length) { %><div class="form-errors" role="alert"><ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
     <div class="form-grid">
       <label class="field span-2"><span>Business name *</span><input name="businessName" required maxlength="120" value="<%= values.businessName || '' %>" autocomplete="organization"></label>
       <label class="field"><span>Contact person *</span><input name="contactName" required maxlength="80" value="<%= values.contactName || '' %>" autocomplete="name"></label>
       <label class="field"><span>Business type *</span>
-        <select name="businessType" required><option value="">Select…</option><% site.businessTypes.forEach((t) => { %><option <%= values.businessType === t ? 'selected' : '' %>><%= t %></option><% }) %></select>
-      </label>
+        <select name="businessType" required><option value="">Select…</option><% site.businessTypes.forEach((t) => { %><option <%= values.businessType === t ? 'selected' : '' %>><%= t %></option><% }) %></select></label>
       <label class="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" required maxlength="20" value="<%= values.phone || '' %>" autocomplete="tel"></label>
       <label class="field"><span>Email *</span><input name="email" type="email" required maxlength="120" value="<%= values.email || '' %>" autocomplete="email"></label>
       <label class="field"><span>GSTIN *</span><input name="gstin" required maxlength="15" pattern="[0-9]{2}[A-Za-z]{5}[0-9]{4}[A-Za-z][1-9A-Za-z][Zz][0-9A-Za-z]" style="text-transform:uppercase" value="<%= values.gstin || '' %>" placeholder="36ABCDE1234F1Z5"></label>
       <label class="field"><span>Expected monthly volume</span>
-        <select name="monthlyVolume"><% ['Under ₹25,000', '₹25,000 – ₹1 lakh', '₹1 – 5 lakh', 'Above ₹5 lakh'].forEach((o) => { %><option <%= values.monthlyVolume === o ? 'selected' : '' %>><%= o %></option><% }) %></select>
-      </label>
+        <select name="monthlyVolume"><% ['Under ₹25,000', '₹25,000 – ₹1 lakh', '₹1 – 5 lakh', 'Above ₹5 lakh'].forEach((o) => { %><option <%= values.monthlyVolume === o ? 'selected' : '' %>><%= o %></option><% }) %></select></label>
       <label class="field span-2"><span>Delivery address *</span><textarea name="address" rows="2" required maxlength="400" autocomplete="street-address"><%= values.address || '' %></textarea></label>
       <label class="field span-2"><span>Area</span><input name="area" maxlength="80" value="<%= values.area || '' %>"></label>
       <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
     </div>
-    <button class="btn btn-primary btn-block" type="submit">Register business</button>
+    <button class="btn btn-verm btn-block" type="submit">Register the business</button>
   </form>
   <% } %>
 </div>

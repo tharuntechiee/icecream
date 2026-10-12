@@ -1,23 +1,25 @@
-<% const s = h.defaultSize(p); const custom = p.category === 'custom'; %>
-<article class="product-card">
-  <a class="card-photo" href="/products/<%= p.id %>">
-    <img src="<%= h.artUrl(p) %>" alt="<%= p.name %>" loading="lazy" width="400" height="300">
-    <% if (p.seasonal) { %><span class="float-badge">Seasonal</span><% } else if (custom) { %><span class="float-badge">Made to order</span><% } else if (p.featured) { %><span class="float-badge">Bestseller</span><% } %>
-  </a>
-  <div class="card-body">
-    <div class="card-title-row">
-      <h3 class="card-title"><a href="/products/<%= p.id %>"><%= p.name %></a></h3>
-      <% if (p.dietary.length) { %><span class="diet-tags"><% p.dietary.filter((d) => d !== 'eggless' || p.dietary.length === 1).forEach((d) => { %><span class="tag tag-<%= d %>"><%= content.dietary[d] %></span><% }) %></span><% } %>
-    </div>
-    <% if (p.flavours.length) { %><p class="card-meta"><%= p.flavours.slice(0, 4).join(', ') %><%= p.flavours.length > 4 ? ` +${p.flavours.length - 4}` : '' %></p><% } %>
-    <dl class="spec-mini">
-      <div><dt>Pack</dt><dd><%= p.sizes.map((x) => x.packSize).filter((v, i, a) => a.indexOf(v) === i).join(' · ') %></dd></div>
-      <div><dt>Per <%= s.unit %></dt><dd><%= s.contains %></dd></div>
-      <div><dt>MOQ</dt><dd><%= s.moq %> <%= s.unit %><%= s.moq > 1 ? 's' : '' %></dd></div>
-    </dl>
-    <div class="card-foot">
-      <p class="price"><span class="muted small">from</span> <strong><%= h.money(h.fromPrice(p)) %></strong><span class="muted small"> / <%= s.unit %></span></p>
-      <button class="btn btn-outline btn-sm" type="button" data-add-to-quote data-product="<%= p.id %>" data-size="<%= s.id %>" data-qty="<%= s.moq %>" data-flavour="<%= p.flavours.length > 1 ? 'Assorted' : (p.flavours[0] || '') %>">Add to Quote</button>
-    </div>
+<%
+  const s = h.defaultSize(p);
+  const seal = p.category === 'custom' ? 'Made to order' : p.seasonal ? 'Seasonal' : p.featured ? 'Bestseller' : '';
+  const diet = p.dietary.filter((d) => d !== 'eggless').map((d) => content.dietary[d]).join(' · ');
+  const packs = [...new Set(p.sizes.map((x) => x.packSize))].join(' · ');
+%>
+<article class="place">
+  <% if (seal) { %><span class="seal"><%= seal %></span><% } %>
+  <h3><a href="/products/<%= p.id %>"><%= p.name %></a></h3>
+  <% if (p.flavours.length) { %>
+  <div class="swatches" aria-label="Flavours: <%= p.flavours.join(', ') %>">
+    <% p.flavours.forEach((f) => { %><span class="sw" style="background:<%= h.swatch(f) %>" title="<%= f %>"></span><% }) %>
+  </div>
+  <% } %>
+  <dl class="specs">
+    <dt>Pack</dt><dd><%= packs %></dd>
+    <dt>Per <%= s.unit %></dt><dd><%= s.contains %></dd>
+    <dt>Minimum</dt><dd><%= s.moq %> <%= s.moq === 1 ? s.unit : (s.unit === 'box' ? 'boxes' : s.unit + 's') %></dd>
+    <% if (diet) { %><dt>Diet</dt><dd><%= diet %></dd><% } %>
+  </dl>
+  <div class="place-foot">
+    <span class="price"><%= h.money(h.fromPrice(p)) %> <small>/ <%= s.unit %>, best tier</small></span>
+    <button class="btn btn-foil btn-sm" type="button" data-add-to-quote data-name="<%= p.name %>" data-product="<%= p.id %>" data-size="<%= s.id %>" data-qty="<%= s.moq %>" data-flavour="<%= p.flavours.length > 1 ? 'Assorted' : (p.flavours[0] || '') %>">Add to quote</button>
   </div>
 </article>

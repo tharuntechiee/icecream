@@ -1,96 +1,54 @@
 <%- include('partials/top') %>
-<% const activeFilters = [q.format, q.flavour, q.size, q.search, ...q.diet].filter(Boolean).length; %>
+<% const qs = (o) => { const p = new URLSearchParams(); Object.entries(o).forEach(([k, v]) => [].concat(v).forEach((x) => x && p.append(k, x))); const s = p.toString(); return s ? '?' + s : ''; }; %>
 <section class="page-head">
-  <div class="container">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <% if (cat) { %><a href="/products">Catalogue</a> / <span><%= cat.name %></span><% } else { %><span>Catalogue</span><% } %></nav>
-    <h1><%= cat ? cat.name : 'Wholesale catalogue' %></h1>
-    <p class="muted"><%= cat ? cat.blurb : 'Every product shows its pack size, units per carton, minimum order and bulk price tiers.' %> <%= site.gstNote %></p>
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="Breadcrumb" style="padding-top:0;margin-bottom:12px"><a href="/">Home</a> / <% if (cat) { %><a href="/products">Catalogue</a> / <span><%= cat.name %></span><% } else { %><span>Catalogue</span><% } %></nav>
+    <h1><%= cat ? cat.name : 'The catalogue' %></h1>
+    <p><%= cat ? cat.blurb + '.' : 'Every line shows its pack size, units per carton, minimum order and tier price.' %> <%= site.gstNote %></p>
   </div>
 </section>
 
-<div class="container">
-  <nav class="chip-row" aria-label="Categories">
-    <a class="chip <%= !q.category ? 'active' : '' %>" href="/products">All</a>
-    <% content.categories.forEach((c) => { %>
-      <a class="chip <%= q.category === c.id ? 'active' : '' %>" href="/products?category=<%= c.id %>"><%= c.name %></a>
-    <% }) %>
+<section class="wrap" aria-label="Products">
+  <nav class="tabs" aria-label="Categories">
+    <a class="tab" href="/products" <%- !q.category ? 'aria-current="page"' : '' %>>All</a>
+    <% content.categories.forEach((c) => { %><a class="tab" href="/products?category=<%= c.id %>" <%- q.category === c.id ? 'aria-current="page"' : '' %>><%= c.name %></a><% }) %>
   </nav>
 
-  <div class="catalog-layout">
-    <details class="filters" <%= activeFilters ? 'open' : '' %>>
-      <summary class="filters-toggle">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-        Filters<% if (activeFilters) { %> <span class="badge-count"><%= activeFilters %></span><% } %>
-      </summary>
-      <form class="filter-form" method="get" action="/products" data-autosubmit>
-        <% if (q.category) { %><input type="hidden" name="category" value="<%= q.category %>"><% } %>
-        <label class="field">
-          <span>Search</span>
-          <input type="search" name="q" value="<%= q.search %>" placeholder="e.g. kulfi, mango, 50kg">
-        </label>
-        <% if (options.formats.length > 1) { %>
-        <label class="field">
-          <span>Product type</span>
-          <select name="format">
-            <option value="">All types</option>
-            <% options.formats.forEach((f) => { %><option value="<%= f %>" <%= q.format === f ? 'selected' : '' %>><%= content.formats[f] || f %></option><% }) %>
-          </select>
-        </label>
-        <% } %>
-        <% if (options.flavours.length) { %>
-        <label class="field">
-          <span>Flavour</span>
-          <select name="flavour">
-            <option value="">All flavours</option>
-            <% options.flavours.forEach((f) => { %><option <%= q.flavour === f ? 'selected' : '' %>><%= f %></option><% }) %>
-          </select>
-        </label>
-        <% } %>
-        <label class="field">
-          <span>Pack size</span>
-          <select name="size">
-            <option value="">All sizes</option>
-            <% options.sizes.forEach((s) => { %><option <%= q.size === s ? 'selected' : '' %>><%= s %></option><% }) %>
-          </select>
-        </label>
-        <% if (options.hasDietary) { %>
-        <fieldset class="field">
-          <legend>Dietary</legend>
-          <% Object.entries(content.dietary).forEach(([k, v]) => { %>
-            <label class="check"><input type="checkbox" name="diet" value="<%= k %>" <%= q.diet.includes(k) ? 'checked' : '' %>> <%= v %></label>
-          <% }) %>
-        </fieldset>
-        <% } %>
-        <label class="field">
-          <span>Sort by</span>
-          <select name="sort">
-            <option value="popular" <%= q.sort === 'popular' ? 'selected' : '' %>>Most popular</option>
-            <option value="price-asc" <%= q.sort === 'price-asc' ? 'selected' : '' %>>Price: low to high</option>
-            <option value="price-desc" <%= q.sort === 'price-desc' ? 'selected' : '' %>>Price: high to low</option>
-          </select>
-        </label>
-        <div class="filter-actions">
-          <button class="btn btn-primary btn-sm" type="submit">Apply</button>
-          <a class="btn-text" href="/products<%= q.category ? '?category=' + q.category : '' %>">Clear all</a>
-        </div>
-      </form>
-    </details>
-
-    <section aria-label="Products">
-      <p class="result-count muted"><%= list.length %> product line<%= list.length === 1 ? '' : 's' %></p>
-      <% if (list.length) { %>
-        <div class="grid grid-cards">
-          <% list.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
-        </div>
-      <% } else { %>
-        <div class="empty">
-          <h2>No products match those filters</h2>
-          <p class="muted">Try removing a filter — or tell us what you need and we will source it.</p>
-          <a class="btn btn-secondary" href="/products">Clear filters</a>
-        </div>
+  <form class="filters" method="get" action="/products" data-autosubmit>
+    <% if (q.category) { %><input type="hidden" name="category" value="<%= q.category %>"><% } %>
+    <label class="field"><span class="sr-only">Search</span><input type="search" name="q" value="<%= q.search %>" placeholder="Search kulfi, mango, 50 kg…"></label>
+    <% if (options.flavours.length) { %>
+    <label class="field"><span class="sr-only">Flavour</span>
+      <select name="flavour"><option value="">All flavours</option><% options.flavours.forEach((f) => { %><option <%= q.flavour === f ? 'selected' : '' %>><%= f %></option><% }) %></select></label>
+    <% } %>
+    <label class="field"><span class="sr-only">Pack size</span>
+      <select name="size"><option value="">All pack sizes</option><% options.sizes.forEach((s) => { %><option <%= q.size === s ? 'selected' : '' %>><%= s %></option><% }) %></select></label>
+    <div class="diet" role="group" aria-label="Refine">
+      <% if (options.hasDietary) { %><span class="label">Dietary</span>
+        <% Object.entries(content.dietary).forEach(([k, v]) => { %><label class="chip"><input type="checkbox" name="diet" value="<%= k %>" <%= q.diet.includes(k) ? 'checked' : '' %>><%= v %></label><% }) %>
       <% } %>
-    </section>
-  </div>
-</div>
+      <label class="field" style="margin-left:auto;min-width:200px"><span class="sr-only">Sort</span>
+        <select name="sort">
+          <option value="popular" <%= q.sort === 'popular' ? 'selected' : '' %>>Most popular first</option>
+          <option value="price-asc" <%= q.sort === 'price-asc' ? 'selected' : '' %>>Price: low to high</option>
+          <option value="price-desc" <%= q.sort === 'price-desc' ? 'selected' : '' %>>Price: high to low</option>
+        </select></label>
+      <noscript><button class="btn btn-foil btn-sm" type="submit">Apply</button></noscript>
+    </div>
+  </form>
 
+  <p class="count"><%= list.length %> product line<%= list.length === 1 ? '' : 's' %> · prices per unit shown, before GST<% if ([q.search, q.flavour, q.size, ...q.diet].some(Boolean)) { %> · <a href="/products<%= qs({ category: q.category }) %>">clear filters</a><% } %></p>
+
+  <% if (list.length) { %>
+    <div class="places">
+      <% list.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty" style="margin-bottom:72px">
+      <h2 class="h-sub">Nothing matches those filters</h2>
+      <p class="soft">Clear a filter, or tell us what you need on WhatsApp and we will source it.</p>
+      <a class="btn btn-foil btn-sm" href="/products<%= qs({ category: q.category }) %>">Clear filters</a>
+    </div>
+  <% } %>
+</section>
 <%- include('partials/bottom') %>

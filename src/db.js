@@ -5,7 +5,9 @@ const path = require('path');
 const crypto = require('crypto');
 const seed = require('./seed');
 
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
+// Vercel functions can only write to /tmp, and /tmp is wiped between cold starts, so data there is
+// temporary. Use a real database (see README) before relying on a Vercel deployment for orders.
+const DATA_DIR = process.env.DATA_DIR || (process.env.VERCEL ? '/tmp/chillcrate-data' : path.join(__dirname, '..', 'data'));
 const FILE = path.join(DATA_DIR, 'db.json');
 const COLLECTIONS = ['products', 'quotes', 'accounts', 'messages'];
 

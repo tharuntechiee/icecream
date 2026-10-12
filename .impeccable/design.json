@@ -1,0 +1,742 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-12T06:34:22.142Z",
+  "title": "Design System: ChillCrate",
+  "extensions": {
+    "colorMeta": {
+      "indigo-board": {
+        "role": "neutral",
+        "displayName": "Indigo Board",
+        "canonical": "oklch(22.1% 0.068 271.3)",
+        "tonalRamp": [
+          "#040627",
+          "#182145",
+          "#333d64",
+          "#4f5b84",
+          "#717eaa",
+          "#92a0cd",
+          "#b7c6f5",
+          "#e9eeff"
+        ]
+      },
+      "indigo-board-raise": {
+        "role": "neutral",
+        "displayName": "Indigo Board, Raised",
+        "canonical": "oklch(25.9% 0.080 270.9)",
+        "tonalRamp": [
+          "#04042c",
+          "#161f4a",
+          "#303c6a",
+          "#4d5b8b",
+          "#6e7eb1",
+          "#8f9fd4",
+          "#b4c5fd",
+          "#e8eeff"
+        ]
+      },
+      "indigo-board-sunk": {
+        "role": "neutral",
+        "displayName": "Indigo Board, Sunk",
+        "canonical": "oklch(19.4% 0.062 271.2)",
+        "tonalRamp": [
+          "#040725",
+          "#192142",
+          "#343e61",
+          "#515c81",
+          "#727fa6",
+          "#93a0c9",
+          "#b8c6f1",
+          "#e8eeff"
+        ]
+      },
+      "gold-foil": {
+        "role": "primary",
+        "displayName": "Gold Foil",
+        "canonical": "oklch(77.2% 0.116 87.4)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2202",
+          "#503d04",
+          "#74590a",
+          "#9d7b18",
+          "#c09d43",
+          "#e7c36a",
+          "#ffedc4"
+        ]
+      },
+      "gold-foil-soft": {
+        "role": "primary",
+        "displayName": "Gold Foil, Soft (42%)",
+        "canonical": "rgba(212, 176, 87, 0.42)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2202",
+          "#503d04",
+          "#74590a",
+          "#9d7b18",
+          "#c09d43",
+          "#e7c36a",
+          "#ffedc4"
+        ]
+      },
+      "gold-foil-faint": {
+        "role": "primary",
+        "displayName": "Gold Foil, Faint (16%)",
+        "canonical": "rgba(212, 176, 87, 0.16)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2202",
+          "#503d04",
+          "#74590a",
+          "#9d7b18",
+          "#c09d43",
+          "#e7c36a",
+          "#ffedc4"
+        ]
+      },
+      "ivory-ink": {
+        "role": "neutral",
+        "displayName": "Ivory Ink",
+        "canonical": "oklch(95.3% 0.016 86.4)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27241b",
+          "#433f37",
+          "#615d54",
+          "#848076",
+          "#a6a197",
+          "#ccc7bc",
+          "#f3eee3"
+        ]
+      },
+      "lavender-ink-soft": {
+        "role": "neutral",
+        "displayName": "Lavender Ink, Soft",
+        "canonical": "oklch(85.0% 0.058 290.6)",
+        "tonalRamp": [
+          "#0c0521",
+          "#241e3e",
+          "#403a5c",
+          "#5d587c",
+          "#807ba1",
+          "#a19cc4",
+          "#c6c1eb",
+          "#eeecff"
+        ]
+      },
+      "lavender-ink-mute": {
+        "role": "neutral",
+        "displayName": "Lavender Ink, Mute",
+        "canonical": "oklch(73.3% 0.102 286.8)",
+        "tonalRamp": [
+          "#0c012b",
+          "#231751",
+          "#3d3572",
+          "#5a5394",
+          "#7c76ba",
+          "#9d98de",
+          "#c3bffe",
+          "#edecff"
+        ]
+      },
+      "vermilion": {
+        "role": "secondary",
+        "displayName": "Vermilion",
+        "canonical": "oklch(58.2% 0.196 32.5)",
+        "tonalRamp": [
+          "#1d0200",
+          "#480801",
+          "#781301",
+          "#ab2004",
+          "#dc4226",
+          "#fc7055",
+          "#ffb1a0",
+          "#ffe9e4"
+        ]
+      },
+      "vermilion-hover": {
+        "role": "secondary",
+        "displayName": "Vermilion, Pressed",
+        "canonical": "oklch(51.3% 0.176 32.5)",
+        "tonalRamp": [
+          "#1e0100",
+          "#480801",
+          "#771302",
+          "#ab2104",
+          "#d54c33",
+          "#fc7056",
+          "#ffb1a0",
+          "#ffe9e4"
+        ]
+      },
+      "on-vermilion": {
+        "role": "neutral",
+        "displayName": "White on Vermilion",
+        "canonical": "#ffffff"
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "Leaf Ok",
+        "canonical": "oklch(79.7% 0.099 149.1)",
+        "tonalRamp": [
+          "#001003",
+          "#002d0e",
+          "#074d20",
+          "#2f6d3d",
+          "#53915f",
+          "#74b37f",
+          "#99daa4",
+          "#c9fed1"
+        ]
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Marigold Warn",
+        "canonical": "oklch(80.9% 0.102 62.7)",
+        "tonalRamp": [
+          "#150700",
+          "#371d01",
+          "#5e3402",
+          "#854f11",
+          "#ab723a",
+          "#cf935c",
+          "#f7b981",
+          "#ffeada"
+        ]
+      },
+      "err": {
+        "role": "status",
+        "displayName": "Coral Error",
+        "canonical": "oklch(78.7% 0.125 33.2)",
+        "tonalRamp": [
+          "#1d0200",
+          "#460b02",
+          "#731c09",
+          "#973d2b",
+          "#bf614d",
+          "#e4836e",
+          "#fdb2a1",
+          "#ffe9e4"
+        ]
+      },
+      "whatsapp-green": {
+        "role": "channel",
+        "displayName": "WhatsApp Green",
+        "canonical": "oklch(76.1% 0.201 149.7)",
+        "tonalRamp": [
+          "#001003",
+          "#032d10",
+          "#074d21",
+          "#0f7033",
+          "#099a46",
+          "#18c15b",
+          "#49ea7c",
+          "#c9fed2"
+        ]
+      },
+      "light-ivory-board": {
+        "role": "neutral",
+        "displayName": "Ivory Card Stock",
+        "canonical": "oklch(95.9% 0.016 86.4)",
+        "tonalRamp": [
+          "#0e0b05",
+          "#27241c",
+          "#433f37",
+          "#615d54",
+          "#848076",
+          "#a6a197",
+          "#ccc7bc",
+          "#f3eee3"
+        ]
+      },
+      "light-ivory-board-raise": {
+        "role": "neutral",
+        "displayName": "Ivory Card Stock, Raised",
+        "canonical": "oklch(99.4% 0.008 91.5)",
+        "tonalRamp": [
+          "#0c0b07",
+          "#252420",
+          "#41403b",
+          "#5f5d58",
+          "#82807b",
+          "#a3a19c",
+          "#c9c7c1",
+          "#f0eee8"
+        ]
+      },
+      "light-ivory-board-sunk": {
+        "role": "neutral",
+        "displayName": "Ivory Card Stock, Sunk",
+        "canonical": "oklch(92.3% 0.024 88.2)",
+        "tonalRamp": [
+          "#0f0a02",
+          "#292317",
+          "#453f31",
+          "#635d4e",
+          "#868070",
+          "#a8a191",
+          "#cec7b6",
+          "#f5eedd"
+        ]
+      },
+      "light-antique-foil": {
+        "role": "primary",
+        "displayName": "Antique Gold Foil",
+        "canonical": "oklch(52.5% 0.104 79.0)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a01",
+          "#7b5603",
+          "#a1782e",
+          "#c49a52",
+          "#ecc077",
+          "#ffeccf"
+        ]
+      },
+      "light-antique-foil-soft": {
+        "role": "primary",
+        "displayName": "Antique Foil, Soft (45%)",
+        "canonical": "rgba(138, 98, 16, 0.45)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a01",
+          "#7b5603",
+          "#a1782e",
+          "#c49a52",
+          "#ecc077",
+          "#ffeccf"
+        ]
+      },
+      "light-antique-foil-faint": {
+        "role": "primary",
+        "displayName": "Antique Foil, Faint (14%)",
+        "canonical": "rgba(138, 98, 16, 0.14)",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a01",
+          "#7b5603",
+          "#a1782e",
+          "#c49a52",
+          "#ecc077",
+          "#ffeccf"
+        ]
+      },
+      "light-indigo-ink": {
+        "role": "neutral",
+        "displayName": "Indigo Ink",
+        "canonical": "oklch(22.1% 0.068 271.3)",
+        "tonalRamp": [
+          "#040627",
+          "#182145",
+          "#333d64",
+          "#4f5b84",
+          "#717eaa",
+          "#92a0cd",
+          "#b7c6f5",
+          "#e9eeff"
+        ]
+      },
+      "light-indigo-ink-soft": {
+        "role": "neutral",
+        "displayName": "Indigo Ink, Soft",
+        "canonical": "oklch(34.0% 0.062 274.1)",
+        "tonalRamp": [
+          "#050625",
+          "#1b2142",
+          "#363d61",
+          "#535b81",
+          "#747ea6",
+          "#959fc9",
+          "#bac5f1",
+          "#e9eeff"
+        ]
+      },
+      "light-indigo-ink-mute": {
+        "role": "neutral",
+        "displayName": "Indigo Ink, Mute",
+        "canonical": "oklch(48.1% 0.046 275.1)",
+        "tonalRamp": [
+          "#07081e",
+          "#1e223a",
+          "#393e58",
+          "#565c78",
+          "#787e9c",
+          "#99a0bf",
+          "#bec6e6",
+          "#eaeeff"
+        ]
+      },
+      "light-vermilion": {
+        "role": "secondary",
+        "displayName": "Vermilion on Ivory",
+        "canonical": "oklch(53.6% 0.182 32.3)",
+        "tonalRamp": [
+          "#1d0100",
+          "#470902",
+          "#761604",
+          "#a9240a",
+          "#d74931",
+          "#fe6e53",
+          "#feb1a1",
+          "#ffe9e4"
+        ]
+      },
+      "light-vermilion-hover": {
+        "role": "secondary",
+        "displayName": "Vermilion on Ivory, Pressed",
+        "canonical": "oklch(48.4% 0.166 32.5)",
+        "tonalRamp": [
+          "#1d0100",
+          "#470901",
+          "#771403",
+          "#a72911",
+          "#d0513a",
+          "#f7745b",
+          "#feb1a0",
+          "#ffe9e4"
+        ]
+      },
+      "light-ok": {
+        "role": "status",
+        "displayName": "Leaf Ok on Ivory",
+        "canonical": "oklch(51.1% 0.133 147.7)",
+        "tonalRamp": [
+          "#001002",
+          "#002d0c",
+          "#074e1c",
+          "#10712d",
+          "#3f9550",
+          "#62b870",
+          "#89df95",
+          "#c9ffcf"
+        ]
+      },
+      "light-warn": {
+        "role": "status",
+        "displayName": "Marigold Warn on Ivory",
+        "canonical": "oklch(50.6% 0.126 54.6)",
+        "tonalRamp": [
+          "#170600",
+          "#3b1a00",
+          "#623105",
+          "#8d490c",
+          "#b9692c",
+          "#dd8a4f",
+          "#feb483",
+          "#ffeadd"
+        ]
+      },
+      "light-err": {
+        "role": "status",
+        "displayName": "Error on Ivory",
+        "canonical": "oklch(48.4% 0.166 32.5)",
+        "tonalRamp": [
+          "#1d0100",
+          "#470901",
+          "#771403",
+          "#a72911",
+          "#d0513a",
+          "#f7745b",
+          "#feb1a0",
+          "#ffe9e4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page h1 in Yatra One."
+      },
+      "invitation-display": {
+        "displayName": "Invitation Display",
+        "purpose": "The h1 inside the invitation frame; its second line is set in foil."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section h2, centred over the diamond rule."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "h3 and card titles; 1.55 to 1.8rem on place cards, programme and tariff rows."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Estimates, totals and servings in foil, tabular."
+      },
+      "field-value": {
+        "displayName": "Field Value",
+        "purpose": "What the visitor writes into the invitation fields."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text in Hind."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Ledes and section intros in ink-soft."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase foil field labels, table heads, footer column heads, programme times. Never an eyebrow above a heading."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button and action lettering."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "The world is flat; no drawn shadows. Depth comes from board tone and foil line weight."
+      },
+      {
+        "name": "foil-stroke-thicken",
+        "value": "inset 0 0 0 1px var(--foil)",
+        "purpose": "Not elevation: thickens a 1px foil border to 2px on field focus, the selected pack size and written-date focus."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-letterpress",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "The only easing: buttons, toasts, draw-in and settle."
+      },
+      {
+        "name": "state-colour",
+        "value": ".2s",
+        "purpose": "Background, colour and border changes on buttons."
+      },
+      {
+        "name": "corner-in",
+        "value": ".9s, scale(2.2) and opacity 0 to rest, staggered .08s per corner",
+        "purpose": "Invitation corner marks draw in once on load."
+      },
+      {
+        "name": "rule-in",
+        "value": "1s after .1s, clip-path inset(0 50% 0 50%) to inset(0)",
+        "purpose": "Invitation field rule unclips from the centre once on load."
+      },
+      {
+        "name": "settle",
+        "value": ".5s, opacity .35 and blur(3px) to rest",
+        "purpose": "A changed figure (estimate, total) settles into place."
+      },
+      {
+        "name": "toast",
+        "value": ".25s, translateY(12px) and opacity",
+        "purpose": "The added-to-quote toast enters."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce removes all animation and transition",
+        "purpose": "Accessibility floor."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "960px"
+      },
+      {
+        "name": "nav-full",
+        "value": "1100px"
+      }
+    ],
+    "themes": {
+      "default": "dark",
+      "lightSelector": ":root[data-theme=\"light\"]",
+      "note": "Frontmatter keys prefixed light- are the light-theme values of the same custom properties (--board, --board-raise, --board-sunk, --foil, --foil-soft, --foil-faint, --ink, --ink-soft, --ink-mute, --verm, --verm-hover, --ok, --warn, --err)."
+    },
+    "fonts": [
+      {
+        "family": "Yatra One",
+        "weights": [
+          400
+        ],
+        "src": "/fonts/yatra-400.woff2"
+      },
+      {
+        "family": "Hind",
+        "weights": [
+          400,
+          500,
+          600
+        ],
+        "src": "/fonts/hind-400.woff2, hind-500.woff2, hind-600.woff2"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (Vermilion)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single action that sends or starts a quote.",
+      "html": "<button class=\"ds-btn-verm\" type=\"button\">Request the quote</button>",
+      "css": ".ds-btn-verm { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 28px; background: var(--verm, #d63b1f); color: var(--on-verm, #fff); border: 1.5px solid transparent; border-radius: 0; font: 600 1rem/1.2 Hind, sans-serif; letter-spacing: 0.02em; cursor: pointer; transition: background-color .2s cubic-bezier(.16,1,.3,1); } .ds-btn-verm:hover { background: var(--verm-hover, #b62e15); } .ds-btn-verm:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; } .ds-btn-verm:disabled { opacity: .45; cursor: not-allowed; }"
+    },
+    {
+      "name": "Foil Button",
+      "kind": "button",
+      "refersTo": "button-foil",
+      "description": "Secondary action: foil outline that fills with foil on hover.",
+      "html": "<button class=\"ds-btn-foil\" type=\"button\">Browse the catalogue</button>",
+      "css": ".ds-btn-foil { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 28px; background: transparent; color: var(--foil, #d4b057); border: 1.5px solid var(--foil, #d4b057); border-radius: 0; font: 600 1rem/1.2 Hind, sans-serif; letter-spacing: 0.02em; cursor: pointer; transition: background-color .2s cubic-bezier(.16,1,.3,1), color .2s; } .ds-btn-foil:hover { background: var(--foil, #d4b057); color: var(--board, #10173a); } .ds-btn-foil:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Form field: uppercase foil label over a square board-raise box with a soft-foil border.",
+      "html": "<label class=\"ds-field\"><span>Venue area</span><input placeholder=\"e.g. Gachibowli\"></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; max-width: 360px; } .ds-field span { font: 600 .78rem Hind, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--foil, #d4b057); } .ds-field input { min-height: 48px; padding: 10px 12px; background: var(--board-raise, #161f4a); border: 1px solid var(--foil-soft, rgba(212,176,87,.42)); border-radius: 0; color: var(--ink, #f4efe4); font: 400 17px/1.55 Hind, sans-serif; } .ds-field input::placeholder { color: var(--ink-mute, #a49fe6); } .ds-field input:hover { border-color: var(--foil, #d4b057); } .ds-field input:focus { outline: none; border-color: var(--foil, #d4b057); box-shadow: inset 0 0 0 1px var(--foil, #d4b057); }"
+    },
+    {
+      "name": "Invitation Field Row",
+      "kind": "custom",
+      "refersTo": "invitation-field",
+      "description": "Signature: the quote form written as invitation fields between foil rules.",
+      "html": "<div class=\"ds-fields\"><div class=\"ds-fld\"><label for=\"ds-ev\">Event</label><input id=\"ds-ev\" value=\"Wedding\"></div><div class=\"ds-fld\"><label for=\"ds-g\">Guests</label><input id=\"ds-g\" value=\"600\" inputmode=\"numeric\"></div></div>",
+      "css": ".ds-fields { display: grid; grid-template-columns: 1fr 1fr; max-width: 520px; border-top: 1px solid var(--foil, #d4b057); border-bottom: 1px solid var(--foil, #d4b057); } .ds-fld { padding: 14px 12px 12px; } .ds-fld + .ds-fld { border-left: 1px solid var(--foil-faint, rgba(212,176,87,.16)); } .ds-fld label { display: block; font: 600 .78rem Hind, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--foil, #d4b057); } .ds-fld input { display: block; width: 100%; min-height: 44px; padding: 2px 0 0; border: 0; border-bottom: 1px dashed transparent; border-radius: 0; background: transparent; color: var(--ink, #f4efe4); font: 400 1.25rem/1.25 'Yatra One', serif; font-variant-numeric: tabular-nums lining-nums; } .ds-fld input:hover { border-bottom-color: var(--foil-soft, rgba(212,176,87,.42)); } .ds-fld input:focus { outline: none; border-bottom-color: var(--foil, #d4b057); }"
+    },
+    {
+      "name": "Dietary Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Square filter toggle; selected fills with foil.",
+      "html": "<button class=\"ds-chip\" type=\"button\" aria-pressed=\"false\">Vegan</button><button class=\"ds-chip\" type=\"button\" aria-pressed=\"true\">Sugar-free</button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 14px; margin-right: 8px; border: 1px solid var(--foil-soft, rgba(212,176,87,.42)); border-radius: 0; background: transparent; color: var(--ink-soft, #cdc8f2); font: 400 .95rem Hind, sans-serif; cursor: pointer; } .ds-chip:hover { border-color: var(--foil, #d4b057); } .ds-chip[aria-pressed=\"true\"] { background: var(--foil, #d4b057); color: var(--board, #10173a); border-color: var(--foil, #d4b057); } .ds-chip:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; }"
+    },
+    {
+      "name": "Place Card with Seal",
+      "kind": "card",
+      "refersTo": "place-card",
+      "description": "Catalogue card: single soft-foil border, a seal on the top edge, foil price in Yatra One.",
+      "html": "<article class=\"ds-place\"><span class=\"ds-seal\">Bestseller</span><h3>Malai Kulfi</h3><p class=\"ds-meta\">60 sticks per carton, MOQ 10</p><div class=\"ds-foot\"><span class=\"ds-price\">&#8377;1,730 <small>/ carton</small></span></div></article>",
+      "css": ".ds-place { position: relative; max-width: 320px; margin-top: 12px; padding: 22px 20px 20px; background: var(--board-raise, #161f4a); border: 1px solid var(--foil-soft, rgba(212,176,87,.42)); color: var(--ink, #f4efe4); } .ds-place:hover { border-color: var(--foil, #d4b057); } .ds-seal { position: absolute; top: 0; right: 16px; transform: translateY(-50%); background: var(--board, #10173a); border: 1px solid var(--foil, #d4b057); color: var(--foil, #d4b057); padding: 2px 10px; font: 600 .72rem Hind, sans-serif; letter-spacing: .12em; text-transform: uppercase; } .ds-place h3 { margin: 4px 0 10px; font: 400 1.55rem/1.08 'Yatra One', serif; } .ds-meta { margin: 0 0 14px; color: var(--ink-soft, #cdc8f2); font: 400 .95rem Hind, sans-serif; } .ds-foot { padding-top: 14px; border-top: 1px solid var(--foil-faint, rgba(212,176,87,.16)); } .ds-price { font: 400 1.35rem 'Yatra One', serif; color: var(--foil, #d4b057); font-variant-numeric: tabular-nums lining-nums; } .ds-price small { font: 500 .85rem Hind, sans-serif; color: var(--ink-mute, #a49fe6); }"
+    },
+    {
+      "name": "Double Frame with Diamond Rule",
+      "kind": "card",
+      "refersTo": "frame-card",
+      "description": "Principal card: 1.5px foil border, soft outline at 7px offset, headline over the diamond-centred rule.",
+      "html": "<section class=\"ds-frame\"><h2>Send us your card</h2><div class=\"ds-rule\" aria-hidden=\"true\"><svg viewBox=\"0 0 12 12\"><path d=\"M6 0l6 6-6 6-6-6z\"/></svg></div><p>A person confirms every quote on WhatsApp.</p></section>",
+      "css": ".ds-frame { margin: 12px; padding: 40px 22px 32px; text-align: center; background: var(--board-raise, #161f4a); border: 1.5px solid var(--foil, #d4b057); outline: 1px solid var(--foil-soft, rgba(212,176,87,.42)); outline-offset: 7px; color: var(--ink, #f4efe4); } .ds-frame h2 { margin: 0 0 14px; font: 400 2.2rem/1.08 'Yatra One', serif; } .ds-frame p { color: var(--ink-soft, #cdc8f2); font: 400 17px/1.55 Hind, sans-serif; } .ds-rule { display: flex; align-items: center; gap: 14px; max-width: 420px; margin: 0 auto; } .ds-rule::before, .ds-rule::after { content: ''; flex: 1; height: 1px; background: var(--foil-soft, rgba(212,176,87,.42)); } .ds-rule svg { width: 12px; height: 12px; fill: var(--foil, #d4b057); }"
+    },
+    {
+      "name": "Menu Card Lines and Total",
+      "kind": "custom",
+      "refersTo": "frame-card",
+      "description": "Signature: ruled order lines with tabular amounts, closing on a double foil rule.",
+      "html": "<div class=\"ds-menu\"><ul class=\"ds-lines\"><li><span>Ice cream, 1.5 servings each<small>40 cartons</small></span><b>&#8377;69,200</b></li><li><span>Chest freezer<small>2 at the venue</small></span><b>&#8377;3,000</b></li></ul><div class=\"ds-total\"><span>Estimate</span><b>&#8377;72,200</b></div></div>",
+      "css": ".ds-menu { max-width: 420px; color: var(--ink, #f4efe4); font: 400 17px/1.55 Hind, sans-serif; } .ds-lines { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--foil, #d4b057); } .ds-lines li { display: flex; justify-content: space-between; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--foil-faint, rgba(212,176,87,.16)); } .ds-lines small { display: block; color: var(--ink-mute, #a49fe6); } .ds-lines b { font-weight: 400; font-variant-numeric: tabular-nums lining-nums; } .ds-total { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0 6px; border-bottom: 3px double var(--foil, #d4b057); } .ds-total b { font: 400 2rem 'Yatra One', serif; color: var(--foil, #d4b057); font-variant-numeric: tabular-nums lining-nums; }"
+    },
+    {
+      "name": "Header Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Sticky board header: foil wordmark, ink-soft links, foil current page, foil-outlined quote link with count.",
+      "html": "<header class=\"ds-head\"><a class=\"ds-brand\" href=\"#\">ChillCrate</a><nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Catalogue</a><a href=\"#\">Events</a><a href=\"#\">Delivery</a></nav><a class=\"ds-quote\" href=\"#\">Quote <b>3</b></a></header>",
+      "css": ".ds-head { display: flex; align-items: center; gap: 28px; height: 76px; padding: 0 20px; background: var(--board, #10173a); border-bottom: 1px solid var(--foil-soft, rgba(212,176,87,.42)); } .ds-brand { font: 400 1.7rem/1 'Yatra One', serif; color: var(--foil, #d4b057); text-decoration: none; } .ds-nav { display: flex; gap: 28px; margin: 0 auto; } .ds-nav a { padding: 6px 0; color: var(--ink-soft, #cdc8f2); text-decoration: none; border-bottom: 1px solid transparent; font: 400 17px Hind, sans-serif; } .ds-nav a:hover { color: var(--ink, #f4efe4); } .ds-nav a[aria-current=\"page\"] { color: var(--foil, #d4b057); border-bottom-color: var(--foil, #d4b057); } .ds-nav a:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; } .ds-quote:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; } .ds-quote { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 1px solid var(--foil, #d4b057); color: var(--foil, #d4b057); text-decoration: none; font: 600 .95rem Hind, sans-serif; } .ds-quote b { min-width: 22px; text-align: center; background: var(--foil, #d4b057); color: var(--board, #10173a); font-size: .8rem; padding: 1px 6px; }"
+    },
+    {
+      "name": "Floating Quote Bar",
+      "kind": "button",
+      "refersTo": "fab-quote",
+      "description": "Fixed on every page beside the WhatsApp square: vermilion Get bulk quote, separated by a 2px board border rather than a shadow.",
+      "html": "<a class=\"ds-fab\" href=\"#\">Get bulk quote</a>",
+      "css": ".ds-fab { display: inline-flex; align-items: center; height: 54px; padding: 0 20px; background: var(--verm, #d63b1f); color: var(--on-verm, #fff); border: 2px solid var(--board, #10173a); text-decoration: none; font: 600 1rem Hind, sans-serif; transition: background-color .2s cubic-bezier(.16,1,.3,1); } .ds-fab:hover { background: var(--verm-hover, #b62e15); } .ds-fab:focus-visible { outline: 2px solid var(--foil, #d4b057); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Shaadi Card",
+    "overview": "Every surface is a letterpress Indian wedding invitation. The page ground is indigo board; line work, labels and figures are stamped in gold foil; lettering is ivory; and one colour, vermilion, is reserved for the action that sends the card. In light mode the same card is printed on ivory stock with antique-gold foil and indigo ink. The quote form is the invitation itself (event, date, venue and guests are written into foil-ruled fields), and the answer comes back as the matching menu card: servings, lines and a double-ruled total.\n\nDensity follows the stationery. Public pages are centred and generous, organised by hairline foil rules, never by boxes with shadows. Catalogue, product, quote and admin pages are tighter and lean on ruled rows (programme, tariff, rates, menu lines, data tables), so the same world serves both persuasion and the working order. Depth comes from foil lines and three tones of board, never from drawn shadows; corners are always square; ornament is limited to a small set of drawn devices (the double frame, the diamond-centred rule, corner marks, seals and diamond bullets).\n\nMotion is a single authored gesture: on the invitation, the four foil corners and the field rule draw themselves in once, and changing figures settle with a short blur-in. Everything else changes colour only. Reduced-motion users get no animation at all.",
+    "keyCharacteristics": [
+      "Indigo board by default, ivory card stock in light mode, switched by a theme toggle.",
+      "Gold foil for every line, label and figure; vermilion only for the action.",
+      "Yatra One for display lettering and figures; Hind for text, labels and controls.",
+      "Square corners everywhere; no shadows; depth by foil rules and board tone.",
+      "Double-ruled foil frames, diamond-centred rules, corner marks and seals as the ornament vocabulary.",
+      "Product imagery is monoline line art filled with the theme's foil.",
+      "Placeholder proof is labelled as illustrative in a dashed foil tag."
+    ],
+    "rules": [
+      {
+        "name": "The One Vermilion Rule",
+        "body": "Vermilion marks the action that sends or starts a quote, and nothing decorative. If a screen has two vermilion buttons competing, one of them is a foil button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Foil Carries Structure Rule",
+        "body": "Every line, rule, frame and label is foil at one of three strengths (full, soft, faint). Gray hairlines do not exist in this world.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tinted Secondary Rule",
+        "body": "Secondary text is ink-soft or ink-mute, tinted toward the indigo; never a neutral gray.",
+        "section": "colors"
+      },
+      {
+        "name": "The Lettering Rule",
+        "body": "Yatra One is set at weight 400 with zero tracking, for headings, written field values and money only. Never for body text, labels or buttons.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Prices, totals, quantities and table cells use tabular, lining numerals so columns of rupees align.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Kicker Rule",
+        "body": "Uppercase foil labels name a field, a column or a time; they never sit above a heading as an eyebrow. Headings open on their own, or on a diamond rule.",
+        "section": "typography"
+      },
+      {
+        "name": "The Letterpress Rule",
+        "body": "Paper does not float. Nothing casts a shadow, glows or blurs behind glass; importance is shown by a heavier or doubled foil line.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square Corner Rule",
+        "body": "Radius is zero. No pills, no rounded cards, no circular buttons.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Double Frame Rule",
+        "body": "A principal card (the invitation, menu card, product label and order panel, calculator, form card, RSVP close) is a 1.5px foil border with a 1px soft-foil outline offset 7px. Repeated items (place cards, figures, KPIs) take a single soft-foil border instead. Corner marks belong to the invitation alone.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** draw every line in foil at full, soft or faint strength, and use board tone for depth.",
+      "**Do** keep vermilion for the one action that sends or starts a quote; secondary actions are foil buttons.",
+      "**Do** set headings, written field values and money in Yatra One 400; everything else in Hind.",
+      "**Do** use tabular, lining numerals for prices, quantities and table cells.",
+      "**Do** set principal cards in the double foil frame (1.5px border, 1px soft outline at 7px offset) and repeated items in a single soft-foil border.",
+      "**Do** open sections with a centred headline over the diamond-centred rule.",
+      "**Do** draw icons as stroked SVG (1.75px, round caps) in currentColor or foil.",
+      "**Do** show product imagery as foil-filled line art until real photography exists.",
+      "**Do** label every placeholder testimonial, client, statistic or photo with the dashed illustrative tag.",
+      "**Do** keep every touch target at 44px or larger and respect reduced motion."
+    ],
+    "donts": [
+      "**Don't** round corners or use pills; radius is 0px.",
+      "**Don't** draw shadows, glows, glass or backdrop blur.",
+      "**Don't** put an uppercase eyebrow or kicker above a heading.",
+      "**Don't** use gradient text or gradient fills.",
+      "**Don't** use gray for secondary text; use ink-soft or ink-mute.",
+      "**Don't** use vermilion for decoration, borders or emphasis in body copy.",
+      "**Don't** use Unicode glyphs or emoji as icons.",
+      "**Don't** add new motion; the invitation draw-in and the figure settle are the only authored animations.",
+      "**Don't** present placeholder proof as real."
+    ]
+  }
+}

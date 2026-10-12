@@ -1,5 +1,9 @@
 const Pricing = require('../public/js/pricing');
 const config = require('./config');
+const art = require('./art');
+
+// Flavour ink for the swatch dots on place cards and labels.
+const swatch = (flavour) => art.flavourColor(flavour);
 
 const SIZE_ORDER = ['60ml', '100ml', '110ml', '125ml', '150ml', '500ml', '700ml', '1L', '4L', '5L', '2kg', '5kg', '10kg', '25kg', '50kg', 'Gift box', 'Kit', 'Service'];
 
@@ -20,12 +24,13 @@ function fromPrice(product) {
   return prices.length ? Math.min(...prices) : 0;
 }
 
-// The size shown on cards and added by quick "Add to Quote" buttons.
+// The size shown on cards and added by quick "Add to quote" buttons.
 const defaultSize = (product) => product.sizes[0];
 
-const artUrl = (p, variant) => `/art/p/${encodeURIComponent(p.id)}.svg${variant ? `?v=${variant}` : ''}`;
-const shapeUrl = (art) => {
+const artUrl = (p, variant) => `/art/p/${encodeURIComponent(p.id)}.svg${variant === 'plain' ? '?plain=1' : variant ? `?v=${variant}` : ''}`;
+const shapeUrl = (art, plain) => {
   const qs = new URLSearchParams();
+  if (plain) qs.set('plain', '1');
   if (art.color) qs.set('c', art.color.replace('#', ''));
   if (art.label) qs.set('l', art.label);
   const s = qs.toString();
@@ -38,7 +43,7 @@ const jsonScript = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c');
 // Compact catalogue for the browser: just what the quote cart / calculator need.
 function clientCatalog(products) {
   return products.filter((p) => p.active).map((p) => ({
-    id: p.id, name: p.name, category: p.category, flavours: p.flavours, art: artUrl(p),
+    id: p.id, name: p.name, category: p.category, flavours: p.flavours, art: artUrl(p, 'plain'),
     sizes: p.sizes.map((s) => ({ id: s.id, label: s.label, unit: s.unit, contains: s.contains, unitsPerCarton: s.unitsPerCarton, moq: s.moq, tiers: s.tiers })),
   }));
 }
@@ -69,4 +74,4 @@ const fmtDateTime = (iso) => {
 
 const waLink = (text) => `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(text)}`;
 
-module.exports = { Pricing, money, fromPrice, defaultSize, artUrl, shapeUrl, jsonScript, clientCatalog, clean, isEmail, isPhone, GSTIN_RE, STATUSES, sortSizes, fmtDate, fmtDateTime, waLink };
+module.exports = { swatch, Pricing, money, fromPrice, defaultSize, artUrl, shapeUrl, jsonScript, clientCatalog, clean, isEmail, isPhone, GSTIN_RE, STATUSES, sortSizes, fmtDate, fmtDateTime, waLink };

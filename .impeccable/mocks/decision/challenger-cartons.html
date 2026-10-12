@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1440">
+<title>Carton wall sketch</title>
+<link href="https://fonts.googleapis.com/css2?family=Khand:wght@600;700&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--board:#2b1d12;--kraft:#a8743f;--ink:#141110;--tissue:#f7f6f2}
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;background:var(--board);color:var(--tissue);font:400 16px Hind,sans-serif}
+nav{height:72px;display:flex;align-items:center;gap:32px;padding:0 56px;border-bottom:1px solid #4a3522}
+.brand{font:700 28px Khand;color:var(--kraft)}
+nav a{color:var(--tissue);opacity:.8}
+.head{display:flex;justify-content:space-between;align-items:end;padding:36px 56px 24px}
+h1{font:700 92px/0.9 Khand;letter-spacing:-1px}
+h1 span{color:var(--kraft)}
+.wall{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:0 56px}
+.box{background:var(--kraft);color:var(--ink);height:168px;padding:16px 18px;position:relative}
+.box h3{font:700 30px Khand;text-transform:uppercase}
+.box p{font:600 14px Hind}
+.box .run{position:absolute;bottom:14px;left:18px;font:600 15px Hind;letter-spacing:1px}
+.box.out{transform:translateY(-22px);box-shadow:0 0 0 3px var(--tissue)}
+.cta{background:var(--tissue);color:var(--ink);padding:16px 28px;font:600 18px Hind}
+</style></head><body>
+<nav><span class="brand">ChillCrate</span><a>Catalogue</a><a>Events</a><a>Custom</a><a>Delivery</a><a style="margin-left:auto">Quote · 0</a></nav>
+<div class="head"><h1>Pull a carton.<br><span>We'll stack the order.</span></h1><a class="cta">Start a bulk quote →</a></div>
+<div class="wall">
+<div class="box"><h3>Vanilla</h3><p>Classic tub</p><span class="run">1L · 4L · 5L</span></div>
+<div class="box out"><h3>Kesar</h3><p>Premium tub</p><span class="run">1L · 4L · 5L</span></div>
+<div class="box"><h3>Malai kulfi</h3><p>Stick · 40/ctn</p><span class="run">60ml</span></div>
+<div class="box"><h3>Cups</h3><p>Assorted · 48/ctn</p><span class="run">100 · 125ml</span></div>
+<div class="box"><h3>Ice block</h3><p>RO water</p><span class="run">5 · 10 · 25 · 50kg</span></div>
+<div class="box"><h3>Mango</h3><p>Premium tub</p><span class="run">1L · 4L</span></div>
+<div class="box"><h3>Logo cups</h3><p>Made to order</p><span class="run">100 · 125ml</span></div>
+<div class="box"><h3>Cones</h3><p>24/ctn</p><span class="run">110ml</span></div>
+<div class="box"><h3>Dry ice</h3><p>Food grade</p><span class="run">5 · 10 · 25kg</span></div>
+<div class="box"><h3>Freezer</h3><p>Rental / day</p><span class="run">200 · 300 · 500L</span></div>
+</div>
+</body></html>

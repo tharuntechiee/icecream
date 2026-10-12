@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1440">
+<title>Invitation card sketch</title>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Hind:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#121a3b;--foil:#caa24a;--verm:#d63b1f;--card:#f4efe4}
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;background:var(--ground);color:var(--card);font:400 16px/1.45 Hind,sans-serif}
+nav{height:76px;display:flex;justify-content:center;align-items:center;gap:40px;border-bottom:1px solid rgba(202,162,74,.5)}
+nav a{color:var(--card);font-size:15px;opacity:.85}
+.brand{font:400 30px 'Yatra One';color:var(--foil)}
+.card{width:880px;margin:44px auto 0;border:2px solid var(--foil);outline:1px solid var(--foil);outline-offset:8px;padding:56px 80px;text-align:center}
+.card .k{color:var(--foil);letter-spacing:4px;text-transform:uppercase;font-size:14px}
+h1{font:400 76px/1.05 'Yatra One';color:var(--card);margin:16px 0 22px}
+h1 span{color:var(--foil)}
+.card p{font-size:20px;opacity:.9;max-width:600px;margin:0 auto 34px}
+.fields{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--foil);border-bottom:1px solid var(--foil)}
+.fields div{padding:20px 12px;border-right:1px solid rgba(202,162,74,.5);text-align:left}
+.fields div:last-child{border:0}
+.fields small{display:block;color:var(--foil);letter-spacing:2px;font-size:12px;text-transform:uppercase}
+.fields b{font:400 30px 'Yatra One'}
+.btn{display:inline-block;margin-top:32px;background:var(--verm);color:#fff;padding:16px 34px;font:600 18px Hind}
+</style></head><body>
+<nav><span class="brand">ChillCrate</span><a>Catalogue</a><a>Events</a><a>Custom packs</a><a>Delivery</a><a>Quote</a></nav>
+<div class="card">
+<p class="k">You are cordially invited to order</p>
+<h1>Ice cream for the<br><span>whole celebration</span></h1>
+<p>Sized to your guest list, delivered at −18°C with freezers and servers at the venue.</p>
+<div class="fields"><div><small>Event</small><b>Wedding</b></div><div><small>Date</small><b>14 Nov</b></div><div><small>Venue</small><b>Gachibowli</b></div><div><small>Guests</small><b>600</b></div></div>
+<a class="btn">Request the quote →</a>
+</div>
+</body></html>

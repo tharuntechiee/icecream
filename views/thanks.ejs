@@ -1,15 +1,17 @@
 <%- include('partials/top') %>
-<section class="section">
-  <div class="container narrow center">
-    <div class="thanks-icon" aria-hidden="true">✓</div>
-    <h1>Quote request received</h1>
-    <% if (ref) { %><p class="lead">Your reference is <strong><%= ref %></strong></p><% } %>
-    <p class="muted">Our order desk will call or WhatsApp you within 2 business hours with confirmed stock, delivery slot and final price. Nothing is charged until you confirm.</p>
-    <div class="cta-actions center">
-      <a class="btn btn-primary" href="<%= h.waLink(`Hi ${site.brand}, I just sent quote request ${ref || ''}.`) %>" target="_blank" rel="noopener">Follow up on WhatsApp</a>
-      <a class="btn btn-secondary" href="/products">Back to catalogue</a>
+<section class="band">
+  <div class="wrap narrow">
+    <div class="frame rsvp">
+      <div class="seal-mark" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h1 style="font-size:clamp(2rem,1.4rem + 2.6vw,3.2rem)">Your card is with us</h1>
+      <% if (ref) { %><p class="lead" style="margin-top:14px">Reference <strong class="tabular" style="color:var(--foil)"><%= ref %></strong></p><% } %>
+      <p class="soft">The order desk will call or WhatsApp within two business hours with confirmed stock, a delivery slot and the final price. Nothing is charged until you confirm.</p>
+      <div class="rsvp-actions">
+        <a class="btn btn-verm" href="<%= h.waLink(`Hi ${site.brand}, I just sent quote request ${ref || ''}.`) %>" target="_blank" rel="noopener">Follow up on WhatsApp</a>
+        <a class="btn btn-foil" href="/products">Back to the catalogue</a>
+      </div>
+      <p class="small mute" style="margin-top:22px">Ordering regularly? <a href="/register">Register a business account</a> for GST invoices and credit terms.</p>
     </div>
-    <p class="small muted">Ordering regularly? <a href="/register">Register a business account</a> for GST invoices and credit terms.</p>
   </div>
 </section>
 <%- include('partials/bottom') %>

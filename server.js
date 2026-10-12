@@ -55,4 +55,9 @@ app.use((err, req, res, next) => {
   res.status(500).render('404', { meta: { title: 'Something went wrong', noindex: true }, error: true });
 });
 
-app.listen(PORT, () => console.log(`${config.brand} site running on http://localhost:${PORT}`));
+// Vercel imports the app as a serverless handler; everywhere else, run a normal server.
+if (require.main === module && !process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`${config.brand} site running on http://localhost:${PORT}`));
+}
+
+module.exports = app;

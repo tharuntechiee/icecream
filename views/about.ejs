@@ -1,52 +1,51 @@
 <%- include('partials/top') %>
+<%
+  const diamond = '<div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>';
+  const temps = ['Our plant', '−35°C', '−22°C', '−18°C', 'Your door'];
+%>
 <section class="page-head">
-  <div class="container narrow">
-    <p class="eyebrow">About <%= site.brand %></p>
-    <h1>Frozen, food-safe and on time — since 2012</h1>
-    <p class="lead">We started with one chest freezer and a borrowed van, delivering kulfi to wedding caterers in <%= site.city %>. Today we run an FSSAI-licensed plant, a −22°C cold store and a fleet of reefer vans that serve hundreds of restaurants, hotels, caterers, shops and offices every week.</p>
+  <div class="wrap narrow">
+    <h1>Frozen, food-safe and on time since 2012</h1>
+    <p>We started with one chest freezer and a borrowed van, delivering kulfi to wedding caterers in <%= site.city %>. Today we run an FSSAI-licensed plant, a −22°C cold store and our own reefer vans, serving restaurants, hotels, caterers, shops and offices every week.</p>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head"><h2>Our cold-chain process</h2></div>
-    <ol class="chain">
-      <% content.coldChain.forEach((c, i) => { %>
-        <li><span class="step-num"><%= i + 1 %></span><div><h3><%= c.title %></h3><p class="muted small"><%= c.text %></p></div></li>
-      <% }) %>
+<section class="band sunk" aria-labelledby="cc-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="cc-h">The cold chain, step by step</h2><%- diamond %></div>
+    <ol class="programme">
+      <% content.coldChain.forEach((c, i) => { %><li><span class="when"><%= temps[i] %></span><div><h3><%= c.title %></h3><p><%= c.text %></p></div></li><% }) %>
     </ol>
   </div>
 </section>
 
-<section class="section section-soft">
-  <div class="container">
-    <div class="section-head"><h2>Hygiene &amp; food-safety certifications</h2></div>
-    <div class="grid grid-3">
-      <div class="cert-card"><span class="cert-badge">FSSAI</span><h3>FSSAI State Licence</h3><p class="muted small">Lic. No. <%= site.certifications.fssai %> — manufacturing and storage of frozen desserts and ice.</p></div>
-      <div class="cert-card"><span class="cert-badge">HACCP</span><h3>HACCP-based food safety plan</h3><p class="muted small">Critical control points from pasteurisation to dispatch, audited every year.</p></div>
-      <div class="cert-card"><span class="cert-badge">QA</span><h3>In-house quality lab</h3><p class="muted small">Every batch tested for coliforms and TPC; RO water tested daily for ice production.</p></div>
+<section class="band" aria-labelledby="cert-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="cert-h">Hygiene &amp; food safety</h2><%- diamond %></div>
+    <div class="tariff">
+      <div class="tariff-row"><h3>FSSAI licence</h3><p class="from" style="font-size:1.1rem">Lic. No. <%= site.certifications.fssai %></p><p class="soft" style="margin:0">State licence for manufacturing and storing frozen desserts and ice.</p></div>
+      <div class="tariff-row"><h3>HACCP plan</h3><p class="from" style="font-size:1.1rem">Audited yearly</p><p class="soft" style="margin:0">Critical control points from pasteurisation to dispatch.</p></div>
+      <div class="tariff-row"><h3>Quality lab</h3><p class="from" style="font-size:1.1rem">Every batch</p><p class="soft" style="margin:0">Coliform and TPC tests on every batch; RO water for ice tested daily.</p></div>
     </div>
-    <ul class="ticks two-col">
-      <li>Staff in hairnets, gloves and aprons; health checks every 6 months</li>
+    <ul class="ticks" style="margin-top:32px;max-width:760px">
+      <li>Staff in hairnets, gloves and aprons, with health checks every six months</li>
       <li>Closed, hands-free filling and bagging lines</li>
       <li>24×7 cold-room temperature logging with alarms</li>
       <li>Pest-control contract and monthly sanitation audits</li>
       <li>Batch codes on every carton for full traceability</li>
-      <li>Temperature-logged deliveries with probe check at handover</li>
+      <li>Temperature-logged deliveries, probe-checked at handover</li>
     </ul>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head"><h2>Inside our facility</h2></div>
-    <div class="grid grid-3 gallery">
-      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/facility.svg?c=F4A3B4" alt="Cold store racks at −22°C" loading="lazy" width="400" height="300"></div><figcaption><strong>−22°C cold store</strong><span class="muted small">1,200 pallet positions with backup power</span></figcaption></figure>
-      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/block.svg?v=1" alt="Ice block production" loading="lazy" width="400" height="300"></div><figcaption><strong>Ice plant</strong><span class="muted small">40 tonnes/day from RO-purified water</span></figcaption></figure>
-      <figure class="gallery-item"><div class="card-photo"><img src="/art/s/van.svg" alt="Refrigerated delivery van" loading="lazy" width="400" height="300"></div><figcaption><strong>Reefer fleet</strong><span class="muted small">GPS-tracked vans with data loggers</span></figcaption></figure>
+<section class="band sunk" aria-labelledby="fac-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="fac-h">Inside the facility</h2><%- diamond %><p><span class="illus">Illustrations until facility photos are added</span></p></div>
+    <div class="figs">
+      <figure class="fig"><span class="line-art" role="img" aria-label="Cold store racks at −22°C" style="--art:url('/art/s/facility.svg?plain=1')"></span><figcaption><strong>−22°C cold store</strong>1,200 pallet positions with backup power</figcaption></figure>
+      <figure class="fig"><span class="line-art" role="img" aria-label="Ice block production" style="--art:url('/art/s/block.svg?plain=1')"></span><figcaption><strong>Ice plant</strong>40 tonnes a day from RO-purified water</figcaption></figure>
+      <figure class="fig"><span class="line-art" role="img" aria-label="Refrigerated delivery van" style="--art:url('/art/s/van.svg?plain=1')"></span><figcaption><strong>Reefer fleet</strong>GPS-tracked vans with data loggers</figcaption></figure>
     </div>
-    <p class="muted small">Illustrations shown — replace with real facility photos in <code>views/about.ejs</code>.</p>
   </div>
 </section>
-
 <%- include('partials/bottom') %>

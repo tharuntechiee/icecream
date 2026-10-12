@@ -1,38 +1,27 @@
 <%- include('partials/top') %>
-<section class="hero hero-compact">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow"><%= site.brand %> · <%= site.city %></p>
-      <h1><%= page.h1.charAt(0).toUpperCase() + page.h1.slice(1) %></h1>
-      <p class="lead"><%= page.intro %></p>
-      <ul class="ticks"><% page.points.forEach((pt) => { %><li><%= pt %></li><% }) %></ul>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="/quote">Get a bulk quote</a>
-        <a class="btn btn-secondary" href="/products?category=<%= page.category %>">Browse range</a>
-      </div>
-    </div>
-    <% const c = content.categories.find((x) => x.id === page.category); %>
-    <div class="hero-art single" aria-hidden="true"><img src="<%= h.shapeUrl(c.art) %>" alt="" width="400" height="300"></div>
+<% const diamond = '<div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>'; %>
+<section class="page-head">
+  <div class="wrap narrow">
+    <h1><%= page.h1.charAt(0).toUpperCase() + page.h1.slice(1) %></h1>
+    <p><%= page.intro %></p>
+    <ul class="ticks" style="max-width:560px;margin:22px auto 0;text-align:left"><% page.points.forEach((pt) => { %><li><%= pt %></li><% }) %></ul>
+    <div class="rsvp-actions"><a class="btn btn-verm" href="/quote">Get a bulk quote</a><a class="btn btn-foil" href="/products?category=<%= page.category %>">Browse the range</a></div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head"><h2>Wholesale range &amp; prices</h2><a class="link-more" href="/products?category=<%= page.category %>">Filter the full range →</a></div>
-    <div class="grid grid-cards">
-      <% products.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
-    </div>
-  </div>
+<section class="wrap" aria-labelledby="range-h" style="padding-top:24px">
+  <div class="section-head"><h2 id="range-h" class="h-sub" style="margin:0">Wholesale range &amp; prices</h2><a class="link-more" href="/products?category=<%= page.category %>">Filter the full range</a></div>
+  <div class="places"><% products.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %></div>
 </section>
 
-<section class="section section-soft">
-  <div class="container">
-    <div class="section-head"><h2>Why <%= site.city %> businesses order from <%= site.brand %></h2></div>
-    <div class="grid grid-3">
-      <div class="card"><h3>Delivered frozen</h3><p class="muted">Own reefer fleet at −18°C with data loggers — no third-party couriers.</p></div>
-      <div class="card"><h3>Clear bulk pricing</h3><p class="muted">Tier prices on every product, GST invoices and credit terms for registered businesses.</p></div>
-      <div class="card"><h3>Across the city</h3><p class="muted">Same-day in <%= site.serviceZones[0].areas.slice(0, 4).join(', ') %> and more. <a href="/delivery">See all areas</a>.</p></div>
-    </div>
+<section class="band sunk" aria-labelledby="why-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="why-h">Why <%= site.city %> businesses order from <%= site.brand %></h2><%- diamond %></div>
+    <ol class="programme">
+      <li><span class="when">Cold chain</span><div><h3>Delivered frozen</h3><p>Our own reefer fleet at −18°C with data loggers; no third-party couriers.</p></div></li>
+      <li><span class="when">Pricing</span><div><h3>Clear bulk tiers</h3><p>Tier prices on every product, GST invoices, and credit terms for registered businesses.</p></div></li>
+      <li><span class="when">Coverage</span><div><h3>Across the city</h3><p>Same day in <%= site.serviceZones[0].areas.slice(0, 4).join(', ') %> and more. <a href="/delivery">See every area</a>.</p></div></li>
+    </ol>
   </div>
 </section>
 <%- include('partials/bottom') %>

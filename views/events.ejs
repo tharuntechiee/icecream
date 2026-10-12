@@ -1,85 +1,68 @@
 <%- include('partials/top') %>
-<section class="hero hero-compact">
-  <div class="container hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">Events &amp; catering</p>
-      <h1>Ice cream for 50 guests or 5,000</h1>
-      <p class="lead">Weddings, birthdays, corporate days and festivals. We bring the ice cream, the freezer and the serving team, and it stays frozen until the last guest.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-primary" href="#calculator">How much do I need?</a>
-        <a class="btn btn-secondary" href="<%= h.waLink(`Hi ${site.brand}, I'm planning an event and need ice cream.`) %>" target="_blank" rel="noopener">Talk to an event planner</a>
-      </div>
-    </div>
-    <div class="hero-art single" aria-hidden="true"><img src="/art/s/counter.svg?c=ff385c" alt="" width="400" height="300"></div>
+<%
+  const diamond = '<div class="rule" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 0l6 6-6 6-6-6z"/></svg></div>';
+  const pkgName = { wedding: 'Weddings', birthday: 'Birthdays', corporate: 'Corporate', festival: 'Festivals' };
+  const pkgEvent = { wedding: 'Wedding', birthday: 'Birthday / private party', corporate: 'Corporate event', festival: 'Festival / puja' };
+  const eventFaq = content.faqs.flatMap((g) => g.items).filter(([q]) => /notice|frozen during|guest count|pay online|payment terms/i.test(q)).slice(0, 4);
+%>
+<section class="page-head">
+  <div class="wrap narrow">
+    <h1>Ice cream for 50 guests or 5,000</h1>
+    <p>Weddings, birthdays, corporate days and festivals. Write the guest list and the menu card fills itself, with freezer, dry ice and serving counter included. Remove what you don't need, then send it as a quote.</p>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head"><h2>Event packages</h2></div>
-    <div class="grid grid-4">
+<section class="wrap" id="calculator" aria-label="Guest calculator">
+  <div class="calc">
+    <form class="frame calc-card" data-calc onsubmit="return false">
+      <h2 class="card-h">The guest list</h2>
+      <div class="fields">
+        <div class="fld"><label class="label" for="c-g">Guests</label><input id="c-g" name="guests" type="number" min="1" max="100000" inputmode="numeric" value="400"></div>
+        <div class="fld"><label class="label" for="c-evt">Occasion</label><select id="c-evt" name="evt"><% Object.values(pkgEvent).forEach((e) => { %><option><%= e %></option><% }) %></select></div>
+        <div class="fld"><label class="label" for="c-per">Servings each</label><select id="c-per" name="per"><option value="1">1 · with sweets</option><option value="1.5" selected>1.5 · wedding</option><option value="2">2 · main dessert</option><option value="3">3 · hot day</option></select></div>
+        <div class="fld"><label class="label" for="c-buf">Buffer</label><select id="c-buf" name="buf"><option value="0">None</option><option value="0.05">5%</option><option value="0.1" selected>10% · best</option><option value="0.15">15%</option></select></div>
+      </div>
+      <div class="fields" style="border-top:0">
+        <div class="fld" style="grid-column:1/-1;border-right:0"><label class="label" for="c-fmt">Served as</label><select id="c-fmt" name="fmt"><% content.servingFormats.forEach((f) => { %><option value="<%= f.id %>"><%= f.label %></option><% }) %></select></div>
+      </div>
+      <label class="check"><input type="checkbox" name="outdoor"> Outdoor venue, or no power for freezers</label>
+    </form>
+
+    <aside class="frame menu-card" aria-live="polite">
+      <h2 class="card-h">The menu card</h2>
+      <p class="serv tabular" data-serv>0</p>
+      <p class="mute">servings, buffer included</p>
+      <ul class="lines" data-lines></ul>
+      <div class="total"><span>Estimate</span><b class="tabular" data-total>₹0</b></div>
+      <p class="small mute" data-perguest style="margin-top:8px"></p>
+      <button class="btn btn-verm" type="button" data-send>Request this order <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </aside>
+  </div>
+</section>
+
+<section class="band" aria-labelledby="pk-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="pk-h">Start from a package</h2><%- diamond %><p>Each one presets the calculator. Indicative per-guest prices for one serving at catalogue tiers, before GST, rentals and delivery.</p></div>
+    <div class="tariff">
       <% content.eventPackages.forEach((pk) => { %>
-        <article class="package-card">
-          <h3><%= pk.name %></h3>
-          <p class="price"><span class="muted small">from</span> <strong>₹<%= pk.from %></strong><span class="muted small"> / guest</span></p>
-          <ul class="ticks small"><% pk.includes.forEach((i) => { %><li><%= i %></li><% }) %></ul>
-          <button class="btn btn-outline btn-sm btn-block" type="button" data-use-package data-format="<%= pk.format %>" data-servings="<%= pk.perGuest %>" data-event="<%= { wedding: 'Wedding', birthday: 'Birthday / private party', corporate: 'Corporate event', festival: 'Festival / puja' }[pk.id] %>">Plan with calculator</button>
-        </article>
+        <div class="tariff-row">
+          <h3><%= pkgName[pk.id] %></h3>
+          <p class="from">₹<%= pk.from %> <small>per guest, from</small></p>
+          <ul><% pk.includes.forEach((i) => { %><li><%= i %></li><% }) %></ul>
+          <button class="btn btn-foil btn-sm" type="button" data-pkg="<%= pkgEvent[pk.id] %>" data-fmt="<%= pk.format %>" data-per="<%= pk.perGuest %>">Use this package</button>
+        </div>
       <% }) %>
     </div>
-    <p class="muted small">Per-guest prices are indicative for 1 serving per guest at catalogue tier pricing, excluding GST, rentals and delivery.</p>
   </div>
 </section>
 
-<section class="section section-soft" id="calculator">
-  <div class="container calc-layout">
-    <div>
-      <h2>Guest calculator</h2>
-      <p class="muted">Guests × servings per guest, plus a safety buffer, rounded up to full cartons — then add it straight to your quote.</p>
-      <form class="card form-card calc" data-calculator onsubmit="return false">
-        <div class="form-grid">
-          <label class="field"><span>Number of guests</span><input type="number" min="1" max="100000" value="200" inputmode="numeric" data-c-guests></label>
-          <label class="field"><span>Servings per guest</span>
-            <select data-c-servings>
-              <option value="1">1 — dessert with other sweets</option>
-              <option value="1.5" selected>1.5 — typical wedding</option>
-              <option value="2">2 — ice cream is the main dessert</option>
-              <option value="3">3 — hot day / kids’ party</option>
-            </select>
-          </label>
-          <label class="field"><span>Serve as</span>
-            <select data-c-format>
-              <% content.servingFormats.forEach((f) => { %><option value="<%= f.id %>"><%= f.label %></option><% }) %>
-            </select>
-          </label>
-          <label class="field"><span>Safety buffer</span>
-            <select data-c-buffer>
-              <option value="0">None</option>
-              <option value="0.05">5%</option>
-              <option value="0.1" selected>10% (recommended)</option>
-              <option value="0.15">15%</option>
-            </select>
-          </label>
-          <label class="field"><span>Event type</span>
-            <select data-c-event><% site.eventTypes.slice(0, 4).forEach((t) => { %><option><%= t %></option><% }) %></select>
-          </label>
-          <label class="check"><input type="checkbox" data-c-outdoor> Outdoor / no power at venue</label>
-        </div>
-      </form>
+<section class="band sunk" aria-labelledby="fq-h">
+  <div class="wrap">
+    <div class="band-head"><h2 id="fq-h">Before the day</h2><%- diamond %></div>
+    <div class="faq">
+      <% eventFaq.forEach(([q, a]) => { %><details><summary><%= q %></summary><p><%= a %></p></details><% }) %>
     </div>
-    <div class="card calc-result" aria-live="polite">
-      <p class="eyebrow">Suggested order</p>
-      <p class="calc-big"><span data-r-servings>0</span> <small>servings</small></p>
-      <dl class="spec-table">
-        <div><dt>Product</dt><dd data-r-product>—</dd></div>
-        <div><dt>Units needed</dt><dd data-r-units>—</dd></div>
-        <div><dt>Cartons</dt><dd data-r-cartons>—</dd></div>
-        <div><dt>Estimated cost</dt><dd><strong data-r-cost>—</strong> <span class="muted small">+ GST</span></dd></div>
-        <div><dt>Per guest</dt><dd data-r-perguest>—</dd></div>
-      </dl>
-      <ul class="ticks small" data-r-tips></ul>
-      <button class="btn btn-primary btn-block" type="button" data-r-add>Add to quote</button>
-    </div>
+    <p class="center" style="margin-top:22px"><a class="link-more" href="/faq">All questions</a></p>
   </div>
 </section>
 
