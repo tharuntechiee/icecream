@@ -32,6 +32,7 @@
       <% if (q.guests) { %><div><dt>Guests</dt><dd><%= q.guests %></dd></div><% } %>
       <div><dt>Area</dt><dd><%= q.area || '—' %></dd></div>
       <div><dt>Address</dt><dd><%= q.address || '—' %></dd></div>
+      <% if (q.location) { %><div><dt>Map pin</dt><dd><a href="https://www.google.com/maps/search/?api=1&query=<%= q.location.lat %>,<%= q.location.lng %>" target="_blank" rel="noopener">Open in Google Maps</a> <span class="muted small"><%= q.location.lat %>, <%= q.location.lng %></span></dd></div><% } %>
       <% if (q.sampleRequested) { %><div><dt>Sample</dt><dd>Requested</dd></div><% } %>
       <% if (q.logo) { %><div><dt>Logo</dt><dd><a href="/admin/quotes/<%= q.id %>/logo"><%= q.logo.originalName %></a> <span class="muted small">(<%= Math.round(q.logo.size / 1024) %> KB)</span></dd></div><% } %>
     </dl>

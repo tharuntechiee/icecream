@@ -173,6 +173,9 @@ router.post('/api/quote', express.json({ limit: '100kb' }), (req, res) => {
     area: h.clean(b.area, 80), address: h.clean(b.address, 400), pincode: h.clean(b.pincode, 10),
     guests: Math.max(0, Math.floor(Number(b.guests) || 0)) || '', notes: h.clean(b.notes, 1500),
   };
+  // Optional map pin from the location picker; kept only when it is a real coordinate.
+  const lat = Number(b.lat), lng = Number(b.lng);
+  if (b.lat && b.lng && Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) data.location = { lat: +lat.toFixed(6), lng: +lng.toFixed(6) };
   const errors = [];
   if (!customer.name) errors.push('Please enter your name.');
   if (!h.isPhone(customer.phone)) errors.push('Please enter a valid phone number.');

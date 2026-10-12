@@ -1,5 +1,5 @@
 /* Front-end behaviour: theme, quote cart (localStorage), invitation estimate, product tiers,
-   event menu card, catalogue filters, delivery area checker. Depends on /js/pricing.js. */
+   event menu card, catalogue filters, location picker. Depends on /js/pricing.js. */
 (function () {
   'use strict';
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
@@ -354,6 +354,7 @@
         customer: { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value, gstin: f.gstin.value },
         eventType: f.eventType.value, deliveryDate: f.deliveryDate.value, timeSlot: f.timeSlot.value, area: f.area.value,
         address: f.address.value, guests: f.guests.value, notes: f.notes.value, website: f.website.value,
+        lat: f.lat.value, lng: f.lng.value,
       };
       fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r.json(); })
@@ -441,100 +442,41 @@
     renderCalc();
   }
 
-  // ---------- delivery map (Leaflet + OpenStreetMap) ----------
-  var mapEl = $('[data-map]');
-  var deliveryMap = null;
-  if (mapEl && window.L && $('#map-data')) {
-    var md = JSON.parse($('#map-data').textContent);
-    var cssVar = function (n) { return getComputedStyle(root).getPropertyValue(n).trim(); };
-    var map = L.map(mapEl, { scrollWheelZoom: false, zoomSnap: 0.5 }).setView([16.6, 79.6], 6); // both Telugu states
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-    // Let the wheel zoom only after the visitor engages with the map, so the page scroll isn't trapped.
-    map.on('click focus', function () { map.scrollWheelZoom.enable(); });
-    mapEl.addEventListener('mouseleave', function () { map.scrollWheelZoom.disable(); });
-
-    var rings = [], dots = [], byPlace = {}, byZone = {};
-    md.zones.forEach(function (z) {
-      byZone[z.name] = [];
-      if (z.ring) {
-        var c = L.circle([md.centre.lat, md.centre.lng], { radius: z.ring * 1000, weight: 1.5, fillOpacity: 0.05, dashArray: z.ring > 20 ? '4 6' : null })
-          .bindTooltip(z.name.replace('Hyderabad ', '') + ' · ' + z.eta, { sticky: true }).addTo(map);
-        rings.push(c);
-        byZone[z.name].push(c);
+  // ---------- Rapido-style location picker (delivery page check + quote form pick) ----------
+  var mapDataEl = $('#map-data');
+  var mapData = mapDataEl ? JSON.parse(mapDataEl.textContent) : null;
+  if (mapData && window.LocPicker && window.L) {
+    $$('[data-locpicker]').forEach(function (el) {
+      var mode = el.getAttribute('data-mode') || 'check';
+      if (mode === 'check') {
+        var picker = LocPicker.mount(el, { data: mapData, mode: 'check' });
+        $$('[data-zone-focus]').forEach(function (b) {
+          b.addEventListener('click', function () { picker.focusZone(b.getAttribute('data-zone-focus')); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+        });
+        return;
       }
-      if (z.points) Object.keys(z.points).forEach(function (place) {
-        var ll = z.points[place];
-        var m = L.circleMarker(ll, { radius: 6, weight: 2, fillOpacity: 1 })
-          .bindPopup('<strong>' + esc(place) + '</strong><br>' + esc(z.name) + '<br>' + esc(z.eta) + ' · minimum ' + money(z.minOrder))
-          .addTo(map);
-        dots.push(m);
-        byPlace[place.toLowerCase()] = m;
-        byZone[z.name].push(m);
-      });
-    });
-    var store = L.marker([md.store.lat, md.store.lng], {
-      icon: L.divIcon({ className: 'map-store', iconSize: [14, 14] }), keyboard: false,
-    }).bindTooltip(md.store.name).addTo(map);
-
-    // Paint every layer from the live theme tokens; repaint when the theme toggles.
-    var paint = function () {
-      var foil = cssVar('--foil'), board = cssVar('--board-raise');
-      rings.forEach(function (r) { r.setStyle({ color: foil, fillColor: foil }); });
-      dots.forEach(function (d) { d.setStyle({ color: foil, fillColor: board }); });
-    };
-    paint();
-    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
-    var all = L.featureGroup(dots.concat(rings, [store]));
-    map.fitBounds(all.getBounds(), { padding: [24, 24] });
-
-    deliveryMap = {
-      place: function (name) {
-        var m = byPlace[name.toLowerCase()];
-        if (m) { map.flyTo(m.getLatLng(), 10, { duration: 0.8 }); m.openPopup(); return; }
-        map.flyTo([md.centre.lat, md.centre.lng], 10, { duration: 0.8 }); // a Hyderabad locality
-      },
-      zone: function (name) {
-        var g = L.featureGroup(byZone[name] || []);
-        if (g.getLayers().length) map.flyToBounds(g.getBounds(), { padding: [40, 40], maxZoom: 11, duration: 0.8 });
-      },
-    };
-    $$('[data-zone-focus]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        deliveryMap.zone(b.getAttribute('data-zone-focus'));
-        mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    });
-  }
-
-  // ---------- delivery area checker ----------
-  var areaInput = $('[data-area-search]');
-  if (areaInput) {
-    var result = $('[data-area-result]');
-    var lastPlace = '';
-    areaInput.addEventListener('input', function () {
-      var term = areaInput.value.trim().toLowerCase();
-      var hit = null;
-      $$('[data-area]').forEach(function (li) {
-        var match = term && li.textContent.toLowerCase().indexOf(term) !== -1;
-        li.classList.toggle('match', !!match);
-        if (match && (!hit || li.textContent.toLowerCase().indexOf(term) === 0)) hit = hit && hit.textContent.toLowerCase().indexOf(term) === 0 ? hit : li;
-      });
-      if (!term) { result.hidden = true; return; }
-      result.hidden = false;
-      if (hit) {
-        var zone = hit.closest('[data-zone]');
-        result.className = 'notice success small';
-        result.innerHTML = 'Yes, we deliver to <strong>' + esc(hit.textContent) + '</strong>: ' + esc(zone.getAttribute('data-zone')) + ', ' +
-          esc(zone.getAttribute('data-eta').toLowerCase()) + ', minimum order ' + esc(zone.getAttribute('data-min')) + '.';
-        if (deliveryMap && hit.textContent !== lastPlace) { lastPlace = hit.textContent; deliveryMap.place(hit.textContent); }
-      } else {
-        result.className = 'notice small';
-        result.innerHTML = 'Not on our list yet; we often still deliver larger orders. <a href="/contact">Ask us</a>.';
-      }
+      // Quote form: the panel opens on demand and fills the address, area and pin.
+      var panel = el.closest('[data-map-panel]'), toggle = $('[data-map-toggle]'), form = el.closest('form'), mounted = null;
+      var openPanel = function () {
+        panel.hidden = false; toggle.setAttribute('aria-expanded', 'true');
+        if (!mounted) {
+          mounted = LocPicker.mount(el, {
+            data: mapData, mode: 'pick',
+            onConfirm: function (p) {
+              var f = form.elements;
+              f.address.value = [p.line1, p.line2].filter(Boolean).join(', ');
+              f.lat.value = p.lat.toFixed(6); f.lng.value = p.lng.toFixed(6);
+              var town = p.match ? (p.match.place === 'Hyderabad' ? '' : p.match.place) : '';
+              var opt = town && Array.prototype.filter.call(f.area.options, function (o) { return o.value === town; })[0];
+              if (opt) f.area.value = town; else if (!f.area.value && !(p.match && p.match.place === 'Hyderabad')) f.area.value = 'Other / not listed';
+              $('[data-pin-note]').innerHTML = 'Pin saved: <strong>' + esc(p.match ? p.match.zone.name : '') + '</strong>' + (p.route ? ' · ' + esc(p.route) : '');
+              panel.hidden = true; toggle.setAttribute('aria-expanded', 'false');
+              f.address.focus();
+            },
+          });
+        } else mounted.refresh();
+      };
+      toggle.addEventListener('click', function () { if (panel.hidden) openPanel(); else { panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } });
     });
   }
 

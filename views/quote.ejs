@@ -53,6 +53,12 @@
                         <option>Other / not listed</option>
           </select></label>
         <label class="field"><span>Guests <small>for events</small></span><input name="guests" type="number" min="0" inputmode="numeric" value="<%= preset.guests %>"></label>
+        <div class="field span-2 pin-row">
+          <button class="btn btn-foil btn-sm" type="button" data-map-toggle aria-expanded="false" aria-controls="map-panel"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Pick the delivery spot on the map</button>
+          <span class="small soft" data-pin-note>Drop a pin so the driver finds the exact gate.</span>
+          <div class="map-panel" id="map-panel" data-map-panel hidden><div data-locpicker data-mode="pick"></div></div>
+          <input type="hidden" name="lat"><input type="hidden" name="lng">
+        </div>
         <label class="field span-2"><span>Delivery address *</span><textarea name="address" rows="2" required maxlength="400" autocomplete="street-address" placeholder="Venue or store, street, landmark, pincode"></textarea></label>
         <label class="field span-2"><span>Notes</span><textarea name="notes" rows="3" maxlength="1500" placeholder="Flavour split, freezer at the venue?, access and parking, invoice details…"></textarea></label>
         <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
@@ -64,4 +70,8 @@
 </div>
 
 <script type="application/json" id="catalog"><%- h.jsonScript(catalog) %></script>
+<script type="application/json" id="map-data"><%- h.jsonScript({ centre: site.hyderabadCentre, store: site.coldStore, zones: site.serviceZones.map((z) => ({ name: z.name, state: z.state, eta: z.eta, minOrder: z.minOrder, ring: z.ring || null, points: z.points || null })) }) %></script>
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/js/locpicker.js"></script>
 <%- include('partials/bottom') %>

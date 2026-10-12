@@ -33,22 +33,13 @@
 
 <section class="band" aria-labelledby="chk-h">
   <div class="wrap">
-    <div class="map-layout">
-      <div class="frame map-frame">
-        <div id="delivery-map" class="delivery-map" data-map role="region" aria-label="Map of delivery areas across Telangana and Andhra Pradesh"></div>
-      </div>
-      <div class="map-side">
-        <h2 id="chk-h" class="h-sub" style="font-size:2rem">Is my area covered?</h2>
-        <label class="field"><span>Type your city, town or locality</span><input type="search" placeholder="e.g. Gachibowli, Vijayawada, Tirupati" data-area-search></label>
-        <p class="notice small" data-area-result hidden style="margin-top:12px"></p>
-        <ul class="map-legend">
-          <li><span class="lg-ring"></span>Hyderabad zones A, B and C (approximate rings)</li>
-          <li><span class="lg-dot"></span>Towns on our regional reefer routes</li>
-          <li><span class="key-mark"></span><%= site.coldStore.name %></li>
-        </ul>
-        <p class="small mute">Not on the map? We often still deliver larger orders. <a href="/contact">Ask us</a>.</p>
-      </div>
-    </div>
+    <div class="band-head"><h2 id="chk-h">Check your delivery spot</h2><%- diamond %><p>Search your venue or street, use your current location, or drag the map under the pin. You'll see the delivery zone, time, minimum order and the road distance from our cold store.</p></div>
+    <div class="frame lp-frame"><div data-locpicker data-mode="check"></div></div>
+    <ul class="map-legend">
+      <li><span class="lg-ring"></span>Hyderabad zones A, B and C (approximate rings)</li>
+      <li><span class="lg-dot"></span>Towns on our regional reefer routes</li>
+      <li><span class="key-mark"></span><%= site.coldStore.name %></li>
+    </ul>
   </div>
 </section>
 
@@ -88,4 +79,5 @@
 
 <script type="application/json" id="map-data"><%- h.jsonScript(mapData) %></script>
 <script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/js/locpicker.js"></script>
 <%- include('partials/bottom') %>

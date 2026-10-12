@@ -59,6 +59,22 @@ The repo deploys to Vercel as one serverless function (`vercel.json` routes ever
   - `SMTP_*` and `OWNER_EMAIL`. Without them, quote notification emails go only to `/tmp` and are lost.
 - `SITE_URL` defaults to the project's production domain on Vercel.
 
+## Maps & delivery coverage
+
+Delivery covers Hyderabad (zones A/B/C) and every region of Telangana and Andhra Pradesh. Each region has its own time, charge and per-drop minimum; edit them in `serviceZones` in `src/config.js`.
+
+The delivery page and the quote form use a Rapido-style location picker (`public/js/locpicker.js`, on self-hosted Leaflet). It needs no API key and is built on free public services:
+
+| Feature | Service | Notes |
+|---|---|---|
+| Map tiles | OpenStreetMap standard tiles | Attribution required; fine for modest traffic under the OSM tile policy |
+| Search-as-you-type and pin addresses | Photon (komoot) | Fair use. OSM's own Nominatim forbids autocomplete, so it isn't used |
+| Road route and drive time | OSRM demo server | Demo use only. If it's unavailable, a straight-line distance is shown |
+
+Picked pins are saved with the quote. The admin quote page and the owner email both include an "Open in Google Maps" link to the exact spot.
+
+For heavy production traffic, move the map to a keyed provider (Google Maps Platform, Mapbox or MapTiler) or self-host tiles and routing. Only `locpicker.js` needs to change.
+
 ## Design
 
 The look is the **Shaadi Card** world: a letterpress wedding invitation on indigo board, with gold foil and vermilion. It is dark by default, with an ivory light mode. `DESIGN.md` documents the tokens and components. Static design mockups live in `public/mockups/`.
