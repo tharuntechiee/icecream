@@ -100,7 +100,7 @@
     map.fitBounds(L.featureGroup(dots.concat(rings)).getBounds(), { padding: [20, 20] });
 
     // ----- the picked spot -----
-    var picked = null, seq = 0, routeSeq = 0, revTimer, routeTimer;
+    var picked = null, seq = 0, routeSeq = 0, revTimer, routeTimer, autoConfirm = false;
     var engaged = mode === 'pick'; // the delivery page shows coverage until the visitor picks something
     var renderCard = function () {
       if (!picked) return;
@@ -115,10 +115,16 @@
       } else {
         body = '<p class="lp-no">This spot is outside our regular routes. Large orders can still be arranged: <a href="/contact">ask us</a>.</p>';
       }
-      var act = mode === 'pick' && m ? '<button type="button" class="btn btn-verm btn-block lp-confirm">Deliver here</button>' : '';
+      var act = !m ? '' : mode === 'pick'
+        ? '<button type="button" class="btn btn-verm btn-block lp-confirm">Deliver here</button>'
+        : '<button type="button" class="btn btn-verm btn-block lp-confirm">Order to this spot</button>';
       card.innerHTML = head + body + act;
       var b = card.querySelector('.lp-confirm');
-      if (b) b.addEventListener('click', function () { opts.onConfirm && opts.onConfirm(picked); });
+      if (b) b.addEventListener('click', function () {
+        if (picked.line1 === 'Locating address…') return; // wait for the address to resolve
+        opts.onConfirm && opts.onConfirm(picked);
+      });
+      if (autoConfirm && m && picked.line1 !== 'Locating address…') { autoConfirm = false; opts.onConfirm && opts.onConfirm(picked); }
     };
 
     var evaluate = function (ll, known) {
@@ -236,6 +242,12 @@
     });
 
     setTimeout(function () { map.invalidateSize(); }, 50);
+    // Open on a saved spot (e.g. chosen on the delivery page) and confirm it once its address resolves.
+    if (opts.initial && isFinite(opts.initial.lat) && isFinite(opts.initial.lng)) {
+      var ini = opts.initial;
+      autoConfirm = !!opts.confirmInitial;
+      setTimeout(function () { go([ini.lat, ini.lng], 16, ini.line1 ? { line1: ini.line1, line2: ini.line2 || '' } : null); }, 120);
+    }
     return {
       map: map,
       focusZone: function (name) {

@@ -20,6 +20,6 @@
   </dl>
   <div class="place-foot">
     <span class="price"><%= h.money(h.fromPrice(p)) %> <small>/ <%= s.unit %>, best tier</small></span>
-    <button class="btn btn-foil btn-sm" type="button" data-add-to-quote data-name="<%= p.name %>" data-product="<%= p.id %>" data-size="<%= s.id %>" data-qty="<%= s.moq %>" data-flavour="<%= p.flavours.length > 1 ? 'Assorted' : (p.flavours[0] || '') %>">Add to quote</button>
+    <button class="btn btn-foil btn-sm" type="button" data-add-to-quote data-name="<%= p.name %>" data-product="<%= p.id %>" data-size="<%= s.id %>" data-qty="<%= s.moq %>" data-flavour="<%= p.flavours.length > 1 ? 'Assorted' : (p.flavours[0] || '') %>">Add to cart</button>
   </div>
 </article>

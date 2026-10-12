@@ -72,6 +72,12 @@ const fmtDateTime = (iso) => {
   return isNaN(d) ? '' : d.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
 };
 
+// Zone data for the map, the location picker and cart totals (public/js/totals.js).
+const mapData = () => ({
+  centre: config.hyderabadCentre, store: config.coldStore,
+  zones: config.serviceZones.map((z) => ({ name: z.name, state: z.state, eta: z.eta, minOrder: z.minOrder, charge: z.charge, freeAbove: z.freeAbove, areas: z.areas, ring: z.ring || null, points: z.points || null })),
+});
+
 const waLink = (text) => `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(text)}`;
 
-module.exports = { swatch, Pricing, money, fromPrice, defaultSize, artUrl, shapeUrl, jsonScript, clientCatalog, clean, isEmail, isPhone, GSTIN_RE, STATUSES, sortSizes, fmtDate, fmtDateTime, waLink };
+module.exports = { mapData, swatch, Pricing, money, fromPrice, defaultSize, artUrl, shapeUrl, jsonScript, clientCatalog, clean, isEmail, isPhone, GSTIN_RE, STATUSES, sortSizes, fmtDate, fmtDateTime, waLink };

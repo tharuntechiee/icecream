@@ -75,7 +75,7 @@ function remove(col, id) {
 function nextQuoteRef() {
   state.seq.quote += 1;
   save();
-  return `Q-${new Date().getFullYear()}-${String(state.seq.quote).padStart(4, '0')}`;
+  return `ORD-${new Date().getFullYear()}-${String(state.seq.quote).padStart(4, '0')}`;
 }
 
 load();

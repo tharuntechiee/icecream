@@ -5,7 +5,7 @@
     <h1><%= page.h1.charAt(0).toUpperCase() + page.h1.slice(1) %></h1>
     <p><%= page.intro %></p>
     <ul class="ticks" style="max-width:560px;margin:22px auto 0;text-align:left"><% page.points.forEach((pt) => { %><li><%= pt %></li><% }) %></ul>
-    <div class="rsvp-actions"><a class="btn btn-verm" href="/quote">Get a bulk quote</a><a class="btn btn-foil" href="/products?category=<%= page.category %>">Browse the range</a></div>
+    <div class="rsvp-actions"><a class="btn btn-verm" href="/products?category=<%= page.category %>">Order in bulk</a><a class="btn btn-foil" href="/delivery">Check delivery to you</a></div>
   </div>
 </section>
 

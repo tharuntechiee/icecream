@@ -7,10 +7,7 @@
     ['Andhra Pradesh', site.serviceZones.filter((z) => z.state === 'Andhra Pradesh')],
   ];
   const outMins = site.serviceZones.filter((z) => !z.ring).map((z) => z.minOrder);
-  const mapData = {
-    centre: site.hyderabadCentre, store: site.coldStore,
-    zones: site.serviceZones.map((z) => ({ name: z.name, state: z.state, eta: z.eta, minOrder: z.minOrder, ring: z.ring || null, points: z.points || null })),
-  };
+  const mapData = h.mapData();
 %>
 <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
 <section class="page-head">

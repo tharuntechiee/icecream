@@ -18,9 +18,9 @@ Most visitors arrive on a phone and want to hand off to a person quickly, by Wha
 
 ## Product Purpose
 
-A wholesale storefront whose job is to generate quote requests and bulk orders, not to sell online. The buyer builds a list, picks a delivery date, slot and address, and sends an enquiry. A person at the supplier confirms stock, the final price and delivery. No payment happens on the site.
+A wholesale storefront that takes bulk orders through a cart, with no online payment. The buyer fills a cart, picks the exact delivery spot on a map (required; it sets the delivery zone, charge and minimum), a date and slot, and places the order. The site shows a firm total: tier-priced subtotal plus the zone delivery charge plus 18% GST, which the server recomputes. A person at the supplier confirms stock and the slot, and the buyer pays on confirmation (UPI, bank transfer or cash on delivery).
 
-Success means a qualified enquiry with the quantities, date and venue the owner needs to quote, arriving by email to the owner and in the admin dashboard.
+Success means a placed order with quantities, an exact map pin, a date and a firm total, arriving by email to the owner and in the admin dashboard. (Changed on 2026-10-12 from quote requests to a cart, at the owner's request.)
 
 ## Positioning
 
@@ -30,7 +30,7 @@ The cold chain, custom packaging and tier pricing support this, but events are t
 
 ## Operating Context
 
-- **The quote flow:** browse the catalogue → add to quote (the cart persists in the browser) → submit date, time slot, venue, event type and guest count → the owner follows up by phone or WhatsApp within business hours.
+- **The order flow:** browse the catalogue → add to cart (it persists in the browser) → pick the exact delivery spot on the map, date and slot → place the order with a firm total → the owner confirms by phone or WhatsApp within business hours, and the buyer pays on confirmation.
 - **The event guest calculator** turns guests × servings per guest plus a buffer into cartons, an estimated cost and suggested add-ons (freezer, dry ice, serving counter).
 - **Repeat buyers** can register a business account with a GSTIN, and are linked to their quotes by GSTIN or phone.
 - **The owner** works the quote pipeline in `/admin`: New → Quoted → Confirmed → Delivered (or Cancelled). They also manage products, tier prices and stock there.
@@ -42,7 +42,7 @@ The cold chain, custom packaging and tier pricing support this, but events are t
 - **Catalogue:** 25 product lines in four categories: ice creams, custom and private-label packaging, ice blocks and ice, and add-ons and rentals. Each product has pack sizes, units per carton, a minimum order (MOQ), stock and three price tiers.
 - **Required on every page:** a floating "Get Bulk Quote" button and a WhatsApp click-to-chat button.
 - **SEO landing pages** target "bulk ice cream supplier [city]", "ice blocks wholesale [city]" and "custom ice cream cups with logo".
-- **Terminology:** quote, not cart checkout. Also carton, MOQ, tier, pack size, cold chain.
+- **Terminology:** cart, order and "place order"; never "checkout" or "pay now", because payment is offline. Also carton, MOQ, tier, pack size, cold chain, delivery spot.
 
 ## Brand Commitments
 

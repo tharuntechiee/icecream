@@ -63,11 +63,15 @@ function quoteEmail(q) {
     ['Estimated total', q.estimate ? money(q.estimate) + ' + GST & delivery' : ''], ['Logo file', q.logo ? q.logo.originalName : ''],
     ['Sample requested', q.sampleRequested ? 'Yes' : ''],
   ];
-  const text = [`New ${q.source} enquiry ${q.ref}`, '', ...details.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`), '', 'Items:', ...lines, '', `Open in admin: ${config.siteUrl}/admin/quotes/${q.id}`].join('\n');
-  const html = `<h2 style="font:600 20px Arial">New ${esc(q.source)} enquiry ${esc(q.ref)}</h2>${table(details)}
+  const kind = q.source === 'cart' ? 'order' : q.source + ' enquiry';
+  const t = q.totals;
+  const totalLines = t ? [`Subtotal: ${money(t.subtotal)}`, `Delivery${t.zone ? ' (' + t.zone + ')' : ''}: ${t.delivery === null ? 'to confirm' : money(t.delivery)}`, `GST 18%: ${money(t.gst)}`, `Total: ${money(t.total)}`] : [];
+  const text = [`New ${kind} ${q.ref}`, '', ...details.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`), '', 'Items:', ...lines, '', ...totalLines, '', `Open in admin: ${config.siteUrl}/admin/quotes/${q.id}`].join('\n');
+  const html = `<h2 style="font:600 20px Arial">New ${esc(kind)} ${esc(q.ref)}</h2>${table(details)}
     ${lines.length ? `<h3 style="font:600 16px Arial">Items</h3><ul style="font:14px Arial">${lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+    ${totalLines.length ? `<p style="font:14px Arial">${totalLines.map(esc).join('<br>')}</p>` : ''}
     <p><a href="${config.siteUrl}/admin/quotes/${q.id}" style="background:#c0331a;color:#fff;padding:10px 18px;text-decoration:none;font:600 14px Arial">Open in admin</a></p>`;
-  return send({ subject: `[${config.brand}] New quote ${q.ref} — ${c.company || c.name}${q.estimate ? ' — ' + money(q.estimate) : ''}`, text, html, replyTo: c.email });
+  return send({ subject: `[${config.brand}] New ${q.source === 'cart' ? 'order' : 'enquiry'} ${q.ref} — ${c.company || c.name}${t ? ' — ' + money(t.total) : q.estimate ? ' — ' + money(q.estimate) : ''}`, text, html, replyTo: c.email });
 }
 
 function simpleEmail(subject, rows, replyTo) {

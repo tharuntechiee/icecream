@@ -3,7 +3,7 @@
 <p><a href="/admin/quotes">← All quotes</a></p>
 <div class="section-head tight">
   <h1><%= q.ref %> <span class="status status-<%= q.status %>"><%= (h.STATUSES.find((s) => s.id === q.status) || {}).label %></span></h1>
-  <span class="muted small">Received <%= h.fmtDateTime(q.createdAt) %> · <%= q.source === 'custom-packaging' ? 'Custom packaging form' : 'Quote cart' %></span>
+  <span class="muted small">Received <%= h.fmtDateTime(q.createdAt) %> · <%= q.source === 'custom-packaging' ? 'Custom packaging form' : 'Cart order' %></span>
 </div>
 <% if (saved) { %><div class="notice success" role="status">Saved.</div><% } %>
 
@@ -56,7 +56,16 @@
         </tr>
       <% }) %>
     </tbody>
-    <tfoot><tr><td colspan="5" class="num">Estimated subtotal (excl. GST &amp; delivery)</td><td class="num"><strong><%= h.money(q.estimate) %></strong></td></tr></tfoot>
+    <tfoot>
+      <% if (q.totals) { const t = q.totals; %>
+        <tr><td colspan="5" class="num">Subtotal</td><td class="num"><%= h.money(t.subtotal) %></td></tr>
+        <tr><td colspan="5" class="num">Delivery<%= t.zone ? ' · ' + t.zone : '' %></td><td class="num"><%= t.delivery === null ? 'To confirm' : (t.delivery === 0 ? 'Free' : h.money(t.delivery)) %></td></tr>
+        <tr><td colspan="5" class="num">GST 18%</td><td class="num"><%= h.money(t.gst) %></td></tr>
+        <tr><td colspan="5" class="num"><strong>Total, payable on confirmation</strong></td><td class="num"><strong><%= h.money(t.total) %></strong></td></tr>
+      <% } else { %>
+        <tr><td colspan="5" class="num">Estimated subtotal (excl. GST &amp; delivery)</td><td class="num"><strong><%= h.money(q.estimate) %></strong></td></tr>
+      <% } %>
+    </tfoot>
   </table>
   </div>
   <% if (q.notes) { %><p><strong>Customer notes:</strong> <%= q.notes %></p><% } %>
@@ -64,12 +73,12 @@
 
 <div class="admin-grid">
   <form class="card form-card" method="post" action="/admin/quotes/<%= q.id %>">
-    <h2 class="h-sub">Update quote</h2>
+    <h2 class="h-sub">Update order</h2>
     <div class="form-grid">
       <label class="field"><span>Status</span>
         <select name="status"><% h.STATUSES.forEach((s) => { %><option value="<%= s.id %>" <%= q.status === s.id ? 'selected' : '' %>><%= s.label %></option><% }) %></select>
       </label>
-      <label class="field"><span>Quoted amount (₹, excl. GST)</span><input type="number" name="quotedAmount" min="0" value="<%= q.quotedAmount ?? '' %>" placeholder="<%= Math.round(q.estimate) %>"></label>
+      <label class="field"><span>Revised total (₹, optional)</span><input type="number" name="quotedAmount" min="0" value="<%= q.quotedAmount ?? '' %>" placeholder="<%= Math.round(q.estimate) %>"></label>
       <label class="field span-2"><span>Log note <small class="muted">(added to history)</small></span><input name="note" maxlength="500" placeholder="e.g. Sent proforma on WhatsApp"></label>
       <label class="field span-2"><span>Internal notes</span><textarea name="adminNotes" rows="3"><%= q.adminNotes || '' %></textarea></label>
     </div>

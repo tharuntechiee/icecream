@@ -1,4 +1,4 @@
-/* Front-end behaviour: theme, quote cart (localStorage), invitation estimate, product tiers,
+/* Front-end behaviour: theme, order cart (localStorage), invitation estimate, product tiers,
    event menu card, catalogue filters, location picker. Depends on /js/pricing.js. */
 (function () {
   'use strict';
@@ -25,7 +25,7 @@
     });
   });
 
-  // ---------- quote cart ----------
+  // ---------- order cart ----------
   var CART_KEY = 'quoteCart:v1';
   var Cart = {
     items: function () { return load(CART_KEY, []); },
@@ -61,10 +61,10 @@
     toastTimer = setTimeout(function () { t.classList.remove('show'); setTimeout(function () { t.hidden = true; }, 250); }, 4000);
   }
   function addedToast(name) {
-    toast('<span>' + esc(name) + ' added to your quote</span><a href="/quote">View quote (' + Cart.count() + ')</a>');
+    toast('<span>' + esc(name) + ' added to your cart</span><a href="/cart">View cart (' + Cart.count() + ')</a>');
   }
 
-  // Quick "Add to quote" buttons (place cards, menu-card extras)
+  // Quick "Add to cart" buttons (place cards, menu-card extras)
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-add-to-quote]');
     if (!btn) return;
@@ -121,7 +121,7 @@
     return { p: p, s: s, fmt: fmt, servings: servings, units: units, cartons: cartons, atMoq: cartons > need, cost: Pricing.lineTotal(s, cartons) };
   }
 
-  // ---------- home: the invitation card is the quote form ----------
+  // ---------- home: the invitation card starts the order ----------
   var SERVINGS = { 'Wedding': 1.5, 'Birthday / private party': 1, 'Corporate event': 1, 'Festival / puja': 1.5 };
   var inv = $('[data-invite]');
   if (inv) {
@@ -159,12 +159,12 @@
       var g = Math.max(0, parseInt(guests.value, 10) || 0), per = SERVINGS[ev.value];
       if (per && g) { var r = sizeEvent(g, per, 0.1, 'cup100'); if (r) Cart.add({ productId: r.p.id, sizeId: r.s.id, flavour: 'Assorted', qty: r.cartons }); }
       store('quotePreset:v1', { eventType: ev.value, guests: guests.value, date: date.value, area: venue.value });
-      location.href = '/quote?event=' + encodeURIComponent(ev.value) + '&guests=' + encodeURIComponent(guests.value);
+      location.href = '/cart?event=' + encodeURIComponent(ev.value) + '&guests=' + encodeURIComponent(guests.value);
     });
     var waBtn = $('[data-wa-card]');
     if (waBtn) waBtn.addEventListener('click', function () {
       var base = waBtn.href.split('?')[0];
-      waBtn.href = base + '?text=' + encodeURIComponent('Hi! ' + ev.value + ' on ' + face.textContent + ' at ' + venue.value + ' for ' + guests.value + ' guests. Please send a quote.');
+      waBtn.href = base + '?text=' + encodeURIComponent('Hi! ' + ev.value + ' on ' + face.textContent + ' at ' + venue.value + ' for ' + guests.value + ' guests. I would like to order.');
     });
     renderInvite();
   }
@@ -214,7 +214,7 @@
     renderPdp(false);
   }
 
-  // ---------- quote page ----------
+  // ---------- cart page ----------
   var quotePage = $('[data-quote-page]');
   if (quotePage) {
     var list = $('[data-quote-items]');
@@ -224,6 +224,37 @@
 
     // Drop items whose product/size no longer exists.
     Cart.save(Cart.items().filter(function (i) { return findSize(byId[i.productId], i.sizeId); }));
+
+    // Firm totals: subtotal + the zone's delivery charge + 18% GST (same rules the server applies, public/js/totals.js).
+    var zoneDataEl = $('#map-data');
+    var zoneData = zoneDataEl ? JSON.parse(zoneDataEl.textContent) : null;
+    var lastSubtotal = 0;
+    var renderTotals = function () {
+      var f = form.elements;
+      var zone = window.Totals && zoneData ? Totals.zoneFor(zoneData.zones, zoneData.centre, { area: f.area.value, lat: f.lat.value, lng: f.lng.value }) : null;
+      var t = window.Totals ? Totals.compute(lastSubtotal, zone) : { delivery: null, gst: 0, total: lastSubtotal };
+      $('[data-subtotal]').textContent = money(lastSubtotal);
+      var del = $('[data-delivery]');
+      if (zone) {
+        del.textContent = t.delivery === 0 ? 'Free' : money(t.delivery);
+        del.classList.remove('pending');
+        $('[data-zone-name]').textContent = '· ' + zone.name.replace(/^Hyderabad /, '');
+      } else {
+        del.textContent = 'Choose your area or drop a pin';
+        del.classList.add('pending');
+        $('[data-zone-name]').textContent = '';
+      }
+      $('[data-gst]').textContent = money(t.gst);
+      $('[data-total]').textContent = money(t.total);
+      $('[data-free-note]').textContent = zone && t.delivery > 0 && lastSubtotal < zone.freeAbove ? 'Free delivery above ' + money(zone.freeAbove) + ': add ' + money(zone.freeAbove - lastSubtotal) + ' more.' : '';
+      var min = zone ? zone.minOrder : (parseInt(quotePage.getAttribute('data-mov'), 10) || 0);
+      var mov = $('[data-mov-warning]');
+      mov.hidden = !Cart.count() || lastSubtotal >= min;
+      mov.textContent = 'The minimum order' + (zone ? ' for ' + zone.name : '') + ' is ' + money(min) + '. You can still place it and we will suggest options.';
+      var st = $('[data-submit-total]');
+      if (st) st.textContent = Cart.count() ? '· ' + money(t.total) : '';
+    };
+    form.addEventListener('change', function (e) { if (e.target.name === 'area') renderTotals(); });
 
     var renderQuote = function () {
       var items = Cart.items();
@@ -261,9 +292,9 @@
         '</div>';
       }).join('');
 
-      $('[data-subtotal]').textContent = money(subtotal);
-      $('[data-mov-warning]').hidden = !items.length || subtotal >= (parseInt(quotePage.getAttribute('data-mov'), 10) || 0);
+      lastSubtotal = subtotal;
       $('[data-moq-warning]').hidden = !belowMoq;
+      renderTotals();
     };
 
     var mutate = function (idx, fn) {
@@ -344,6 +375,7 @@
       if (!f.deliveryDate.value) errors.push('Please choose a delivery date.');
       if (!f.timeSlot.value) errors.push('Please choose a delivery time slot.');
       if (!f.address.value.trim()) errors.push('Please enter the delivery address.');
+      if (!f.lat.value || !f.lng.value) errors.push('Choose your exact delivery spot on the map and press Deliver here.');
       if (errors.length) return showErrors(errors);
 
       var btn = $('[data-submit]');
@@ -356,7 +388,7 @@
         address: f.address.value, guests: f.guests.value, notes: f.notes.value, website: f.website.value,
         lat: f.lat.value, lng: f.lng.value,
       };
-      fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) { return r.json(); })
         .then(function (res) {
           if (!res.ok) throw res;
@@ -368,7 +400,7 @@
         })
         .catch(function (err) {
           btn.disabled = false;
-          btn.textContent = 'Send the quote request';
+          btn.innerHTML = 'Place order <span class="tabular" data-submit-total></span>'; renderTotals();
           showErrors((err && err.errors) || ['Could not send right now. Please try again, or WhatsApp us your list.']);
         });
     });
@@ -429,7 +461,7 @@
     $('[data-send]').addEventListener('click', function () {
       lastOrder.forEach(function (i) { Cart.add(i); });
       store('quotePreset:v1', { eventType: evt.value, guests: g.value });
-      location.href = '/quote?event=' + encodeURIComponent(evt.value) + '&guests=' + encodeURIComponent(g.value);
+      location.href = '/cart?event=' + encodeURIComponent(evt.value) + '&guests=' + encodeURIComponent(g.value);
     });
     $$('[data-pkg]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -442,41 +474,42 @@
     renderCalc();
   }
 
-  // ---------- Rapido-style location picker (delivery page check + quote form pick) ----------
+  // ---------- Rapido-style location picker: choose the exact delivery spot ----------
+  // The spot chosen on the delivery page is saved and reopens in the cart, where it is required to order.
+  var SPOT_KEY = 'deliverySpot:v1';
   var mapDataEl = $('#map-data');
   var mapData = mapDataEl ? JSON.parse(mapDataEl.textContent) : null;
   if (mapData && window.LocPicker && window.L) {
     $$('[data-locpicker]').forEach(function (el) {
       var mode = el.getAttribute('data-mode') || 'check';
+      var saved = load(SPOT_KEY, null);
       if (mode === 'check') {
-        var picker = LocPicker.mount(el, { data: mapData, mode: 'check' });
+        var picker = LocPicker.mount(el, {
+          data: mapData, mode: 'check',
+          onConfirm: function (p) {
+            store(SPOT_KEY, { lat: p.lat, lng: p.lng, line1: p.line1, line2: p.line2 });
+            location.href = '/cart';
+          },
+        });
         $$('[data-zone-focus]').forEach(function (b) {
           b.addEventListener('click', function () { picker.focusZone(b.getAttribute('data-zone-focus')); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
         });
         return;
       }
-      // Quote form: the panel opens on demand and fills the address, area and pin.
-      var panel = el.closest('[data-map-panel]'), toggle = $('[data-map-toggle]'), form = el.closest('form'), mounted = null;
-      var openPanel = function () {
-        panel.hidden = false; toggle.setAttribute('aria-expanded', 'true');
-        if (!mounted) {
-          mounted = LocPicker.mount(el, {
-            data: mapData, mode: 'pick',
-            onConfirm: function (p) {
-              var f = form.elements;
-              f.address.value = [p.line1, p.line2].filter(Boolean).join(', ');
-              f.lat.value = p.lat.toFixed(6); f.lng.value = p.lng.toFixed(6);
-              var town = p.match ? (p.match.place === 'Hyderabad' ? '' : p.match.place) : '';
-              var opt = town && Array.prototype.filter.call(f.area.options, function (o) { return o.value === town; })[0];
-              if (opt) f.area.value = town; else if (!f.area.value && !(p.match && p.match.place === 'Hyderabad')) f.area.value = 'Other / not listed';
-              $('[data-pin-note]').innerHTML = 'Pin saved: <strong>' + esc(p.match ? p.match.zone.name : '') + '</strong>' + (p.route ? ' · ' + esc(p.route) : '');
-              panel.hidden = true; toggle.setAttribute('aria-expanded', 'false');
-              f.address.focus();
-            },
-          });
-        } else mounted.refresh();
+      // Cart: the spot is required. Confirming it fills the address and prices delivery for its zone.
+      var form = el.closest('form'), note = $('[data-pin-note]');
+      var applySpot = function (p) {
+        var f = form.elements;
+        var addr = [p.line1, p.line2].filter(Boolean).join(', ');
+        if (!f.address.value || f.address.dataset.fromMap === f.address.value) { f.address.value = addr; f.address.dataset.fromMap = addr; }
+        f.lat.value = p.lat.toFixed(6); f.lng.value = p.lng.toFixed(6);
+        f.area.value = p.match && p.match.place !== 'Hyderabad' ? p.match.place : '';
+        store(SPOT_KEY, { lat: p.lat, lng: p.lng, line1: p.line1, line2: p.line2 });
+        note.classList.add('set');
+        note.innerHTML = '<strong>Delivering to ' + esc(p.line1) + '</strong> · ' + esc(p.match ? p.match.zone.name : '') + (p.route ? ' · ' + esc(p.route) : '') + '. Move the pin and press Deliver here again to change it.';
+        f.area.dispatchEvent(new Event('change', { bubbles: true })); // re-price delivery for this zone
       };
-      toggle.addEventListener('click', function () { if (panel.hidden) openPanel(); else { panel.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } });
+      LocPicker.mount(el, { data: mapData, mode: 'pick', onConfirm: applySpot, initial: saved, confirmInitial: true });
     });
   }
 

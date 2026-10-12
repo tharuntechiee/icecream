@@ -1,20 +1,20 @@
 <% if (list.length) { %>
 <div class="table-scroll">
 <table class="data-table">
-  <thead><tr><th>Ref</th><th>Received</th><th>Customer</th><th>Source</th><th>Delivery</th><th>Estimate</th><th>Status</th></tr></thead>
+  <thead><tr><th>Ref</th><th>Received</th><th>Customer</th><th>Source</th><th>Delivery</th><th>Total</th><th>Status</th></tr></thead>
   <tbody>
     <% list.forEach((q) => { %>
       <tr>
         <td><a href="/admin/quotes/<%= q.id %>"><strong><%= q.ref %></strong></a></td>
         <td class="nowrap"><%= h.fmtDateTime(q.createdAt) %></td>
         <td><%= q.customer.company || q.customer.name %><br><span class="muted small"><%= q.customer.phone %></span></td>
-        <td><%= q.source === 'custom-packaging' ? 'Custom packaging' : 'Quote cart' %></td>
+        <td><%= q.source === 'custom-packaging' ? 'Custom packaging' : 'Cart order' %></td>
         <td class="nowrap"><%= h.fmtDate(q.deliveryDate) || '—' %></td>
-        <td class="nowrap"><%= h.money(q.quotedAmount || q.estimate) %><% if (q.quotedAmount) { %> <span class="muted small">quoted</span><% } %></td>
+        <td class="nowrap"><%= h.money(q.quotedAmount || (q.totals ? q.totals.total : q.estimate)) %><% if (q.quotedAmount) { %> <span class="muted small">revised</span><% } else if (!q.totals) { %> <span class="muted small">est.</span><% } %></td>
         <td><span class="status status-<%= q.status %>"><%= (h.STATUSES.find((s) => s.id === q.status) || {}).label %></span></td>
       </tr>
     <% }) %>
   </tbody>
 </table>
 </div>
-<% } else { %><p class="muted">No quote requests yet.</p><% } %>
+<% } else { %><p class="muted">No orders yet.</p><% } %>

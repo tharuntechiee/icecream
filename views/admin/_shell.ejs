@@ -4,7 +4,7 @@
     <a class="brand" href="/admin"><%= site.brand %><small>Admin</small></a>
     <nav aria-label="Admin">
       <a href="/admin" class="<%= path === '/admin' ? 'active' : '' %>">Dashboard</a>
-      <a href="/admin/quotes" class="<%= path.startsWith('/admin/quotes') ? 'active' : '' %>">Quotes <% if (nav.newQuotes) { %><span class="badge-count"><%= nav.newQuotes %></span><% } %></a>
+      <a href="/admin/quotes" class="<%= path.startsWith('/admin/quotes') ? 'active' : '' %>">Orders <% if (nav.newQuotes) { %><span class="badge-count"><%= nav.newQuotes %></span><% } %></a>
       <a href="/admin/products" class="<%= path.startsWith('/admin/products') ? 'active' : '' %>">Products &amp; stock</a>
       <a href="/admin/accounts" class="<%= path.startsWith('/admin/accounts') ? 'active' : '' %>">Business accounts <% if (nav.pending) { %><span class="badge-count"><%= nav.pending %></span><% } %></a>
       <a href="/admin/messages" class="<%= path.startsWith('/admin/messages') ? 'active' : '' %>">Messages <% if (nav.unread) { %><span class="badge-count"><%= nav.unread %></span><% } %></a>

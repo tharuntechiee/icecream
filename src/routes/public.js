@@ -8,6 +8,7 @@ const content = require('../content');
 const art = require('../art');
 const mailer = require('../mailer');
 const h = require('../helpers');
+const Totals = require('../../public/js/totals');
 
 const router = express.Router();
 
@@ -147,18 +148,20 @@ router.get('/products/:id', (req, res, next) => {
   });
 });
 
-router.get('/quote', (req, res) => {
+// The order cart. /quote was its old address; keep old links and bookmarks working.
+router.get('/quote', (req, res) => res.redirect(301, '/cart' + (req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '')));
+router.get('/cart', (req, res) => {
   res.render('quote', {
-    meta: { title: `Your Bulk Quote | ${config.brand}`, description: 'Review your bulk order list, choose a delivery slot and send it for a confirmed quote.', noindex: true },
+    meta: { title: `Your Cart | ${config.brand}`, description: 'Review your bulk order, choose a delivery slot and place it. Pay on confirmation: no online payment.', noindex: true },
     catalog: h.clientCatalog(db.all('products')),
     minDate: minDeliveryDate(),
     preset: { eventType: h.clean(req.query.event, 60), guests: h.clean(req.query.guests, 6) },
   });
 });
 
-router.post('/api/quote', express.json({ limit: '100kb' }), (req, res) => {
+router.post(['/api/order', '/api/quote'], express.json({ limit: '100kb' }), (req, res) => {
   const b = req.body || {};
-  if (b.website) return res.json({ ok: true, ref: 'Q-0000' }); // honeypot: pretend success
+  if (b.website) return res.json({ ok: true, ref: 'ORD-0000' }); // honeypot: pretend success
   if (rateLimited(req)) return res.status(429).json({ ok: false, errors: ['Too many requests. Please call or WhatsApp us instead.'] });
 
   const c = b.customer || {};
@@ -187,11 +190,18 @@ router.post('/api/quote', express.json({ limit: '100kb' }), (req, res) => {
   if (!data.address) errors.push('Please enter the delivery address.');
 
   const built = buildItems(b.items);
-  if (!built.items.length) errors.push('Your quote list is empty.');
+  if (!built.items.length) errors.push('Your cart is empty.');
+  // Orders are delivered to an exact map spot inside our zones; the zone sets delivery charge and minimum.
+  const zone = data.location ? Totals.zoneFor(config.serviceZones, config.hyderabadCentre, { area: data.area, lat: data.location.lat, lng: data.location.lng }) : null;
+  if (!data.location) errors.push('Choose your exact delivery spot on the map.');
+  else if (!zone) errors.push('That spot is outside our delivery areas in Telangana and Andhra Pradesh. Call or WhatsApp us and we will try to arrange it.');
   if (errors.length) return res.status(400).json({ ok: false, errors });
 
+  // Firm totals, recomputed here from the catalogue and the delivery zone; the browser's figures are never trusted.
+  const totals = Totals.compute(built.estimate, zone);
+  if (totals.belowMin) built.errors.push(`Below the ${zone.name} minimum order of ${h.money(zone.minOrder)}`);
   const account = findAccount(customer.gstin, customer.phone);
-  const q = saveQuote({ source: 'quote-cart', customer, ...data, items: built.items, estimate: built.estimate, moqWarnings: built.errors, accountId: account ? account.id : null });
+  const q = saveQuote({ source: 'cart', customer, ...data, items: built.items, estimate: built.estimate, totals, moqWarnings: built.errors, accountId: account ? account.id : null });
   res.json({ ok: true, ref: q.ref });
 });
 
@@ -323,7 +333,7 @@ router.post('/register', express.urlencoded({ extended: false }), (req, res) => 
 
 router.get('/thanks', (req, res) => {
   const ref = h.clean(req.query.ref, 20);
-  res.render('thanks', { meta: { title: `Quote request received | ${config.brand}`, description: 'Thank you.', noindex: true }, ref });
+  res.render('thanks', { meta: { title: `Order placed | ${config.brand}`, description: 'Thank you.', noindex: true }, ref });
 });
 
 // SEO landing pages: /bulk-ice-cream-supplier-<city>, /ice-blocks-wholesale-<city>, /custom-ice-cream-cups-with-logo

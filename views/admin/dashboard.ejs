@@ -1,7 +1,7 @@
 <%- include('_shell') %>
 <h1>Dashboard</h1>
 <div class="kpis">
-  <a class="kpi" href="/admin/quotes?status=new"><span class="muted small">New quotes</span><strong><%= byStatus.new %></strong></a>
+  <a class="kpi" href="/admin/quotes?status=new"><span class="muted small">New orders</span><strong><%= byStatus.new %></strong></a>
   <a class="kpi" href="/admin/quotes?status=quoted"><span class="muted small">Awaiting customer</span><strong><%= byStatus.quoted %></strong></a>
   <a class="kpi" href="/admin/quotes?status=confirmed"><span class="muted small">Confirmed</span><strong><%= byStatus.confirmed %></strong></a>
   <div class="kpi"><span class="muted small">Open pipeline value</span><strong><%= h.money(pipeline) %></strong></div>
@@ -31,7 +31,7 @@
 </div>
 
 <section class="card">
-  <div class="section-head tight"><h2 class="h-sub">Recent quote requests</h2><a class="link-more" href="/admin/quotes">All quotes →</a></div>
+  <div class="section-head tight"><h2 class="h-sub">Recent orders &amp; enquiries</h2><a class="link-more" href="/admin/quotes">All orders →</a></div>
   <%- include('_quote-table', { list: recent }) %>
 </section>
 

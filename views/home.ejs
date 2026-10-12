@@ -17,10 +17,10 @@
 
 <section class="invite-wrap">
   <div class="wrap narrow">
-    <form class="invite frame" data-invite action="/quote" method="get" novalidate>
+    <form class="invite frame" data-invite action="/cart" method="get" novalidate>
       <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
       <h1>Bulk ice cream &amp; ice<br><em>for every occasion</em></h1>
-      <p class="lede">Write your event on this card. We size the order, then deliver it at −18°C across Telangana and Andhra Pradesh, with freezers and servers at the venue. A person confirms every quote on WhatsApp.</p>
+      <p class="lede">Write your event on this card. We size the order, then deliver it at −18°C across Telangana and Andhra Pradesh, with freezers and servers at the venue. A person confirms every order on WhatsApp; you pay on confirmation.</p>
       <div class="fields">
         <div class="fld"><label class="label" for="i-ev">Event</label>
           <select id="i-ev" name="event"><% inviteEvents.forEach((e) => { %><option><%= e %></option><% }) %></select></div>
@@ -35,8 +35,8 @@
       </div>
       <div class="estimate" aria-live="polite"><span class="big tabular" data-est-big>Add your guest count</span><span class="mute" data-est-line>We size the order for you.</span></div>
       <div class="invite-actions">
-        <button class="btn btn-verm" type="submit">Request the quote <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-        <a class="btn btn-foil" href="<%= h.waLink(`Hi ${site.brand}, I'd like a bulk quote.`) %>" target="_blank" rel="noopener" data-wa-card>Send this card on WhatsApp</a>
+        <button class="btn btn-verm" type="submit">Start my order <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <a class="btn btn-foil" href="<%= h.waLink(`Hi ${site.brand}, I'd like to place a bulk order.`) %>" target="_blank" rel="noopener" data-wa-card>Send this card on WhatsApp</a>
       </div>
     </form>
   </div>
@@ -47,7 +47,7 @@
     <div class="band-head"><h2 id="prog-h">How an order unfolds</h2><%- diamond %></div>
     <ol class="programme">
       <% content.steps.forEach((s, i) => { %>
-        <li><span class="when"><%= when[i] %></span><div><h3><%= s.title === 'Get quote' ? 'Get the quote' : s.title %></h3><p><%= s.text %></p></div></li>
+        <li><span class="when"><%= when[i] %></span><div><h3><%= s.title %></h3><p><%= s.text %></p></div></li>
       <% }) %>
     </ol>
   </div>
@@ -109,8 +109,8 @@
       <h2>Send us the guest list</h2>
       <p class="soft">We reply within two business hours with stock, a delivery slot and the final price.</p>
       <div class="rsvp-actions">
-        <a class="btn btn-verm" href="/quote">Open the quote <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn-foil" href="<%= h.waLink(`Hi ${site.brand}, I need a bulk quote.`) %>" target="_blank" rel="noopener">WhatsApp the order desk</a>
+        <a class="btn btn-verm" href="/cart">Open your cart <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-foil" href="<%= h.waLink(`Hi ${site.brand}, I'd like to place a bulk order.`) %>" target="_blank" rel="noopener">WhatsApp the order desk</a>
       </div>
     </div>
   </div>

@@ -728,3 +728,21 @@ input[type=date]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 
 @media (max-width: 639px) { .lp-facts { grid-template-columns: 1fr 1fr; } .lp-map { height: 420px; } }
 @media (min-width: 960px) { .lp-map { height: 540px; } }
 :root[data-theme="dark"] .lp .leaflet-tile-pane { filter: invert(1) hue-rotate(195deg) brightness(.85) contrast(.92) saturate(.55); }
+
+/* cart totals */
+.totals { margin: 0; }
+.totals > div { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; }
+.totals dt { color: var(--ink-soft); } .totals dd { margin: 0; color: var(--ink); text-align: right; }
+.totals .grand { border-top: 1px solid var(--foil); border-bottom: 3px double var(--foil); margin-top: 6px; padding: 12px 0; }
+.totals .grand dt { font: 400 1.4rem "Yatra One", serif; color: var(--ink); } .totals .grand dd { font: 400 2rem "Yatra One", serif; color: var(--foil); }
+[data-delivery].pending { color: var(--ink-mute); font-size: .95rem; }
+
+/* exact delivery spot in the cart */
+.spot-field { gap: 10px; }
+.spot-field .map-panel .lp-map { height: 360px; }
+.spot-note { margin: 0; padding: 10px 14px; border: 1px dashed var(--foil-soft); color: var(--ink-soft); font-size: .95rem; }
+.spot-note.set { border-style: solid; border-color: var(--ok); background: var(--ok-bg); color: var(--ink); }
+.spot-note strong { color: var(--ink); }
+.quote-link .ico { width: 18px; height: 18px; }
+.fab-count { min-width: 22px; text-align: center; background: #fff; color: var(--verm); font-size: .8rem; padding: 1px 6px; }
+@media (max-width: 420px) { .cart-word { display: none; } }
