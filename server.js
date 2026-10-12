@@ -1,7 +1,7 @@
 const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const config = require('./src/config');
 const content = require('./src/content');
 const h = require('./src/helpers');
@@ -26,12 +26,15 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: isProd ? '7d' : 0 }));
 
-app.use('/admin', session({
+// The admin login lives in a signed cookie rather than server memory, so it survives on
+// serverless hosts (Vercel) where each request may reach a different instance.
+app.use('/admin', cookieSession({
   name: 'admin.sid',
-  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
-  resave: false,
-  saveUninitialized: false,
-  cookie: { httpOnly: true, sameSite: 'strict', secure: isProd, maxAge: 8 * 3600 * 1000 },
+  keys: [process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex')],
+  httpOnly: true,
+  sameSite: 'strict',
+  secure: isProd,
+  maxAge: 8 * 3600 * 1000,
 }));
 
 // Values every template can use.

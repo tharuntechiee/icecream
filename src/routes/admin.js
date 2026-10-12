@@ -29,13 +29,14 @@ router.post('/login', (req, res) => {
   if (list.length >= 10) return res.status(429).render('admin/login', { error: 'Too many attempts. Try again in 15 minutes.' });
   if (crypto.timingSafeEqual(digest(req.body.password || ''), digest(ADMIN_PASSWORD))) {
     loginAttempts.delete(req.ip);
-    return req.session.regenerate(() => { req.session.admin = true; res.redirect('/admin'); });
+    req.session = { admin: true, since: Date.now() }; // a fresh signed cookie replaces any old one
+    return res.redirect('/admin');
   }
   list.push(now);
   loginAttempts.set(req.ip, list);
   res.status(401).render('admin/login', { error: 'Incorrect password.' });
 });
-router.post('/logout', (req, res) => req.session.destroy(() => res.redirect('/admin/login')));
+router.post('/logout', (req, res) => { req.session = null; res.redirect('/admin/login'); });
 
 router.use((req, res, next) => (req.session && req.session.admin ? next() : res.redirect('/admin/login')));
 router.use((req, res, next) => {
