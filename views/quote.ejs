@@ -50,8 +50,7 @@
           <select name="area">
             <option value="">Select area…</option>
             <% site.serviceZones.forEach((z) => { %><optgroup label="<%= z.name %>"><% z.areas.forEach((a) => { %><option><%= a %></option><% }) %></optgroup><% }) %>
-            <optgroup label="Other cities"><% site.otherCities.forEach((c) => { %><option><%= c %></option><% }) %></optgroup>
-            <option>Other / not listed</option>
+                        <option>Other / not listed</option>
           </select></label>
         <label class="field"><span>Guests <small>for events</small></span><input name="guests" type="number" min="0" inputmode="numeric" value="<%= preset.guests %>"></label>
         <label class="field span-2"><span>Delivery address *</span><textarea name="address" rows="2" required maxlength="400" autocomplete="street-address" placeholder="Venue or store, street, landmark, pincode"></textarea></label>

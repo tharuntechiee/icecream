@@ -20,7 +20,7 @@
     <form class="invite frame" data-invite action="/quote" method="get" novalidate>
       <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span><span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
       <h1>Bulk ice cream &amp; ice<br><em>for every occasion</em></h1>
-      <p class="lede">Write your event on this card. We size the order, then deliver it at −18°C across <%= site.city %>, with freezers and servers at the venue. A person confirms every quote on WhatsApp.</p>
+      <p class="lede">Write your event on this card. We size the order, then deliver it at −18°C across Telangana and Andhra Pradesh, with freezers and servers at the venue. A person confirms every quote on WhatsApp.</p>
       <div class="fields">
         <div class="fld"><label class="label" for="i-ev">Event</label>
           <select id="i-ev" name="event"><% inviteEvents.forEach((e) => { %><option><%= e %></option><% }) %></select></div>
@@ -28,8 +28,8 @@
           <div class="datewrap"><span class="dateface" data-date-face aria-hidden="true">Choose a date</span><input id="i-date" name="date" type="date"></div></div>
         <div class="fld"><label class="label" for="i-venue">Venue</label>
           <select id="i-venue" name="venue">
-            <% site.serviceZones.forEach((z) => { z.areas.forEach((a) => { %><option<%= a === 'Gachibowli' ? ' selected' : '' %>><%= a %></option><% }) }) %>
-            <% site.otherCities.forEach((c) => { %><option><%= c %></option><% }) %><option>Other area</option>
+            <% site.serviceZones.forEach((z) => { %><optgroup label="<%= z.name %>"><% z.areas.forEach((a) => { %><option<%= a === 'Gachibowli' ? ' selected' : '' %>><%= a %></option><% }) %></optgroup><% }) %>
+            <option>Other area</option>
           </select></div>
         <div class="fld"><label class="label" for="i-g">Guests</label><input id="i-g" name="guests" type="number" min="1" max="100000" inputmode="numeric" value="600"></div>
       </div>

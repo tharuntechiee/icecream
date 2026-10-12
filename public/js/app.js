@@ -441,24 +441,96 @@
     renderCalc();
   }
 
+  // ---------- delivery map (Leaflet + OpenStreetMap) ----------
+  var mapEl = $('[data-map]');
+  var deliveryMap = null;
+  if (mapEl && window.L && $('#map-data')) {
+    var md = JSON.parse($('#map-data').textContent);
+    var cssVar = function (n) { return getComputedStyle(root).getPropertyValue(n).trim(); };
+    var map = L.map(mapEl, { scrollWheelZoom: false, zoomSnap: 0.5 }).setView([16.6, 79.6], 6); // both Telugu states
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+    // Let the wheel zoom only after the visitor engages with the map, so the page scroll isn't trapped.
+    map.on('click focus', function () { map.scrollWheelZoom.enable(); });
+    mapEl.addEventListener('mouseleave', function () { map.scrollWheelZoom.disable(); });
+
+    var rings = [], dots = [], byPlace = {}, byZone = {};
+    md.zones.forEach(function (z) {
+      byZone[z.name] = [];
+      if (z.ring) {
+        var c = L.circle([md.centre.lat, md.centre.lng], { radius: z.ring * 1000, weight: 1.5, fillOpacity: 0.05, dashArray: z.ring > 20 ? '4 6' : null })
+          .bindTooltip(z.name.replace('Hyderabad ', '') + ' · ' + z.eta, { sticky: true }).addTo(map);
+        rings.push(c);
+        byZone[z.name].push(c);
+      }
+      if (z.points) Object.keys(z.points).forEach(function (place) {
+        var ll = z.points[place];
+        var m = L.circleMarker(ll, { radius: 6, weight: 2, fillOpacity: 1 })
+          .bindPopup('<strong>' + esc(place) + '</strong><br>' + esc(z.name) + '<br>' + esc(z.eta) + ' · minimum ' + money(z.minOrder))
+          .addTo(map);
+        dots.push(m);
+        byPlace[place.toLowerCase()] = m;
+        byZone[z.name].push(m);
+      });
+    });
+    var store = L.marker([md.store.lat, md.store.lng], {
+      icon: L.divIcon({ className: 'map-store', iconSize: [14, 14] }), keyboard: false,
+    }).bindTooltip(md.store.name).addTo(map);
+
+    // Paint every layer from the live theme tokens; repaint when the theme toggles.
+    var paint = function () {
+      var foil = cssVar('--foil'), board = cssVar('--board-raise');
+      rings.forEach(function (r) { r.setStyle({ color: foil, fillColor: foil }); });
+      dots.forEach(function (d) { d.setStyle({ color: foil, fillColor: board }); });
+    };
+    paint();
+    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+    var all = L.featureGroup(dots.concat(rings, [store]));
+    map.fitBounds(all.getBounds(), { padding: [24, 24] });
+
+    deliveryMap = {
+      place: function (name) {
+        var m = byPlace[name.toLowerCase()];
+        if (m) { map.flyTo(m.getLatLng(), 10, { duration: 0.8 }); m.openPopup(); return; }
+        map.flyTo([md.centre.lat, md.centre.lng], 10, { duration: 0.8 }); // a Hyderabad locality
+      },
+      zone: function (name) {
+        var g = L.featureGroup(byZone[name] || []);
+        if (g.getLayers().length) map.flyToBounds(g.getBounds(), { padding: [40, 40], maxZoom: 11, duration: 0.8 });
+      },
+    };
+    $$('[data-zone-focus]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        deliveryMap.zone(b.getAttribute('data-zone-focus'));
+        mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  }
+
   // ---------- delivery area checker ----------
   var areaInput = $('[data-area-search]');
   if (areaInput) {
     var result = $('[data-area-result]');
+    var lastPlace = '';
     areaInput.addEventListener('input', function () {
       var term = areaInput.value.trim().toLowerCase();
       var hit = null;
       $$('[data-area]').forEach(function (li) {
         var match = term && li.textContent.toLowerCase().indexOf(term) !== -1;
         li.classList.toggle('match', !!match);
-        if (match && !hit) hit = li;
+        if (match && (!hit || li.textContent.toLowerCase().indexOf(term) === 0)) hit = hit && hit.textContent.toLowerCase().indexOf(term) === 0 ? hit : li;
       });
       if (!term) { result.hidden = true; return; }
       result.hidden = false;
       if (hit) {
         var zone = hit.closest('[data-zone]');
         result.className = 'notice success small';
-        result.innerHTML = 'Yes, we deliver to <strong>' + esc(hit.textContent) + '</strong>: ' + esc(zone.getAttribute('data-zone')) + ', ' + esc($('.from', zone).textContent.toLowerCase()) + '.';
+        result.innerHTML = 'Yes, we deliver to <strong>' + esc(hit.textContent) + '</strong>: ' + esc(zone.getAttribute('data-zone')) + ', ' +
+          esc(zone.getAttribute('data-eta').toLowerCase()) + ', minimum order ' + esc(zone.getAttribute('data-min')) + '.';
+        if (deliveryMap && hit.textContent !== lastPlace) { lastPlace = hit.textContent; deliveryMap.place(hit.textContent); }
       } else {
         result.className = 'notice small';
         result.innerHTML = 'Not on our list yet; we often still deliver larger orders. <a href="/contact">Ask us</a>.';

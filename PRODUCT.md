@@ -34,7 +34,7 @@ The cold chain, custom packaging and tier pricing support this, but events are t
 - **The event guest calculator** turns guests × servings per guest plus a buffer into cartons, an estimated cost and suggested add-ons (freezer, dry ice, serving counter).
 - **Repeat buyers** can register a business account with a GSTIN, and are linked to their quotes by GSTIN or phone.
 - **The owner** works the quote pipeline in `/admin`: New → Quoted → Confirmed → Delivered (or Cancelled). They also manage products, tier prices and stock there.
-- **Regional context:** India. Prices are in INR and exclude GST; an FSSAI food-safety licence is expected; WhatsApp is the main channel.
+- **Regional context:** India. The cold store is in Hyderabad; delivery covers all of Telangana and Andhra Pradesh (Hyderabad zones same/next day, regional reefer routes in 1–2 days, higher per-drop minimums outside Hyderabad). Prices are in INR and exclude GST; an FSSAI food-safety licence is expected; WhatsApp is the main channel.
 
 ## Capabilities and Constraints
 

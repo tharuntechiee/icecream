@@ -95,7 +95,8 @@ const faqs = [
   {
     topic: 'Ordering & advance notice', items: [
       ['How much notice do you need?', `Standard catalogue items: ${config.advanceNoticeHours} hours (same day in Zone A if ordered by 11 AM). Events with freezers or counters: 48–72 hours. Custom logo cups: 10–14 working days after artwork approval.`],
-      ['Is there a minimum order?', `Yes — ₹${config.minOrderValue.toLocaleString('en-IN')} per delivery, and each product has a minimum order quantity (MOQ) shown on its card.`],
+      ['Is there a minimum order?', `Yes. ₹${config.minOrderValue.toLocaleString('en-IN')} per delivery in Hyderabad, and ₹20,000 to ₹30,000 per drop elsewhere in Telangana and Andhra Pradesh depending on the region. Each product also has a minimum order quantity (MOQ) shown on its card.`],
+      ['Do you deliver outside Hyderabad?', 'Yes, across all of Telangana and Andhra Pradesh, from Adilabad to Tirupati and Srikakulam. Regional towns get scheduled −18°C reefer routes, usually next day or within two days. Check your town on the delivery map.'],
       ['Can I mix flavours in one carton?', 'For 4L and 5L tubs, yes. For cups, cones and sticks you can mix flavours across cartons, and we can pack mixed cartons for orders above 50 cartons.'],
     ],
   },
