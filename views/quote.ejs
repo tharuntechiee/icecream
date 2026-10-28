@@ -2,7 +2,7 @@
 <section class="page-head">
   <div class="wrap narrow">
     <h1>Your cart</h1>
-    <p>Check the order, choose where and when it should arrive, and place it. We confirm stock and the delivery slot within two business hours. <strong>No online payment: you pay on confirmation by UPI, bank transfer or cash on delivery.</strong></p>
+    <p>Check the order, choose where and when it should arrive, and place it. We confirm stock and the delivery time within two business hours. <strong>No online payment: you pay on confirmation by UPI, bank transfer or cash on delivery.</strong></p>
   </div>
 </section>
 
@@ -45,12 +45,9 @@
         <label class="field"><span>Business name</span><input name="company" autocomplete="organization" maxlength="120"></label>
         <label class="field"><span>Phone / WhatsApp *</span><input name="phone" type="tel" autocomplete="tel" required maxlength="20" placeholder="+91"></label>
         <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" maxlength="120"></label>
-        <label class="field"><span>GSTIN <small>for a GST invoice</small></span><input name="gstin" maxlength="15" style="text-transform:uppercase" placeholder="36ABCDE1234F1Z5"></label>
         <label class="field"><span>Event / order type</span>
           <select name="eventType"><option value="">Select…</option><% site.eventTypes.forEach((t) => { %><option <%= preset.eventType === t ? 'selected' : '' %>><%= t %></option><% }) %></select></label>
         <label class="field"><span>Delivery date *</span><input name="deliveryDate" type="date" min="<%= minDate %>" required></label>
-        <label class="field"><span>Time slot *</span>
-          <select name="timeSlot" required><option value="">Select…</option><% site.timeSlots.forEach((t) => { %><option><%= t %></option><% }) %></select></label>
         <label class="field"><span>Guests <small>for events</small></span><input name="guests" type="number" min="0" inputmode="numeric" value="<%= preset.guests %>"></label>
         <div class="field span-2 spot-field">
           <span>Exact delivery spot *</span>

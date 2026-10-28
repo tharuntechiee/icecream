@@ -18,7 +18,7 @@ Open http://localhost:3000. The admin is at http://localhost:3000/admin. The pas
 | What | Where |
 |---|---|
 | Brand name, city, phone, WhatsApp, emails, address, hours, FSSAI/GSTIN | `.env` (see `.env.example`) or `src/config.js` |
-| Delivery zones, areas, charges, minimum order, time slots | `src/config.js` |
+| Delivery zones, areas, charges, minimum order | `src/config.js` |
 | Testimonials, client names, FAQs, event packages, gallery, SEO landing pages | `src/content.js` (client names and testimonials are placeholders) |
 | Starting catalogue | `src/seed.js`, loaded on first run. After that, edit products in `/admin` |
 

@@ -18,7 +18,7 @@ Most visitors arrive on a phone and want to hand off to a person quickly, by Wha
 
 ## Product Purpose
 
-A wholesale storefront that takes bulk orders through a cart, with no online payment. The buyer fills a cart, picks the exact delivery spot on a map (required; it sets the delivery zone, charge and minimum), a date and slot, and places the order. The site shows a firm total: tier-priced subtotal plus the zone delivery charge plus 18% GST, which the server recomputes. A person at the supplier confirms stock and the slot, and the buyer pays on confirmation (UPI, bank transfer or cash on delivery).
+A wholesale storefront that takes bulk orders through a cart, with no online payment. The buyer fills a cart, picks the exact delivery spot on a map (required; it sets the delivery zone, charge and minimum) and a date, and places the order. The site shows a firm total: tier-priced subtotal plus the zone delivery charge plus 18% GST, which the server recomputes. A person at the supplier confirms stock and the delivery time, and the buyer pays on confirmation (UPI, bank transfer or cash on delivery).
 
 Success means a placed order with quantities, an exact map pin, a date and a firm total, arriving by email to the owner and in the admin dashboard. (Changed on 2026-10-12 from quote requests to a cart, at the owner's request.)
 
@@ -30,9 +30,9 @@ The cold chain, custom packaging and tier pricing support this, but events are t
 
 ## Operating Context
 
-- **The order flow:** browse the catalogue → add to cart (it persists in the browser) → pick the exact delivery spot on the map, date and slot → place the order with a firm total → the owner confirms by phone or WhatsApp within business hours, and the buyer pays on confirmation.
+- **The order flow:** browse the catalogue → add to cart (it persists in the browser) → pick the exact delivery spot on the map and date → place the order with a firm total → the owner confirms by phone or WhatsApp within business hours, and the buyer pays on confirmation.
 - **The event guest calculator** turns guests × servings per guest plus a buffer into cartons, an estimated cost and suggested add-ons (freezer, dry ice, serving counter).
-- **Repeat buyers** can register a business account with a GSTIN, and are linked to their quotes by GSTIN or phone.
+- **Repeat buyers** can register a business account with a GSTIN, and are linked to their orders by phone.
 - **The owner** works the quote pipeline in `/admin`: New → Quoted → Confirmed → Delivered (or Cancelled). They also manage products, tier prices and stock there.
 - **Regional context:** India. The cold store is in Hyderabad; delivery covers all of Telangana and Andhra Pradesh (Hyderabad zones same/next day, regional reefer routes in 1–2 days, higher per-drop minimums outside Hyderabad). Prices are in INR and exclude GST; an FSSAI food-safety licence is expected; WhatsApp is the main channel.
 

@@ -59,9 +59,9 @@ function buildItems(rawItems) {
   return { items, errors, estimate: items.reduce((sum, i) => sum + i.lineTotal, 0) };
 }
 
-function findAccount(gstin, phone) {
+function findAccount(phone) {
   const digits = (phone || '').replace(/\D/g, '').slice(-10);
-  return db.all('accounts').find((a) => (gstin && a.gstin === gstin) || (digits && a.phone.replace(/\D/g, '').slice(-10) === digits));
+  return db.all('accounts').find((a) => digits && a.phone.replace(/\D/g, '').slice(-10) === digits);
 }
 
 function saveQuote(data) {
@@ -152,7 +152,7 @@ router.get('/products/:id', (req, res, next) => {
 router.get('/quote', (req, res) => res.redirect(301, '/cart' + (req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '')));
 router.get('/cart', (req, res) => {
   res.render('quote', {
-    meta: { title: `Your Cart | ${config.brand}`, description: 'Review your bulk order, choose a delivery slot and place it. Pay on confirmation: no online payment.', noindex: true },
+    meta: { title: `Your Cart | ${config.brand}`, description: 'Review your bulk order, choose the delivery date and spot, and place it. Pay on confirmation: no online payment.', noindex: true },
     catalog: h.clientCatalog(db.all('products')),
     minDate: minDeliveryDate(),
     preset: { eventType: h.clean(req.query.event, 60), guests: h.clean(req.query.guests, 6) },
@@ -167,12 +167,11 @@ router.post(['/api/order', '/api/quote'], express.json({ limit: '100kb' }), (req
   const c = b.customer || {};
   const customer = {
     name: h.clean(c.name, 80), company: h.clean(c.company, 120), phone: h.clean(c.phone, 20),
-    email: h.clean(c.email, 120).toLowerCase(), gstin: h.clean(c.gstin, 15).toUpperCase(),
+    email: h.clean(c.email, 120).toLowerCase(),
   };
   const data = {
     eventType: config.eventTypes.includes(b.eventType) ? b.eventType : '',
     deliveryDate: /^\d{4}-\d{2}-\d{2}$/.test(b.deliveryDate || '') ? b.deliveryDate : '',
-    timeSlot: config.timeSlots.includes(b.timeSlot) ? b.timeSlot : '',
     area: h.clean(b.area, 80), address: h.clean(b.address, 400), pincode: h.clean(b.pincode, 10),
     guests: Math.max(0, Math.floor(Number(b.guests) || 0)) || '', notes: h.clean(b.notes, 1500),
   };
@@ -183,10 +182,8 @@ router.post(['/api/order', '/api/quote'], express.json({ limit: '100kb' }), (req
   if (!customer.name) errors.push('Please enter your name.');
   if (!h.isPhone(customer.phone)) errors.push('Please enter a valid phone number.');
   if (customer.email && !h.isEmail(customer.email)) errors.push('Please enter a valid email address.');
-  if (customer.gstin && !h.GSTIN_RE.test(customer.gstin)) errors.push('GSTIN should be 15 characters, e.g. 36ABCDE1234F1Z5.');
   if (!data.deliveryDate) errors.push('Please choose a delivery date.');
   else if (data.deliveryDate < new Date().toISOString().slice(0, 10)) errors.push('Delivery date cannot be in the past.');
-  if (!data.timeSlot) errors.push('Please choose a delivery time slot.');
   if (!data.address) errors.push('Please enter the delivery address.');
 
   const built = buildItems(b.items);
@@ -200,7 +197,7 @@ router.post(['/api/order', '/api/quote'], express.json({ limit: '100kb' }), (req
   // Firm totals, recomputed here from the catalogue and the delivery zone; the browser's figures are never trusted.
   const totals = Totals.compute(built.estimate, zone);
   if (totals.belowMin) built.errors.push(`Below the ${zone.name} minimum order of ${h.money(zone.minOrder)}`);
-  const account = findAccount(customer.gstin, customer.phone);
+  const account = findAccount(customer.phone);
   const q = saveQuote({ source: 'cart', customer, ...data, items: built.items, estimate: built.estimate, totals, moqWarnings: built.errors, accountId: account ? account.id : null });
   res.json({ ok: true, ref: q.ref });
 });
@@ -226,7 +223,7 @@ router.post('/custom-packaging', (req, res) => {
     if (err) errors.push(err.code === 'LIMIT_FILE_SIZE' ? 'Logo file must be under 8 MB.' : 'Could not upload that file.');
     if (b.website) return res.redirect('/thanks');
     if (rateLimited(req)) errors.push('Too many requests — please call or WhatsApp us.');
-    const customer = { name: h.clean(b.name, 80), company: h.clean(b.company, 120), phone: h.clean(b.phone, 20), email: h.clean(b.email, 120).toLowerCase(), gstin: '' };
+    const customer = { name: h.clean(b.name, 80), company: h.clean(b.company, 120), phone: h.clean(b.phone, 20), email: h.clean(b.email, 120).toLowerCase() };
     if (!customer.name) errors.push('Please enter your name.');
     if (!h.isPhone(customer.phone)) errors.push('Please enter a valid phone number.');
     if (customer.email && !h.isEmail(customer.email)) errors.push('Please enter a valid email address.');
@@ -247,7 +244,7 @@ router.post('/custom-packaging', (req, res) => {
       source: 'custom-packaging', customer,
       eventType: config.eventTypes.includes(b.eventType) ? b.eventType : '',
       deliveryDate: /^\d{4}-\d{2}-\d{2}$/.test(b.date || '') ? b.date : '',
-      timeSlot: '', area: '', address: h.clean(b.city, 120),
+      area: '', address: h.clean(b.city, 120),
       notes: [`Approx. ${units} units requested.`, h.clean(b.notes, 1500)].filter(Boolean).join(' '),
       sampleRequested: b.sample === 'on',
       items: built.items, estimate: built.estimate, moqWarnings: built.errors,

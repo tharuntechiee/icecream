@@ -12,9 +12,9 @@
     <h2 class="h-sub">Deliveries in the next 7 days</h2>
     <% if (upcoming.length) { %>
       <table class="data-table compact">
-        <thead><tr><th>Date</th><th>Slot</th><th>Customer</th><th>Area</th></tr></thead>
+        <thead><tr><th>Date</th><th>Customer</th><th>Area</th></tr></thead>
         <tbody><% upcoming.forEach((q) => { %>
-          <tr><td><a href="/admin/quotes/<%= q.id %>"><%= h.fmtDate(q.deliveryDate) %></a></td><td><%= q.timeSlot %></td><td><%= q.customer.company || q.customer.name %></td><td><%= q.area %></td></tr>
+          <tr><td><a href="/admin/quotes/<%= q.id %>"><%= h.fmtDate(q.deliveryDate) %></a></td><td><%= q.customer.company || q.customer.name %></td><td><%= q.area %></td></tr>
         <% }) %></tbody>
       </table>
     <% } else { %><p class="muted">No confirmed deliveries this week.</p><% } %>

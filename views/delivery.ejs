@@ -23,7 +23,6 @@
       <dt>Minimum order</dt><dd><%= h.money(site.minOrderValue) %> in <%= site.city %>; <%= h.money(Math.min(...outMins)) %>–<%= h.money(Math.max(...outMins)) %> per drop elsewhere</dd>
       <dt>Advance notice</dt><dd><%= site.advanceNoticeHours %> h in <%= site.city %> (same day in Zone A before 11 AM); 48 h for other regions</dd>
       <dt>Cold chain</dt><dd>−18°C reefer vans with temperature data loggers, dry ice on long routes</dd>
-      <dt>Time slots</dt><dd><%= site.timeSlots.join(' · ') %></dd>
     </dl>
   </div>
 </section>

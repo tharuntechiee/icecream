@@ -19,7 +19,6 @@
       <% if (c.company) { %><div><dt>Business</dt><dd><%= c.company %></dd></div><% } %>
       <div><dt>Phone</dt><dd><a href="tel:<%= c.phone %>"><%= c.phone %></a> · <a href="https://wa.me/<%= c.phone.replace(/\D/g, '').length === 10 ? '91' + c.phone.replace(/\D/g, '') : c.phone.replace(/\D/g, '') %>?text=<%= encodeURIComponent(`Hi ${c.name}, this is ${site.brand} about your quote ${q.ref}.`) %>" target="_blank" rel="noopener">WhatsApp</a></dd></div>
       <% if (c.email) { %><div><dt>Email</dt><dd><a href="mailto:<%= c.email %>?subject=<%= encodeURIComponent(`Your quote ${q.ref} from ${site.brand}`) %>"><%= c.email %></a></dd></div><% } %>
-      <% if (c.gstin) { %><div><dt>GSTIN</dt><dd><%= c.gstin %></dd></div><% } %>
       <% if (account) { %><div><dt>Account</dt><dd><%= account.businessName %> <span class="pill"><%= account.status %></span></dd></div><% } %>
     </dl>
   </section>
@@ -27,7 +26,6 @@
     <h2 class="h-sub">Delivery</h2>
     <dl class="spec-table compact">
       <div><dt>Date</dt><dd><%= h.fmtDate(q.deliveryDate) || '—' %></dd></div>
-      <div><dt>Slot</dt><dd><%= q.timeSlot || '—' %></dd></div>
       <div><dt>Event type</dt><dd><%= q.eventType || '—' %></dd></div>
       <% if (q.guests) { %><div><dt>Guests</dt><dd><%= q.guests %></dd></div><% } %>
       <div><dt>Area</dt><dd><%= q.area || '—' %></dd></div>

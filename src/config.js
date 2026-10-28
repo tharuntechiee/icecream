@@ -53,7 +53,6 @@ module.exports = {
   // Ordering rules
   minOrderValue: 5000,
   advanceNoticeHours: 24,
-  timeSlots: ['6 AM – 9 AM', '9 AM – 12 PM', '12 PM – 3 PM', '3 PM – 6 PM', '6 PM – 9 PM'],
   eventTypes: ['Wedding', 'Birthday / private party', 'Corporate event', 'Festival / puja', 'Restaurant / café restock', 'Hotel / banquet', 'Retail restock', 'Office pantry', 'Other'],
   businessTypes: ['Restaurant', 'Hotel / resort', 'Caterer', 'Event planner', 'Wedding organiser', 'Retail shop / supermarket', 'Café / bakery', 'Office / corporate', 'Other'],
 

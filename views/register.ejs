@@ -20,7 +20,7 @@
   <% if (done) { %>
     <div class="frame form-card">
       <div class="notice success" role="status"><strong>Thank you, <%= values.contactName %>.</strong> We have the registration for <%= values.businessName %>.</div>
-      <p>Our accounts team will verify your GSTIN and call within one business day to activate the account. Meanwhile, <a href="/products">start filling your cart</a>; use the same phone number or GSTIN at checkout and we will link it to your account.</p>
+      <p>Our accounts team will verify your GSTIN and call within one business day to activate the account. Meanwhile, <a href="/products">start filling your cart</a>; use the same phone number at checkout and we will link it to your account.</p>
     </div>
   <% } else { %>
   <form class="frame form-card" method="post" action="/register">

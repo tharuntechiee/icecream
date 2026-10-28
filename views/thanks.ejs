@@ -5,7 +5,7 @@
       <div class="seal-mark" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
       <h1 style="font-size:clamp(2rem,1.4rem + 2.6vw,3.2rem)">Order placed</h1>
       <% if (ref) { %><p class="lead" style="margin-top:14px">Reference <strong class="tabular" style="color:var(--foil)"><%= ref %></strong></p><% } %>
-      <p class="soft">The order desk will call or WhatsApp within two business hours to confirm stock and your delivery slot. You pay on confirmation by UPI, bank transfer or cash on delivery; nothing is charged online.</p>
+      <p class="soft">The order desk will call or WhatsApp within two business hours to confirm stock and your delivery time. You pay on confirmation by UPI, bank transfer or cash on delivery; nothing is charged online.</p>
       <div class="rsvp-actions">
         <a class="btn btn-verm" href="<%= h.waLink(`Hi ${site.brand}, I just placed order ${ref || ''}.`) %>" target="_blank" rel="noopener">Follow up on WhatsApp</a>
         <a class="btn btn-foil" href="/products">Back to the catalogue</a>

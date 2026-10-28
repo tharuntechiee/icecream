@@ -27,8 +27,8 @@ const testimonials = [
 
 const steps = [
   { title: 'Choose', text: 'Browse the catalogue, pick flavours and pack sizes, and add them to your cart. Not sure how much? Use the guest calculator.' },
-  { title: 'Place the order', text: 'Choose the date, slot and spot on the map, and see the total with delivery and GST. We confirm stock and the slot within 2 business hours; you pay on confirmation.' },
-  { title: 'Delivered frozen', text: 'Our −18°C reefer vans deliver to your kitchen, store or venue in your chosen slot, with freezers set up if you need them.' },
+  { title: 'Place the order', text: 'Choose the date and spot on the map, and see the total with delivery and GST. We confirm stock and the delivery time within 2 business hours; you pay on confirmation.' },
+  { title: 'Delivered frozen', text: 'Our −18°C reefer vans deliver to your kitchen, store or venue on your chosen date, with freezers set up if you need them.' },
 ];
 
 const coldChain = [
@@ -108,9 +108,9 @@ const faqs = [
   },
   {
     topic: 'Payment terms', items: [
-      ['Do I pay online?', 'No. You place the order on the site; we confirm stock and the slot and send a proforma invoice. Pay by UPI, bank transfer (NEFT/RTGS) or cheque.'],
+      ['Do I pay online?', 'No. You place the order on the site; we confirm stock and the delivery time and send a proforma invoice. Pay by UPI, bank transfer (NEFT/RTGS) or cheque.'],
       ['What are the payment terms?', 'First orders and events: 50% advance, balance on delivery. Registered business accounts with GSTIN can apply for 7–15 day credit after three orders.'],
-      ['Do you provide GST invoices?', 'Yes, every order gets a GST invoice. Add your GSTIN at checkout or register a business account to claim input tax credit.'],
+      ['Do you provide GST invoices?', 'Yes, every order gets a GST invoice. Register a business account with your GSTIN, or call us with it after ordering, to claim input tax credit.'],
     ],
   },
 ];

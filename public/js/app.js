@@ -346,7 +346,7 @@
     // Prefill remembered contact details, and anything the invitation or menu card carried over.
     var f0 = form.elements;
     var saved = load(DETAILS_KEY, {});
-    ['name', 'company', 'phone', 'email', 'gstin', 'address', 'area'].forEach(function (k) {
+    ['name', 'company', 'phone', 'email', 'address', 'area'].forEach(function (k) {
       if (saved[k] && f0[k] && !f0[k].value) f0[k].value = saved[k];
     });
     var preset = load('quotePreset:v1', null);
@@ -373,7 +373,6 @@
       if (!f.name.value.trim()) errors.push('Please enter your name.');
       if (f.phone.value.replace(/\D/g, '').length < 10) errors.push('Please enter a valid phone number.');
       if (!f.deliveryDate.value) errors.push('Please choose a delivery date.');
-      if (!f.timeSlot.value) errors.push('Please choose a delivery time slot.');
       if (!f.address.value.trim()) errors.push('Please enter the delivery address.');
       if (!f.lat.value || !f.lng.value) errors.push('Choose your exact delivery spot on the map and press Deliver here.');
       if (errors.length) return showErrors(errors);
@@ -383,8 +382,8 @@
       btn.textContent = 'Sending…';
       var payload = {
         items: items,
-        customer: { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value, gstin: f.gstin.value },
-        eventType: f.eventType.value, deliveryDate: f.deliveryDate.value, timeSlot: f.timeSlot.value, area: f.area.value,
+        customer: { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value },
+        eventType: f.eventType.value, deliveryDate: f.deliveryDate.value, area: f.area.value,
         address: f.address.value, guests: f.guests.value, notes: f.notes.value, website: f.website.value,
         lat: f.lat.value, lng: f.lng.value,
       };
@@ -393,7 +392,7 @@
         .then(function (res) {
           if (!res.ok) throw res;
           store(LAST_KEY, items);
-          store(DETAILS_KEY, { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value, gstin: f.gstin.value, address: f.address.value, area: f.area.value });
+          store(DETAILS_KEY, { name: f.name.value, company: f.company.value, phone: f.phone.value, email: f.email.value, address: f.address.value, area: f.area.value });
           try { localStorage.removeItem('quotePreset:v1'); } catch (x) { /* ignore */ }
           Cart.save([]);
           window.location.href = '/thanks?ref=' + encodeURIComponent(res.ref);

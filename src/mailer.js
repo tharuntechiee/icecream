@@ -58,7 +58,7 @@ function quoteEmail(q) {
   const c = q.customer;
   const details = [
     ['Reference', q.ref], ['Source', q.source], ['Business', c.company], ['Contact', c.name], ['Phone', c.phone], ['Email', c.email],
-    ['GSTIN', c.gstin], ['Event type', q.eventType], ['Delivery date', q.deliveryDate], ['Time slot', q.timeSlot],
+    ['Event type', q.eventType], ['Delivery date', q.deliveryDate],
     ['Area', q.area], ['Address', q.address], ['Map pin', q.location ? `https://www.google.com/maps/search/?api=1&query=${q.location.lat},${q.location.lng}` : ''], ['Guests', q.guests], ['Notes', q.notes],
     ['Estimated total', q.estimate ? money(q.estimate) + ' + GST & delivery' : ''], ['Logo file', q.logo ? q.logo.originalName : ''],
     ['Sample requested', q.sampleRequested ? 'Yes' : ''],
